@@ -1,21 +1,9 @@
 .App {
-  text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
+header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,15 +12,107 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+nav {
+  background-color: #ccc;
+  min-height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+nav ul {
+  list-style-type: none;
+}
+
+nav li {
+  display:inline;
+  margin: 0 20px;
+}
+
+nav li a {
+  text-decoration: none;
+  color: white;
+}
+
+nav li a:hover {
+  text-decoration: underline;
+}
+
+.primitive {
+  font-weight: bold;
+}
+
+
+.a-wrapper, .b-wrapper {
+  position: absolute;
+}
+.b-wrapper {
+  bottom: 0;
+  right: 0;
+}
+.b-row-wrapper {
+  display: flex;
+}
+.b-square {
+  width: 30px;
+  height: 30px;
+  margin: 1px;
+  background-color: #666;
+}
+
+.a-row-wrapper {
+  display: flex;
+}
+.a-square {
+  width: 30px;
+  height: 30px;
+  margin: 1px;
+  background-color: #09f;
+}
+
+.c-wrapper {
+  position: relative;
+  float: left; /* to make the width no more than necessary. */
+}
+.c-row-wrapper {
+  display: flex;
+}
+.c-square {
+  width: 30px;
+  height: 30px;
+  margin: 1px;
+  background-color:#ccc;
+}
+.no-show {
+  display: none;
+}
+
+.year-12-digit-wrapper {
+  margin-right: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.current-year {
+  background-color:#ddd;
+}
+.century-divider {
+  flex-basis: 100%;
+  height: 0;
+}
+.calendar-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+.digit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 10px);
+}
+.year-label {
+  font-size: 10px;
+  font-weight: bold;
+  grid-column: 1/-1;
+}
+.digit-grid > div {
+  font-size: 10px;
 }
