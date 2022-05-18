@@ -20,7 +20,6 @@ function App() {
           <li><a href="/phi">Phi</a></li>
           <li><a href="/pythag-clist">Pythag C List</a></li>
           <li><a href="/pythag">Pythagorean Triples</a></li>
-          <li><a href="/pythag-square">Pythagorean Square</a></li>
           <li><a href="/calendar">Calendar</a></li>
         </ul>
       </nav>
@@ -30,7 +29,6 @@ function App() {
         <Route path="/phi" element={<Phi />} />
         <Route path="/pythag-clist" element={<PythagCList />} />
         <Route path="/pythag" element={<PythagTriples />} />
-        <Route path="/pythag-square" element={<PythagSquare />} />
         <Route path="/calendar" element={<Calendar />} />
       </Routes>
       </div>

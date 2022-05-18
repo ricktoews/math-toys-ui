@@ -13,7 +13,7 @@ header {
 }
 
 nav {
-  background-color: #ccc;
+  background-color: #999;
   min-height: 30px;
   display: flex;
   flex-direction: row;
@@ -23,6 +23,8 @@ nav {
 
 nav ul {
   list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
 nav li {
@@ -37,6 +39,7 @@ nav li a {
 
 nav li a:hover {
   text-decoration: underline;
+  color: white;
 }
 
 .primitive {
@@ -44,6 +47,11 @@ nav li a:hover {
 }
 
 
+.a-square, .b-square, .c-square {
+  width: 20px;
+  height: 20px;
+  margin: 0 1px 1px 0;
+}
 .a-wrapper, .b-wrapper {
   position: absolute;
 }
@@ -55,9 +63,6 @@ nav li a:hover {
   display: flex;
 }
 .b-square {
-  width: 30px;
-  height: 30px;
-  margin: 1px;
   background-color: #666;
 }
 
@@ -65,9 +70,6 @@ nav li a:hover {
   display: flex;
 }
 .a-square {
-  width: 30px;
-  height: 30px;
-  margin: 1px;
   background-color: #09f;
 }
 
@@ -79,9 +81,6 @@ nav li a:hover {
   display: flex;
 }
 .c-square {
-  width: 30px;
-  height: 30px;
-  margin: 1px;
   background-color:#ccc;
 }
 .no-show {
