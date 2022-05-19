@@ -1,7 +1,7 @@
 import { Table } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { getPhi } from '../api/math-toys-api';
-import { getPascalRow, constructXYPower, constructPhiPower, reducedTerms, combineTerms } from './pascal-util';
+import { getPascalRow, constructXYPower, constructPhiPower, reducedTerms, combineTerms, isolateFibonacciTerms } from './pascal-util';
 
 function Phi(props) {
     const [ phiData, setPhiData ] = useState([]);
@@ -23,11 +23,15 @@ function Phi(props) {
       const row = e.currentTarget;
       const power = row.dataset.power;
       console.log(power, getPascalRow(power));
-      console.log(constructXYPower('√5', '1', power));
-      const terms = constructPhiPower(power);
-      console.log(terms);
+      //console.log(constructXYPower('√5', '1', power));
+      let terms = constructPhiPower(power);
+      console.log('Keep exponents', terms.join(' + '));
+      terms = constructPhiPower(power, false);
+      console.log('Lose exponents', terms.join(' + '));
+      console.log('Isolate Fibonacci terms', isolateFibonacciTerms(terms).sum);
       const reduced = reducedTerms(terms);
       console.log(reducedTerms(terms));
+      console.log('Isolate reduced Fibonacci terms', isolateFibonacciTerms(reduced).sum);
       console.log('combined', combineTerms(reduced));
 
     }

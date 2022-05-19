@@ -27,6 +27,7 @@ export function getPascalRow(n) {
   return Pascal[n];
 }
 
+
 export function constructXYPower(x, y, n) {
   const pascalNums = Pascal[n];
   let powerX = n;
@@ -63,7 +64,7 @@ function getSqrt5Power(power) {
   return sqrt5Power;
 }
 
-export function constructPhiPower(n) {
+export function constructPhiPower(n, keepExponents = true) {
   const pascalNums = Pascal[n];
   let powerX = n;
   let powerY = 0;
@@ -73,13 +74,16 @@ export function constructPhiPower(n) {
     let pascalNum = pascalNums[termNdx];
     let termParts = [pascalNum];
     if (powerX > 0) {
-      let sqrt5Power = getSqrt5Power(powerX);
+      let sqrt5Power;
+      if (keepExponents) {
+        sqrt5Power = radicalSymbol5 + '^' + powerX;
+      } else {
+        sqrt5Power = getSqrt5Power(powerX);
+      }
       termParts.push(`${sqrt5Power}`);
     }
-    if (powerY > 0) {
-//      termParts.push(1);
-    }
-    let term = termParts.join('*');
+    const joinChar = keepExponents ? '' : '*';
+    let term = termParts.join(joinChar);
     result.push(term);
     powerX--;
     powerY++;
@@ -130,4 +134,18 @@ export function combineTerms(terms) {
     simplified + ''
   ];
   return result;
+}
+
+export function isolateFibonacciTerms(terms) {
+  const divideBy = 2**(terms.length - 2);
+  const fibTerms = [];
+  const sumElements = [];
+  terms.forEach(term => {
+    if (root5re.test(term)) {
+      fibTerms.push(term);
+      sumElements.push(term.replace(root5re, ''));
+    }
+  });
+  let sum = '(' + sumElements.join(' + ') + ') / ' + divideBy;
+  return { fibTerms, divideBy, sum };
 }
