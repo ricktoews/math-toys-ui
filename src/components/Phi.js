@@ -26,17 +26,17 @@ function MyVerticallyCenteredModal(props) {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          (({radicalSymbol5} + 1) / 2)<sup>{power}</sup>
+          Phi to the power of {power} = (({radicalSymbol5} + 1) / 2)<sup>{power}</sup>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>Numerator: ({radicalSymbol5} + 1) to the power of {power}.</p>
-        <p>Use the pattern (x, y)<sup>{power}</sup> = <span dangerouslySetInnerHTML={{__html:xyPowerSuperscript}} />,<br/>
+        <p>Numerator: ({radicalSymbol5} + 1)<sup>{power}</sup>.</p>
+        <p>Denominator: 2<sup>{power}</sup> = {2**power}. Numerator will be divided by {2**(power-1)} to yield a result with denominator 2.</p>
+        <p>Calculate numerator as (x + y)<sup>{power}</sup> = <span dangerouslySetInnerHTML={{__html:xyPowerSuperscript}} />,<br/>
         where x = {radicalSymbol5}, y = 1.</p>
-        <p>So:<br/><span dangerouslySetInnerHTML={{__html: termsExponentsSuperscript}} /></p>
-        <p>Compute {radicalSymbol5}<sup>n</sup>:<br/><span dangerouslySetInnerHTML={{__html: terms.join(' + ')}} /></p>
+        <p>So: <span dangerouslySetInnerHTML={{__html: termsExponentsSuperscript}} /></p>
+        <p>Compute {radicalSymbol5}<sup>n</sup>: <span dangerouslySetInnerHTML={{__html: terms.join(' + ')}} /></p>
         <p>Fibonacci terms (<i>n</i>{radicalSymbol5}): <span dangerouslySetInnerHTML={{__html: fibonacciTerms}} /> = {fibonacciSum}</p>
-        <p>Denominator: 2<sup>{power}</sup>. To get to a form with denominator 2, divide by 2<sup>{power-1}</sup> ({2**(power-1)}).</p>
         <p>So the {power}th Fibonacci number is {fibonacciSum} / {2**(power-1)} = {fibonacciSum / 2**(power-1)}.</p>
       </Modal.Body>
       <Modal.Footer>
@@ -84,15 +84,6 @@ function Phi(props) {
       popupData.reducedFibonacci = reducedFibonacci;
       const combined = combineTerms(reduced);
       popupData.combined = combined;
-      if (false) {
-        console.log(`(x+y)^${power}`, xyPower);
-        console.log('Keep exponents', termsExponents.join(' + '));
-        console.log('Lose exponents', terms.join(' + '));
-        console.log('Isolate Fibonacci terms', fibonacciTerms);
-        console.log('reduced', reduced);
-        console.log('Isolate reduced Fibonacci terms', reducedFibonacci);
-        console.log('combined', combined);
-      }
       setPhiDissect(popupData);
       setModalShow(true);
     }

@@ -80,7 +80,7 @@ export function constructPhiPower(n, keepExponents = true) {
     if (powerX > 0) {
       let sqrt5Power;
       if (keepExponents) {
-        sqrt5Power = radicalSymbol5 + '^' + powerX;
+        sqrt5Power = powerX > 1 ? radicalSymbol5 + '^' + powerX : radicalSymbol5;
       } else {
         sqrt5Power = getSqrt5Power(powerX);
       }
