@@ -2,28 +2,6 @@
   position: relative;
 }
 
-.popup-wrapper {
-  position: fixed;
-  z-index: 100;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(128, 128, 128, .5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.hide-popup {
-  display: none;
-}
-.popup {
-  position: absolute;
-  width: 80vw;
-  height: 80vh;
-  background-color: white;
-  border: 1px solid black;
-  box-shadow: 2px 2px 2px gray;
-}
 
 header {
   background-color: #282c34;
