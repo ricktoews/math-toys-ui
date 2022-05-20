@@ -71,6 +71,14 @@ nav li a:hover {
 }
 
 
+/* Phi Stuff */
+.fibonacci {
+  color: #09f;
+}
+.lucas {
+  color: #f90;
+}
+
 .a-square, .b-square, .c-square {
   width: 20px;
   height: 20px;

@@ -28,26 +28,29 @@ export function getPascalRow(n) {
 }
 
 
-export function constructXYPower(x, y, n) {
+export function constructXYPower(n) {
   const pascalNums = Pascal[n];
   let powerX = n;
   let powerY = 0;
-  const result = [];
+  const resultTerms = [];
   const numTerms = pascalNums.length;
   for (let termNdx = 0; termNdx < numTerms; termNdx++) {
     let pascalNum = pascalNums[termNdx];
-    let termParts = [pascalNum];
+    let termParts = pascalNum > 1 ? [pascalNum] : [];
     if (powerX > 0) {
-      termParts.push(`${x}^${powerX}`);
+      let xPart = powerX > 1 ? `x^${powerX}` : 'x';
+      termParts.push(xPart);
     }
     if (powerY > 0) {
-      termParts.push(`${y}^${powerY}`);
+      let yPart = powerY > 1 ? `y^${powerY}` : 'y';
+      termParts.push(yPart);
     }
-    let term = termParts.join('*');
-    result.push(term);
+    let term = termParts.join('');
+    resultTerms.push(term);
     powerX--;
     powerY++;
   }
+  let result = resultTerms.join(' + ');
   return result;
 }
 
@@ -60,6 +63,7 @@ function getSqrt5Power(power) {
     sqrt5Power = radicalSymbol5;
   }
   let powerOf5 = 5**(power / 2);
+  //sqrt5Power = powerOf5 > 1 ? powerOf5 + sqrt5Power : sqrt5Power;
   sqrt5Power = powerOf5 + sqrt5Power;
   return sqrt5Power;
 }
@@ -72,7 +76,7 @@ export function constructPhiPower(n, keepExponents = true) {
   const numTerms = pascalNums.length;
   for (let termNdx = 0; termNdx < numTerms; termNdx++) {
     let pascalNum = pascalNums[termNdx];
-    let termParts = [pascalNum];
+    let termParts = termNdx > 0 ? [pascalNum] : [];
     if (powerX > 0) {
       let sqrt5Power;
       if (keepExponents) {
@@ -84,17 +88,21 @@ export function constructPhiPower(n, keepExponents = true) {
     }
     const joinChar = keepExponents ? '' : '*';
     let term = termParts.join(joinChar);
-    result.push(term);
+    let type = powerX % 2 === 1 ? 'fibonacci' : 'lucas';
+    result.push(`<span class="${type}">${term}</span>`);
     powerX--;
     powerY++;
   }
+  console.log('constructPhiPower, result', result);
   return result;
 }
 
 const root5re = new RegExp(radicalSymbol5);
 export function reducedTerms(terms) {
+  const strippedTerms = terms.map(item => item.replace(/<.*?>/g, ''));
+  console.log('reduced stripped terms', strippedTerms);
   const reduced = [];
-  terms.forEach(term => {
+  strippedTerms.forEach(term => {
     let xVal = '';
     if (root5re.test(term)) {
       xVal = radicalSymbol5;
@@ -113,6 +121,7 @@ export function reducedTerms(terms) {
 }
 
 export function combineTerms(terms) {
+  console.log('combineTerms', terms);
   const divideBy = 2**(terms.length - 2);
   let combinedRoot5 = 0;
   let combined = 0;
@@ -146,6 +155,6 @@ export function isolateFibonacciTerms(terms) {
       sumElements.push(term.replace(root5re, ''));
     }
   });
-  let sum = '(' + sumElements.join(' + ') + ') / ' + divideBy;
+  let sum = sumElements.join(' + ');
   return { fibTerms, divideBy, sum };
 }

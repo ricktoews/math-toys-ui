@@ -1,10 +1,55 @@
-import { Table } from 'react-bootstrap';
+import { Table, Modal, Button } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { getPhi } from '../api/math-toys-api';
-import { getPascalRow, constructXYPower, constructPhiPower, reducedTerms, combineTerms, isolateFibonacciTerms } from './pascal-util';
+import { getPascalRow, constructXYPower, constructPhiPower, reducedTerms, combineTerms, isolateFibonacciTerms } from './phi-utils';
+
+const convertToSuperscript = (str) => {
+  if (!str) return;
+  let converted = str && str.replace(/\^(\d+)/g, '<sup>$1</sup>');
+  return converted;
+}
+const radicalSymbol = '√';
+const radicalSymbol5 = radicalSymbol + '5';
+function MyVerticallyCenteredModal(props) {
+  const { data } = props;
+  const { power, pascalRow, xyPower, termsExponents = [], terms = [], fibonacciTerms, reducedFibonacci } = data;
+  const xyPowerSuperscript = convertToSuperscript(xyPower);
+  const termsExponentsSuperscript = convertToSuperscript(termsExponents.join(' + '));
+  const fibonacciSum = eval(reducedFibonacci);
+  
+  return (
+    <Modal
+      {...props}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          (({radicalSymbol5} + 1) / 2)<sup>{power}</sup>
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>Numerator: ({radicalSymbol5} + 1) to the power of {power}.</p>
+        <p>Use the pattern (x, y)<sup>{power}</sup> = <span dangerouslySetInnerHTML={{__html:xyPowerSuperscript}} />,<br/>
+        where x = {radicalSymbol5}, y = 1.</p>
+        <p>So:<br/><span dangerouslySetInnerHTML={{__html: termsExponentsSuperscript}} /></p>
+        <p>Compute {radicalSymbol5}<sup>n</sup>:<br/><span dangerouslySetInnerHTML={{__html: terms.join(' + ')}} /></p>
+        <p>Fibonacci terms (<i>n</i>{radicalSymbol5}): <span dangerouslySetInnerHTML={{__html: fibonacciTerms}} /> = {fibonacciSum}</p>
+        <p>Denominator: 2<sup>{power}</sup>. To get to a form with denominator 2, divide by 2<sup>{power-1}</sup> ({2**(power-1)}).</p>
+        <p>So the {power}th Fibonacci number is {fibonacciSum} / {2**(power-1)} = {fibonacciSum / 2**(power-1)}.</p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={props.onHide}>Close</Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
 
 function Phi(props) {
-    const [ phiData, setPhiData ] = useState([]);
+  const [modalShow, setModalShow] = useState(false);
+  const [ phiData, setPhiData ] = useState([]);
+  const [ phiDissect, setPhiDissect ] = useState({});
 
     useEffect(() => {
         (async () => {
@@ -21,19 +66,35 @@ function Phi(props) {
 
     const handleRowClick = e => {
       const row = e.currentTarget;
+      const popupData = {};
       const power = row.dataset.power;
-      console.log(power, getPascalRow(power));
-      //console.log(constructXYPower('√5', '1', power));
-      let terms = constructPhiPower(power);
-      console.log('Keep exponents', terms.join(' + '));
-      terms = constructPhiPower(power, false);
-      console.log('Lose exponents', terms.join(' + '));
-      console.log('Isolate Fibonacci terms', isolateFibonacciTerms(terms).sum);
+      popupData.power = power;
+      popupData.pascalRow = getPascalRow(power);
+      const xyPower = constructXYPower(power);
+      popupData.xyPower = xyPower;
+      const termsExponents = constructPhiPower(power);
+      popupData.termsExponents = termsExponents;
+      const terms = constructPhiPower(power, false);
+      popupData.terms = terms;
+      const fibonacciTerms = isolateFibonacciTerms(terms).sum;
+      popupData.fibonacciTerms = fibonacciTerms;
       const reduced = reducedTerms(terms);
-      console.log(reducedTerms(terms));
-      console.log('Isolate reduced Fibonacci terms', isolateFibonacciTerms(reduced).sum);
-      console.log('combined', combineTerms(reduced));
-
+      popupData.reduced = reduced;
+      const reducedFibonacci = isolateFibonacciTerms(reduced).sum
+      popupData.reducedFibonacci = reducedFibonacci;
+      const combined = combineTerms(reduced);
+      popupData.combined = combined;
+      if (false) {
+        console.log(`(x+y)^${power}`, xyPower);
+        console.log('Keep exponents', termsExponents.join(' + '));
+        console.log('Lose exponents', terms.join(' + '));
+        console.log('Isolate Fibonacci terms', fibonacciTerms);
+        console.log('reduced', reduced);
+        console.log('Isolate reduced Fibonacci terms', reducedFibonacci);
+        console.log('combined', combined);
+      }
+      setPhiDissect(popupData);
+      setModalShow(true);
     }
 
     return (<div>
@@ -60,6 +121,11 @@ function Phi(props) {
         })}
         </tbody>
       </Table>
+      <MyVerticallyCenteredModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        data={phiDissect}
+      />
     </div>)
 }
 
