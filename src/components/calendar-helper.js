@@ -37,7 +37,6 @@ export const calc12DigitYear = year => {
 
 export const generateMonthData = ({ year, janDigit, isLeap }) => {
 	var template = isLeap ? leapTemplate : yearTemplate;
-console.log('generateMonthData, template', template);
 	var data = [];
 	template.forEach((digit, monthNdx) => {
 		let month = { year, month: monthNdx, days: monthDays[monthNdx], blanks: (digit + 1*janDigit) % 7 };

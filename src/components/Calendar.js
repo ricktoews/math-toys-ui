@@ -24,9 +24,12 @@ const CalendarMonthGrid = styled.div`
 function MyVerticallyCenteredModal(props) {
   const { yeardata } = props;
   const { year, jan, leap } = yeardata;
-  console.log('popup leap', leap, typeof leap);
   const monthData = generateMonthData({year, janDigit: jan, isLeap: leap});
 
+  let els = Array.from( document.querySelectorAll('[data-year]'));
+  let matching = els.filter(y => y.dataset.jan === jan);
+  const proximal = matching.map(el => el.dataset.year).filter(y => Math.abs(year-y) <= 100);
+  console.log('matching', proximal);
   return (
     <Modal
       {...props}
@@ -43,6 +46,7 @@ function MyVerticallyCenteredModal(props) {
         <CalendarMonthGrid>
           { monthData.map((m, key) => <DrawMonth key={key} monthData={m} />) }
         </CalendarMonthGrid>
+        <div>{proximal.join(', ')}</div>
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={props.onHide}>Close</Button>
