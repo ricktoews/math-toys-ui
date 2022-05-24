@@ -124,12 +124,15 @@ function Denom(props) {
         <tbody>
         { expansionKeys.map((expansion, key) => {
           const numeratorData = [];
+          const periodData = parsedPeriod(expansion, expansionData[expansion][0].beginRepeat);
+          const periodJSX = getPeriodJSX(periodData)
           expansionData[expansion].forEach(item => {
             numeratorData[item.numerator] = { position: item.position, beginRepeat: item.beginRepeat };
           });
           return (<tr key={key} onClick={() => { }}>
-            <td>{expansion} <NumeratorList digits={expansion} numeratorData={numeratorData} onClick={handleClickNumerator
-            } /></td>
+            <td><div className="digits">{periodJSX}</div>
+              <NumeratorList digits={expansion} numeratorData={numeratorData} onClick={handleClickNumerator} />
+            </td>
           </tr>)
 
         }) }
