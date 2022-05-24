@@ -2,7 +2,9 @@ const baseUrl = 'https://arithmo.toewsweb.net:3000';
 const API = {
     get_phi: baseUrl + '/phi/',
     get_pythag_clist: baseUrl + '/pythag_clist/',
-    get_pythag_triples: baseUrl + '/pythag/'
+    get_pythag_triples: baseUrl + '/pythag/',
+    get_expansions: baseUrl + '/denom/',
+    get_by_expansion: baseUrl + '/denom_byexpansion/'
 }
 
 async function getPhi(n) {
@@ -24,4 +26,15 @@ async function getPythagTriples(corner) {
   return result;
 }
 
-export { getPhi, getPythagCList, getPythagTriples }
+async function getExpansions(denom) {
+  let result = await fetch(API.get_expansions + denom);
+  result = await result.json();
+  return result;
+}
+
+async function getDenomByExpansion(denom) {
+  let result = await fetch(API.get_by_expansion + denom);
+  result = await result.json();
+  return result;
+}
+export { getPhi, getPythagCList, getPythagTriples, getExpansions, getDenomByExpansion }

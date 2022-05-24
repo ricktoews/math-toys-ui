@@ -2,6 +2,15 @@
   position: relative;
 }
 
+.app-content {
+  padding-top: 75px;
+}
+
+.fixed-header {
+  position: fixed;
+  width: 100%;
+  z-index: 10;
+}
 
 header {
   background-color: #282c34;
@@ -48,6 +57,12 @@ nav li a:hover {
   font-weight: bold;
 }
 
+.app-btn {
+  background-color: #999;
+}
+.app-btn:hover {
+  background-color: #ccc;
+}
 
 /* Phi Stuff */
 .fibonacci {
@@ -124,4 +139,36 @@ nav li a:hover {
 }
 .digit-grid > div {
   font-size: 10px;
+}
+
+
+
+.numerator-list span {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 1rem;
+  margin: 8px;
+  background-color: #66866a;
+  border-radius: 20px;
+}
+
+.numerator-list span {
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  color: #fff;
+}
+
+.first-half {
+  color: #09f;
+}
+.second-half {
+  color: #f90;
+}
+.uncomplementary {
+  color: rgb(95, 202, 168);
+}
+.digits {
+  overflow-wrap: anywhere;
 }

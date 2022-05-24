@@ -27,9 +27,8 @@ function MyVerticallyCenteredModal(props) {
   const monthData = generateMonthData({year, janDigit: jan, isLeap: leap});
 
   let els = Array.from( document.querySelectorAll('[data-year]'));
-  let matching = els.filter(y => y.dataset.jan === jan);
+  let matching = els.filter(y => y.dataset.jan === jan && (y.dataset.leap === 'true') === leap);
   const proximal = matching.map(el => el.dataset.year).filter(y => Math.abs(year-y) <= 100);
-  console.log('matching', proximal);
   return (
     <Modal
       {...props}
