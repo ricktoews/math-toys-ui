@@ -80,7 +80,7 @@ function Denom(props) {
     const factors = getDenominatorFactors(selectedDenom);
     const formattedFactors = factors.length > 0 ? formatDenominatorFactors(factors) : <></>;
     setDenom(selectedDenom);
-    setDenomIsPrime(factors.length === 1);
+    setDenomIsPrime(factors.length === 1 && factors[0] === selectedDenom && 10 % factors[0] !== 0);
     setDenomFactors(formattedFactors);
     setExpansionKeys(Object.keys(organizeExpansionData).sort());
     setExpansionData(organizeExpansionData);
