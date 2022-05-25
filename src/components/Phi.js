@@ -1,5 +1,6 @@
 import { Table, Modal, Button } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
+import { MathJax } from 'better-react-mathjax';
 import { getPhi } from '../api/math-toys-api';
 import { getPascalRow, constructXYPower, constructPhiPower, reducedTerms, combineTerms, isolateFibonacciTerms } from './phi-utils';
 
@@ -26,7 +27,7 @@ function MyVerticallyCenteredModal(props) {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Phi to the power of {power} = (({radicalSymbol5} + 1) / 2)<sup>{power}</sup>
+          Phi to the power of {power} = <MathJax inline>{`\\(\\left(\\frac{\\sqrt{5} + 1}{2}\\right)^${power}\\)`}</MathJax>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -103,8 +104,11 @@ function Phi(props) {
         
         { phiData.map((item, key) => {
             let f_l = item['[F, F*SQRT_5, L, L/SQRT_5]'];
+            const Fibonacci = f_l[0];
+            const Lucas = f_l[2];
+
             return (<tr onClick={handleRowClick} key={key} data-power={key + 1}>
-              <td>{item.fraction}</td>
+              <td><MathJax>{`\\(\\frac{${Fibonacci}\\sqrt{5} + ${Lucas}}{2}\\)`}</MathJax></td>
               <td>{f_l[0]}</td>
               <td>{f_l[2]}</td>
               <td>{Number.parseFloat(f_l[1]).toFixed(2)}</td>
