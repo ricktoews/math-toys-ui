@@ -10,22 +10,79 @@ import Calendar from './components/Calendar';
 import Denom from './components/Denom';
 
 function App() {
-  
+  const [menuState, setMenuState] = useState(false);
+
+  const navContainerRef = useRef(null);
+
+  useEffect(() => {
+    const handleClick = e => {
+      const el = e.target;
+      const currentEl = e.currentTarget;
+      if (navContainerRef.current.contains(el)) {
+        console.log('handleClick clicked in nav menu; leave open');
+        setMenuState(true);
+      } else {
+        console.log('handleClick clicked outside of nav menu; close');
+      }
+    }
+
+    document.addEventListener('click', handleClick);
+
+    return () => {
+      document.removeEventListener('click', handleClick);
+    }
+  }, [])
+
+  useEffect(() => {
+console.log('new menu state', menuState);
+
+    if (menuState === true) {
+      navContainerRef.current.classList.add('show-nav-menu');
+      navContainerRef.current.classList.remove('hide-nav-menu');
+    } else {
+      navContainerRef.current.classList.remove('show-nav-menu');
+      navContainerRef.current.classList.add('hide-nav-menu');
+    }
+
+  }, [menuState]);
+
+  const toggleMenu = () => {
+    console.log('toggleMenu');
+    setMenuState(!menuState);
+  }
+
+  const checkMenuClick = e => {
+    const el = e.target;
+    const currentEl = e.currentTarget;
+    if (el === currentEl) {
+      setMenuState(false);
+    }
+  }
+
   return (
     <div className="App">
+      <div ref={navContainerRef} onClick={checkMenuClick} className="nav-container">
+        
+          <nav>
+            <ul>
+              <li><a href="/phi">Phi</a></li>
+              <li><a href="/pythag-clist">Pythag C List</a></li>
+              <li><a href="/pythag">Pythagorean Triples</a></li>
+              <li><a href="/calendar">Calendar</a></li>
+              <li><a href="/denom">Decimal Expansions</a></li>
+            </ul>
+          </nav>
+        
+      </div>
       <div className="fixed-header">
+        <div className="hamburger-icon" onClick={toggleMenu}>
+          <div className="hamburger-line"></div>
+          <div className="hamburger-line"></div>
+          <div className="hamburger-line"></div>
+        </div>
         <header>
         RickToews.me
         </header>
-        <nav>
-          <ul>
-            <li><a href="/phi">Phi</a></li>
-            <li><a href="/pythag-clist">Pythag C List</a></li>
-            <li><a href="/pythag">Pythagorean Triples</a></li>
-            <li><a href="/calendar">Calendar</a></li>
-            <li><a href="/denom">Decimal Expansions</a></li>
-          </ul>
-        </nav>
       </div>
       <div className="container app-content">
       <Routes>

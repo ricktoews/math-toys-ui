@@ -22,7 +22,7 @@ export function getPeriodJSX(data) {
   const firstHalfJSX = <span className="first-half">{firstHalf}</span>;
   const secondHalfJSX = <span className="second-half">{secondHalf}</span>;
 
-  const jsx = <span className="digits">{nonRepeatingJSX}{firstHalfJSX}{secondHalfJSX}</span>;
+  const jsx = <span className="period">{nonRepeatingJSX}{firstHalfJSX}{secondHalfJSX}</span>;
   
   return jsx;
 }

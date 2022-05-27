@@ -11,6 +11,41 @@
   width: 100%;
   z-index: 10;
 }
+.hamburger-icon {
+  position: absolute;
+  z-index: 2;
+  top: 10px;
+  left: 10px;
+  background-color: transparent;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+.hamburger-icon > .hamburger-line {
+  width: 100%;
+  height: 3px;
+  background-color: white;
+  margin-bottom: 3px;
+}
+.nav-container {
+  position: fixed;
+  z-index: 2;
+  width: 200px;
+  height: 100vh;
+  background-color: black;
+}
+.show-nav-menu {
+  left: 0;
+  transition-property: left;
+  transition-duration: .5s;
+  transition-delay: 0;
+}
+.hide-nav-menu {
+  left: -200vw;
+  transition-property: left;
+  transition-duration: .5s;
+  transition-delay: 0;
+}
 
 header {
   background-color: #282c34;
@@ -23,32 +58,27 @@ header {
   color: white;
 }
 
-nav {
-  background-color: #999;
+.nav-container > nav {
+  margin-top: 50px;
   min-height: 30px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
 }
 
-nav ul {
+.nav-container > nav ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
 
-nav li {
-  display:inline;
-  margin: 0 20px;
+.nav-container > nav li {
+  margin: 20px;
 }
 
-nav li a {
+.nav-container > nav li a {
   text-decoration: none;
   color: white;
 }
 
-nav li a:hover {
+.nav-container > nav li a:hover {
   text-decoration: underline;
   color: white;
 }
