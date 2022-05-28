@@ -75,8 +75,10 @@ function Denom(props) {
   const denomRef = useRef(null);
 
   async function getDenomData(selectedDenom) {
-    let expansionData = await getExpansions(selectedDenom);
-    let organizeExpansionData = await getDenomByExpansion(selectedDenom);
+    let results = await getExpansions(selectedDenom);
+    console.log('getDenomData, expansionData', results);
+    let organizeExpansionData = results.byExpansion;
+    let expansionData = results.byNumerator;
     const factors = getDenominatorFactors(selectedDenom);
     const formattedFactors = factors.length > 0 ? formatDenominatorFactors(factors) : <></>;
     setDenom(selectedDenom);
@@ -94,10 +96,8 @@ function Denom(props) {
     const { digits, numerator, stringified } = el.dataset;
     const data = JSON.parse(stringified);
     const { position, beginRepeat } = data;
-    const { period } = periodList.find(item => item.numerator === 1*numerator);
-    console.log('handleClickedNumerator', numerator, period);
-    let numDataObj = { numerator, denom, period, digits, denomIsPrime, position, beginRepeat, denomFactors }; 
-    console.log('handleClickedNumerator Numerator Data Object, for popup', numDataObj);
+    const { expansion } = periodList[numerator];
+    let numDataObj = { numerator, denom, period: expansion, digits, denomIsPrime, position, beginRepeat, denomFactors }; 
     setNumeratorData(numDataObj);
     setModalShow(true);
   }
