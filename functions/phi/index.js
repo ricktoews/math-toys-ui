@@ -1,4 +1,4 @@
-const phi = require('./phi/index.js');
+const phi = require('./controller.js');
 
 exports.handler = async (event) => {
   const { path } = event;
