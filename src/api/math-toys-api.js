@@ -29,8 +29,8 @@ async function getPythagTriples(corner) {
 }
 
 async function getExpansions(denom) {
-  let result = await fetch(API.get_expansions + denom);
-//  let result = await fetch(API.get_dc + denom);
+//  let result = await fetch(API.get_expansions + denom);
+  let result = await fetch(API.get_dc + denom);
   result = await result.json();
   return result;
 }
