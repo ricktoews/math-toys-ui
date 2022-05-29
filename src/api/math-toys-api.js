@@ -5,8 +5,8 @@ const API = {
     get_pythag_triples: baseUrl + '/pythag/',
     get_expansions: baseUrl + '/denom/',
     get_by_expansion: baseUrl + '/denom_byexpansion/',
-    //get_dc: '/api/dc/',
-    //get_phi_data: '/api/phi/'
+    get_dc: '/api/dc/',
+    get_phi_data: '/api/phi/'
 }
 
 async function getPhi(n) {
