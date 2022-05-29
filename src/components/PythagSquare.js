@@ -1,11 +1,33 @@
 import { useEffect, useState, useRef } from 'react';
 
+const makePythagLabel = (label, value, triple, format = 'square') => {
+  let labelJSX = <span className="pythag-side">
+    <span className="pythag-label">{label}<span className="exponent">2</span></span> 
+    = {value}x{value} = {value*value}
+  </span>
+
+  if (label === 'a' && format === 'wrap') {
+    let [a, b, c] = triple;
+    let corner = c - b;
+    labelJSX = <span className="pythag-side">
+    <span className="pythag-label">{label}<span className="exponent">2</span></span> 
+    = {corner}<span className="exponent">2</span> + 
+    {b}x{corner} + {b}x{corner} = {a*a}
+  </span>
+  }
+  return labelJSX;
+}
+
 function PythagSquare(props) {
     const [ mode, setMode ] = useState('square');
 
     const cArea = 200;
-    console.log('Pythagorean Square', props.triple);
+    console.log('Pythagorean Square triple', props.triple);
+    const [a, b, c] = props.triple;
     const [ triple, setTriple ] = useState(props.triple);
+    const [ aLabel, setALabel ] = useState(makePythagLabel('a', a, props.triple));
+    const [ bLabel, setBLabel ] = useState(makePythagLabel('b', b, props.triple));
+    const [ cLabel, setCLabel ] = useState(makePythagLabel('c', c, props.triple));
 
     const cWrapRef = useRef(null);
 
@@ -15,7 +37,12 @@ function PythagSquare(props) {
     }, [props.triple[2]]);
     
     const handleAClicked = e => {
-        setMode(mode === 'square' ? 'wrap' : 'square');
+      if (mode === 'square') { // changing to wrap
+        setALabel(makePythagLabel('a', a, triple, 'wrap'));
+      } else {
+        setALabel(makePythagLabel('a', a, triple));
+      }
+      setMode(mode === 'square' ? 'wrap' : 'square');
     }
 
     function drawASquare(triple) {
@@ -103,7 +130,11 @@ function PythagSquare(props) {
             }
             cRows.push(cCols);
         }
-        let code = (<div ref={cWrapRef} className="c-wrapper">
+        let code = (<div className="pythag-square-wrapper">
+          <div className="a-label">{aLabel}</div>
+          <div className="pythag-square-cols">
+          <div className="pythag-square-col">
+          <div ref={cWrapRef} className="c-wrapper">
             {bSquare}
             {aSquare}
             {cRows.map((row, key) => {
@@ -111,6 +142,13 @@ function PythagSquare(props) {
                     return square;
                 })}</div>
             })}
+          </div>
+          </div>
+          <div className="pythag-square-col">
+          <div className="b-label">{bLabel}</div>
+          </div>
+          </div>
+          <div className="c-label">{cLabel}</div>
         </div>)
 
         return code;

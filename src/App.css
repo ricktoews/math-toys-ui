@@ -89,6 +89,7 @@ header {
 
 .primitive {
   font-weight: bold;
+  cursor: pointer;
 }
 
 .app-btn {
@@ -106,6 +107,33 @@ header {
   color: #f90;
 }
 
+ul.pythag-triple-title {
+  list-style-type: none;
+  display: inline;
+  padding: 0;
+}
+.pythag-triple-title li {
+  display: inline;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 14pt;
+}
+.pythag-side {
+  font-family: 'Times New Roman', Times, serif;
+}
+.pythag-triple {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+}
+.pythag-label {
+  font-style: italic;
+}
+.pythag-square-wrapper {
+  position: relative;
+}
+.pythag-square-cols {
+  position: relative;
+  display: flex;
+}
 .a-square, .b-square, .c-square {
   width: 20px;
   height: 20px;
@@ -124,13 +152,29 @@ header {
 .b-square {
   background-color: #666;
 }
-
 .a-row-wrapper {
   display: flex;
 }
 .a-square {
-  background-color: #09f;
+  background-color: #9a9a9a;
 }
+.a-label {
+  position: relative;
+}
+.b-label {
+  position: absolute;
+  writing-mode: vertical-lr;
+  bottom: 0;
+}
+.exponent {
+  vertical-align: super;
+  font-size: smaller;
+}
+.c-label {
+  position: relative;
+  clear: left;
+}
+
 
 .c-wrapper {
   position: relative;
