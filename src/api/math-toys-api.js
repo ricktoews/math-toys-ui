@@ -5,7 +5,7 @@ const API = {
     get_pythag_triples: baseUrl + '/pythag/',
     get_expansions: baseUrl + '/denom/',
     get_by_expansion: baseUrl + '/denom_byexpansion/',
-    get_dc: '/.netlify/functions/dcx/',
+    get_dc: '/api/dcx/',
     get_phi_data: '/api/phi/'
 }
 
