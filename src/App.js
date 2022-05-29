@@ -81,7 +81,7 @@ console.log('new menu state', menuState);
           <div className="hamburger-line"></div>
         </div>
         <header>
-        RickToews.me
+        M&Lambda;th Toy&Sigma;
         </header>
       </div>
       <div className="container app-content">
