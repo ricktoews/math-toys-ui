@@ -1,16 +1,16 @@
 const baseUrl = 'https://arithmo.toewsweb.net:3000';
+const netlifyUrl = '/api';
+
 const API = {
-    get_phi: baseUrl + '/phi/',
+    get_phi: netlifyUrl + '/phi/',
     get_pythag_clist: baseUrl + '/pythag_clist/',
-    get_pythag_triples: baseUrl + '/pythag/',
-    get_expansions: baseUrl + '/denom/',
+    get_pythag_triples: netlifyUrl + '/pythag/',
+    get_expansions: netlifyUrl + '/dc/',
     get_by_expansion: baseUrl + '/denom_byexpansion/',
-    get_dc: '/api/dc/',
-    get_phi_data: '/api/phi/'
 }
 
 async function getPhi(n) {
-  let result = await fetch(API.get_phi_data + n);
+  let result = await fetch(API.get_phi + n);
   result = await result.json();
   return result;
 }
@@ -29,8 +29,7 @@ async function getPythagTriples(corner) {
 }
 
 async function getExpansions(denom) {
-//  let result = await fetch(API.get_expansions + denom);
-  let result = await fetch(API.get_dc + denom);
+  let result = await fetch(API.get_expansions + denom);
   result = await result.json();
   return result;
 }
