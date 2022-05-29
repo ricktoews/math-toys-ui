@@ -1,5 +1,5 @@
 const baseUrl = 'https://arithmo.toewsweb.net:3000';
-const netlifyUrl = '/api';
+const netlifyUrl = 'https://math-toys.netlify.app';
 
 const API = {
     get_phi: netlifyUrl + '/phi/',
