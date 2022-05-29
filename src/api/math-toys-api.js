@@ -10,7 +10,7 @@ const API = {
 }
 
 async function getPhi(n) {
-  let result = await fetch(API.get_phi + n);
+  let result = await fetch(API.get_phi_data + n);
   result = await result.json();
   return result;
 }
