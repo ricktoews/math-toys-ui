@@ -5,12 +5,12 @@ const API = {
     get_pythag_triples: baseUrl + '/pythag/',
     get_expansions: baseUrl + '/denom/',
     get_by_expansion: baseUrl + '/denom_byexpansion/',
-    get_dc: '/api/dc/',
-    get_phi_data: '/api/phi/'
+    //get_dc: '/api/dc/',
+    //get_phi_data: '/api/phi/'
 }
 
 async function getPhi(n) {
-  let result = await fetch(API.get_phi_data + n);
+  let result = await fetch(API.get_phi + n);
   result = await result.json();
   return result;
 }
@@ -29,8 +29,8 @@ async function getPythagTriples(corner) {
 }
 
 async function getExpansions(denom) {
-  //let result = await fetch(API.get_expansions + denom);
-  let result = await fetch(API.get_dc + denom);
+  let result = await fetch(API.get_expansions + denom);
+//  let result = await fetch(API.get_dc + denom);
   result = await result.json();
   return result;
 }
