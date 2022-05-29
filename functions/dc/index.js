@@ -1,74 +1,13 @@
-var BASE = 10;
+const dc = require('./controller.js');
 
-const Useful = require('./primes');
+exports.handler = async (event) => {
+  const { path } = event;
+  const denom = path.replace('/api/dc/', '');
+  let result = dc.getExpansions(denom);
 
-/*
- * Determine whether number is prime.
- *
- */
-function isPrime(num) {
-  num = 1*num;
-  return Useful.primes.indexOf(num) !== -1;
+  return {
+    statusCode: 200,
+    body: JSON.stringify(result),
+  };
+
 }
-
-/*
- * Perform mechanical division to get expansion, digit by digit.
- * Also, keep track of where in the expansion each numerator starts.
- */
-function divide(num, denom) {
-  let digits = [];
-  let numerators = {};
-  let position = 1;
-
-  while (num > 0 && !numerators[num]) {
-    numerators[num] = position++;
-    let digit = Math.floor(num * BASE / denom);
-    digits.push(digit);
-    num = num * BASE - digit * denom;
-  }
-
-  let beginRepeat = num > 0 ? numerators[num] : -1; // num is 0 if decimal resolves.
-  let result = { expansion: digits.join(''), expansionNumerators: numerators, beginRepeat };
-
-  return result;
-}
-
-/*
- * Get expansions for specified denominator.
- * Return a hash:
- * {
- *   byExpansion: [{ |expansion|: [{ numerator, position }...]}],
- *   byNumerator: [{ |numerator|: { expansion, position }}]
- * }           
- *
- * This feels like it needs to be broken up.
- */
-function getExpansions(denom) {
-  let prime = isPrime(denom);
-  let expansions = {};
-  for (let num = 1; num < denom; num++) {
-    // Check each numerator, and calculate the expansion if it hasn't already been done.
-    if (!expansions[num]) {
-      let { expansion, expansionNumerators, beginRepeat } = divide(num, denom);
-      expansions[num] = { expansion: expansion, position: expansionNumerators[num], beginRepeat };
-      // This forEach block is only for prime numbers.
-      prime && Object.keys(expansionNumerators).forEach(num => {
-        expansions[num] = { expansion: expansion, position: expansionNumerators[num], beginRepeat };
-      });
-    }
-  }
-  let output = {};
-  for (let num = 1; num < denom; num++) {
-    let expansion = expansions[num].expansion;
-    let numerator = num;
-    let position = expansions[num].position;
-    let beginRepeat = expansions[num].beginRepeat;
-    if (!output[expansion]) { output[expansion] = []; }
-    output[expansion].push({ numerator, position, beginRepeat });
-  }
-
-  return { byExpansion: output, byNumerator: expansions };
-}
-
-module.exports.divide = divide;
-module.exports.getExpansions = getExpansions;
