@@ -111,7 +111,7 @@ function Denom(props) {
     <div>
       <Form>
         <InputGroup>
-          <Form.Control ref={denomRef} type="text" id="denom" />
+          <Form.Control ref={denomRef} type="tel" id="denom" />
           <Button onClick={handleInput} className="app-btn">Set Denominator</Button>
         </InputGroup>
       </Form>

@@ -11,6 +11,18 @@ function isPrime(num) {
   return Useful.primes.indexOf(num) !== -1;
 }
 
+function digitsToExpansion(data) {
+  const { expansion, position, beginRepeat } = data;
+  const digits = expansion.split('');
+  let ndx = position - 1;
+  const expansionDigits = [];
+  for (let i = 0; i < digits.length; i++) {
+    expansionDigits.push(digits[ndx]);
+    ndx = (ndx + 1) % digits.length;
+  }
+  return expansionDigits.join('');
+}
+
 /*
  * Perform mechanical division to get expansion, digit by digit.
  * Also, keep track of where in the expansion each numerator starts.
@@ -55,6 +67,8 @@ function getExpansions(denom) {
       prime && Object.keys(expansionNumerators).forEach(num => {
         expansions[num] = { expansion: expansion, position: expansionNumerators[num], beginRepeat };
       });
+    } else {
+      expansions[num].expansion = digitsToExpansion(expansions[num]);
     }
   }
   let output = {};
