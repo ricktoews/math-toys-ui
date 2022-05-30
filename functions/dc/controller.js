@@ -62,7 +62,7 @@ function getExpansions(denom) {
     // Check each numerator, and calculate the expansion if it hasn't already been done.
     if (!expansions[num]) {
       let { expansion, expansionNumerators, beginRepeat } = divide(num, denom);
-      expansions[num] = { expansion: expansion, position: expansionNumerators[num], beginRepeat };
+      expansions[num] = { digits: expansion, expansion, position: expansionNumerators[num], beginRepeat };
       // This forEach block is only for prime numbers.
       prime && Object.keys(expansionNumerators).forEach(num => {
         expansions[num] = { digits: expansion, expansion: expansion, position: expansionNumerators[num], beginRepeat };
