@@ -175,7 +175,6 @@ ul.pythag-triple-title {
   clear: left;
 }
 
-
 .c-wrapper {
   position: relative;
   float: left; /* to make the width no more than necessary. */
@@ -185,6 +184,29 @@ ul.pythag-triple-title {
 }
 .c-square {
   background-color:#ccc;
+}
+
+.a-corner-square {
+  background-color:red;
+  transition-duration:1s;
+}
+.a-corner-label {
+  color: red;
+  transition-duration:1s;
+}
+
+.a-side-square {
+  background-color:#f90;
+}
+.a-side-label {
+  color:#f90;
+}
+
+.a-top-square {
+  background-color:rgb(251, 95, 183);
+}
+.a-top-label {
+  color:rgb(251, 95, 183);
 }
 .no-show {
   display: none;

@@ -99,7 +99,7 @@ function PythagTriples(props) {
   }
 
   const selectTriple = (triple, isPrimitive) => {
-    console.log(triple);
+    //console.log(triple);
     setSelectedTriple(triple);
     setModalShow(true);
   }
@@ -108,8 +108,8 @@ function PythagTriples(props) {
     <h1>Pythagorean Triples</h1>
     <Form>
       <InputGroup>
-        <Form.Control ref={cornerRef} type="text" id="a" />
-        <Button onClick={handleInput}>Set Corner</Button>
+        <Form.Control ref={cornerRef} type="tel" id="a" />
+        <Button className="btn btn-info" onClick={handleInput}>Set Corner</Button>
       </InputGroup>
     </Form>
     <Table striped hover>
