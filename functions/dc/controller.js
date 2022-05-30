@@ -73,12 +73,12 @@ function getExpansions(denom) {
   }
   let output = {};
   for (let num = 1; num < denom; num++) {
-    let expansion = expansions[num].expansion;
+    let digits = expansions[num].digits;
     let numerator = num;
     let position = expansions[num].position;
     let beginRepeat = expansions[num].beginRepeat;
-    if (!output[expansion]) { output[expansion] = []; }
-    output[expansion].push({ numerator, position, beginRepeat });
+    if (!output[digits]) { output[digits] = []; }
+    output[digits].push({ numerator, position, beginRepeat });
   }
 
   return { byExpansion: output, byNumerator: expansions };
