@@ -53,7 +53,7 @@ function MyVerticallyCenteredModal(props) {
         <NumeratorDescription {...numeratordata} power10={power10} periodJSX={periodJSX} />
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={props.onHide}>Close</Button>
+        <Button className="app-btn" onClick={props.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
   );

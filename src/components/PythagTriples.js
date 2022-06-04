@@ -52,7 +52,7 @@ function MyVerticallyCenteredModal(props) {
 
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={props.onHide}>Close</Button>
+        <Button className="app-btn" onClick={props.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
   );
@@ -109,7 +109,7 @@ function PythagTriples(props) {
     <Form>
       <InputGroup>
         <Form.Control ref={cornerRef} type="tel" id="a" />
-        <Button className="btn btn-info" onClick={handleInput}>Set Corner</Button>
+        <Button className="app-btn" onClick={handleInput}>Set Corner</Button>
       </InputGroup>
     </Form>
     <Table striped hover>

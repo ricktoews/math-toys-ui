@@ -58,7 +58,7 @@ function PythagCList(props) {
       <Form>
         <InputGroup>
           <Form.Control ref={cListRef} type="text" id="clist" />
-          <Button onClick={handleInput}>Set C List</Button>
+          <Button className="app-btn" onClick={handleInput}>Set C List</Button>
         </InputGroup>
       </Form>
       <Table striped hover>

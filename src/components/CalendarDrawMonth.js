@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+const CSSRoot = document.querySelector(':root');
+const CSSRootStyle = getComputedStyle(CSSRoot);
+
+const getCSSVar = cssVarName => CSSRootStyle.getPropertyValue(cssVarName);
+
 const monthName = [
   'January', 'February', 'March',
   'April', 'May', 'June',
@@ -26,7 +31,7 @@ const MonthDigit = styled.div`
 	font-family: times new roman;
 	font-style: italic;
 	font-size:7em;
-	color: rgba(0, 144, 255, 1);
+	color: ${getCSSVar('--palette-4')};
 `;
 
 const MonthRow = styled.div`
@@ -38,7 +43,7 @@ const MonthHeader = styled.div`
 	font-weight: bold;
 	text-align:center;
 	border-radius: 10px;
-	background-color: rgba(0, 144, 255, .5);
+	background-color: ${getCSSVar('--palette-4')};
 `;
 
 const MonthMasthead = styled.div`

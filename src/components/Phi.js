@@ -41,7 +41,7 @@ function MyVerticallyCenteredModal(props) {
         <p>So the {power}th Fibonacci number is {fibonacciSum} / {2**(power-1)} = {fibonacciSum / 2**(power-1)}.</p>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={props.onHide}>Close</Button>
+        <Button className="app-btn" onClick={props.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
   );

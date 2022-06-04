@@ -1,3 +1,14 @@
+:root {
+  --palette-1: #14080E;
+  --palette-2: #49475B;
+  --palette-3: #799496;
+  --palette-4: #ACC196;
+  --palette-5: #E9EB9E;
+  --palette-grey-1: #cccccc;
+  --palette-grey-2: #666666;
+  --palette-grey-3: #9a9a9a;
+}
+
 .App {
   position: relative;
 }
@@ -94,17 +105,21 @@ header {
 
 .app-btn {
   background-color: #999;
+  border: none;
 }
 .app-btn:hover {
   background-color: #ccc;
 }
+.app-btn:focus {
+  background-color:#ccc;
+}
 
 /* Phi Stuff */
 .fibonacci {
-  color: #09f;
+  color: var(--palette-2);
 }
 .lucas {
-  color: #f90;
+  color: var(--palette-3);
 }
 
 ul.pythag-triple-title {
@@ -150,13 +165,13 @@ ul.pythag-triple-title {
   display: flex;
 }
 .b-square {
-  background-color: #666;
+  background-color: var(--palette-grey-2);
 }
 .a-row-wrapper {
   display: flex;
 }
 .a-square {
-  background-color: #9a9a9a;
+  background-color: var(--palette-grey-3);
 }
 .a-label {
   position: relative;
@@ -183,30 +198,30 @@ ul.pythag-triple-title {
   display: flex;
 }
 .c-square {
-  background-color:#ccc;
+  background-color: var(--palette-grey-1);
 }
 
 .a-corner-square {
-  background-color:red;
+  background-color: var(--palette-5);
   transition-duration:1s;
 }
 .a-corner-label {
-  color: red;
+  color: var(--palette-5);
   transition-duration:1s;
 }
 
 .a-side-square {
-  background-color:#f90;
+  background-color: var(--palette-3);
 }
 .a-side-label {
-  color:#f90;
+  color: var(--palette-3);
 }
 
 .a-top-square {
-  background-color:rgb(251, 95, 183);
+  background-color: var(--palette-4);
 }
 .a-top-label {
-  color:rgb(251, 95, 183);
+  color: var(--palette-4);
 }
 .no-show {
   display: none;
@@ -215,6 +230,7 @@ ul.pythag-triple-title {
 .year-12-digit-wrapper {
   margin-right: 10px;
   margin-bottom: 10px;
+  padding: 3px;
   cursor: pointer;
 }
 .current-year {
@@ -241,6 +257,20 @@ ul.pythag-triple-title {
   font-size: 10px;
 }
 
+.matching-cols {
+  display: flex;
+}
+
+h4 {
+  font-size: 12pt;
+}
+thead tr {
+  background-color: var(--palette-4);
+  color: white;
+}
+td {
+  padding: 0 10px;
+}
 
 
 .numerator-list span {
@@ -249,7 +279,7 @@ ul.pythag-triple-title {
   line-height: 40px;
   font-size: 1rem;
   margin: 8px;
-  background-color: #66866a;
+  background-color: var(--palette-3);
   border-radius: 20px;
 }
 
@@ -261,14 +291,14 @@ ul.pythag-triple-title {
 }
 
 .first-half {
-  color: #09f;
+  color: var(--palette-2);
 }
 .second-half {
-  color: #f90;
+  color: var(--palette-3);
 }
 .uncomplementary {
-  color: rgb(95, 202, 168);
+  color: var(--palette-4);
 }
-.digits {
+.digits, .period {
   word-break: break-all;
 }

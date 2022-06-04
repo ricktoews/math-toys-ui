@@ -19,10 +19,11 @@ function App() {
       const el = e.target;
       const currentEl = e.currentTarget;
       if (navContainerRef.current.contains(el)) {
-        //console.log('handleClick clicked in nav menu; leave open');
+          console.log('handleClick clicked in nav menu; leave open');
         setMenuState(true);
       } else {
-        //console.log('handleClick clicked outside of nav menu; close');
+        console.log('handleClick clicked outside of nav menu; close');
+        //setMenuState(false);
       }
     }
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { Table } from 'react-bootstrap';
 import { Modal, Button } from 'react-bootstrap';
 import styled from 'styled-components';
 import { generateMonthData } from './calendar-helper';
@@ -21,6 +22,23 @@ const CalendarMonthGrid = styled.div`
 `;
 
 
+const getMatchingYears = (year, jan, isLeap) => {
+  let els = Array.from( document.querySelectorAll('[data-year]'));
+  let matching = els.filter(y => y.dataset.jan === jan && (y.dataset.leap === 'true') === isLeap);
+  let matchingJF, matchingMD;
+  if (isLeap) {
+    let adjustedJan = jan === 6 ? 0 : jan + 1;
+    matchingJF = els.filter(y => y.dataset.jan === jan && y.dataset.leap === 'false');
+    matchingMD = els.filter(y => y.dataset.jan === adjustedJan && y.dataset.leap === 'false');
+  } else {
+    let adjustedJan = jan === 0 ? 6 : jan - 1;
+    console.log('adjusted jan', adjustedJan);
+    matchingJF = els.filter(y => y.dataset.jan === jan && y.dataset.leap === 'true');
+    matchingMD = els.filter(y => y.dataset.jan == adjustedJan && y.dataset.leap === 'true');
+  }
+  return { matching, matchingJF, matchingMD };
+}
+
 function MyVerticallyCenteredModal(props) {
   const { yeardata } = props;
   const { year, jan, leap } = yeardata;
@@ -28,7 +46,12 @@ function MyVerticallyCenteredModal(props) {
 
   let els = Array.from( document.querySelectorAll('[data-year]'));
   let matching = els.filter(y => y.dataset.jan === jan && (y.dataset.leap === 'true') === leap);
-  const proximal = matching.map(el => el.dataset.year).filter(y => Math.abs(year-y) <= 100);
+  const matchingData = getMatchingYears(year, jan, leap);
+  console.log('matching', matchingData);
+  const matchingJF = matchingData.matching.concat(matchingData.matchingJF);
+  const matchingMD = matchingData.matching.concat(matchingData.matchingMD);
+  const proximalPast = matchingMD.map(el => el.dataset.year).filter(y => year-y > 0 && year-y <= 100).sort((a, b)=>b-a);
+  const proximalFuture = matchingMD.map(el => el.dataset.year).filter(y => y-year > 0 && y-year <= 100).sort();
   return (
     <Modal
       {...props}
@@ -42,13 +65,50 @@ function MyVerticallyCenteredModal(props) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <div className="year-popup-layout">
+
         <CalendarMonthGrid>
           { monthData.map((m, key) => <DrawMonth key={key} monthData={m} />) }
         </CalendarMonthGrid>
-        <div>{proximal.join(', ')}</div>
+
+        <div>
+          <h4>Years with matching configuration</h4>
+          <div className="matching-cols">
+            <table className="proximal-past">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>Difference</th>
+                </tr>
+              </thead>
+              <tbody>
+            {proximalPast.map((y, ndx) => {
+              let prevY = ndx > 0 ? proximalPast[ndx-1] : year;
+              return <tr key={ndx}><td>{y}</td><td>[-{prevY-y}]</td></tr>
+            })}
+              </tbody>
+            </table>
+            <table className="proximal-future">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>Difference</th>
+                </tr>
+              </thead>
+              <tbody>
+            {proximalFuture.map((y, ndx) => {
+              let prevY = ndx > 0 ? proximalFuture[ndx-1] : year;
+              return <tr key={ndx}><td>{y}</td><td>[+{y-prevY}]</td></tr>
+            })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        </div>
+
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={props.onHide}>Close</Button>
+        <Button className="app-btn" onClick={props.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
   );
