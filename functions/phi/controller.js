@@ -74,7 +74,7 @@ function lucas(n, a, b) {
  * Non-recursive Fibonacci
  */
 function fib(n) {
-  let [a, b] = [1, 1];
+  let [a, b] = [0, 1];
   for (let i = 1; i <= n; i++) {
     [a, b] = [b, a + b];
   }
@@ -85,7 +85,7 @@ function fib(n) {
 function getPhiData(max) {
   let rows = [];
   for (let i = 1; i <= max; i++) {
-    let [f, l] = [fib(i), lucas(i, 1, 3)];
+    let [f, l] = [fib(i), lucas(i, 2, 1)];
     let phi = `(${f} V5 + ${l} / 2`;
     let real = (f * SQRT_5 + l) / 2
     let fib_approx = real / SQRT_5
