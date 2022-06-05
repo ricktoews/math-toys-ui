@@ -1,3 +1,20 @@
+@function set-text-color($color) {
+  @if (lightness($color) > 50) {
+    @return #000000; // Lighter backgorund, return dark color
+  } @else {
+    @return #ffffff; // Darker background, return light color
+  }
+}
+
+$palette-1: #14080E;
+$palette-2: #49475B;
+$palette-3: #799496;
+$palette-4: #ACC196;
+$palette-5: #E9EB9E;
+$palette-grey-1: #cccccc;
+$palette-grey-2: #666666;
+$palette-grey-3: #9a9a9a;
+
 :root {
   --palette-1: #14080E;
   --palette-2: #49475B;
@@ -175,6 +192,7 @@ ul.pythag-triple-title {
 }
 .a-label {
   position: relative;
+  margin-bottom: 1px;
 }
 .b-label {
   position: absolute;
@@ -203,25 +221,31 @@ ul.pythag-triple-title {
 
 .a-corner-square {
   background-color: var(--palette-5);
-  transition-duration:1s;
+}
+.a-corner-label, .a-side-label, .a-top-label {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 2px;
 }
 .a-corner-label {
-  color: var(--palette-5);
-  transition-duration:1s;
+  background-color: $palette-5;
+  color: set-text-color($palette-5);
 }
 
 .a-side-square {
   background-color: var(--palette-3);
 }
 .a-side-label {
-  color: var(--palette-3);
+  background-color: var(--palette-3);
+  color: set-text-color($palette-3);
 }
 
 .a-top-square {
-  background-color: var(--palette-4);
+  background-color: $palette-4;
 }
 .a-top-label {
-  color: var(--palette-4);
+  background-color: $palette-4;
+  color: set-text-color($palette-4);
 }
 .no-show {
   display: none;
