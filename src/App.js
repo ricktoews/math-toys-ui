@@ -13,6 +13,7 @@ function App() {
   const [menuState, setMenuState] = useState(false);
 
   const navContainerRef = useRef(null);
+  const hamburgerIconRef = useRef(null);
 
   useEffect(() => {
     const handleClick = e => {
@@ -22,8 +23,10 @@ function App() {
           console.log('handleClick clicked in nav menu; leave open');
         setMenuState(true);
       } else {
-        console.log('handleClick clicked outside of nav menu; close');
-        //setMenuState(false);
+        // Close outside of nav container. Close menu unless clicked on hamburger icon.
+        if (!hamburgerIconRef.current.contains(el)) {
+          setMenuState(false);
+        }
       }
     }
 
@@ -76,7 +79,7 @@ console.log('new menu state', menuState);
         
       </div>
       <div className="fixed-header">
-        <div className="hamburger-icon" onClick={toggleMenu}>
+        <div ref={hamburgerIconRef} className="hamburger-icon" onClick={toggleMenu}>
           <div className="hamburger-line"></div>
           <div className="hamburger-line"></div>
           <div className="hamburger-line"></div>
