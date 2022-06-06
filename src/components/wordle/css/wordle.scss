@@ -1,0 +1,251 @@
+@import '../../../css/variables';
+
+* {
+  box-sizing: border-box;
+}
+
+.game-layout {
+  display: flex;
+  margin-top: 15px;
+  width: 100%;
+  flex-direction: column;
+}
+@media screen 
+  and (min-device-width: 320px)
+  and (max-device-width: 420px) {
+  .game-layout {
+    flex-direction: column;
+  }
+}
+
+.col {
+  height: 300px;
+}
+
+/* Left side selectors. */
+.col:nth-child(1) {
+  padding: 0 10px;
+  flex: 30%;
+  background-color:#eeeeee;
+}
+
+.wrap-word-entry {
+  width: 100%;
+}
+
+.word-entry-field {
+}
+
+.word-entry {
+  margin-top: 25px;
+}
+
+.wrap-target-word {
+}
+
+.wrap-button {
+  margin-top: 25px;
+}
+
+.target-word {
+  font-weight: 500;
+}
+
+/* End of left side selectors. */
+
+
+/* Reft side selectors. */
+.col:nth-child(2) {
+  flex: 70%;
+/*  background-color:#999999; */
+}
+
+.guess-list {
+/*  padding: 10px; */
+}
+
+/* Wrap word letter components. */
+.wrap-word-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+.wrap-word-controls:nth-child(odd) {
+  background-color:#eeeeee;
+}
+
+/* wrap-letter-control wraps the letter and the buttons for marking its status. */
+.wrap-letter-control {
+  position: relative;
+/*
+  width: 80px;
+  height: 80px;
+*/
+}
+
+.wrap-letter-control {
+  position: relative;
+  width: 100%;
+}
+
+/* pool size should be on its own row. */
+.pool-size {
+  border-bottom: 1px dotted #999;
+  border-top: 2px solid #999;
+  padding: 5px;
+  font-family: arial, helvetica;
+  font-size: 10pt;
+  flex-basis: 100%;
+}
+
+/* wrap-letter wraps the individual letter itself. */
+.wrap-letter {
+  display: flex;
+  justify-content: center;
+/*  width: 75px;*/
+}
+
+/* .letter is the individual letter within the word attempt. */
+.wrap-letter-control .letter {
+  width: 40px;
+  height: 40px;
+  background-color: #666;
+  border-radius: 50%;
+}
+
+.wrap-letter-control .letter-green {
+  background-color: $app-green;
+  transition: background-color 0.5s ease;
+}
+
+.wrap-letter-control .letter-yellow {
+  background-color: $app-yellow;
+  transition: background-color 0.5s ease;
+}
+
+.wrap-letter-control .letter-gray {
+  background-color: gray;
+  transition: background-color 0.5s ease;
+}
+
+.wrap-letter-control .letter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  color: white;
+  margin: 2px;
+  cursor: pointer;
+}
+
+/* .wrap-letter-buttons wraps the buttons used to indicate Green / Gray / Yellow status. */
+.wrap-letter-buttons {
+  position: absolute;
+  justify-content: space-between;
+}
+.wrap-letter-buttons.hide {
+  display: none;
+}
+.wrap-letter-buttons.show {
+  display: flex;
+}
+
+/* .btn applies to all of the buttons. */
+.wrap-letter-control .btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  margin: 2px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.wrap-letter-control .btn:hover {
+  border: 1px solid black;
+}
+
+/* .green-btn, .gray-btn, .yellow-btn apply to the specific button colors. */
+.green-button {
+  background-color: #6af76f;
+}
+
+.gray-button {
+  background-color: #cccccc;
+}
+
+.yellow-button {
+  background-color: #fffa59;
+}
+
+
+/* Reflects the pattern set for the app's attempt. */
+.wrap-pattern-entry {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.pattern {
+  display: flex;
+  background-color: $palette-3;
+  width: 100%;
+}
+.pattern .square {
+  width: 10px;
+  height: 10px;
+  margin: 1px;
+  background-color: #cccccc;
+}
+
+.pattern .square-green {
+  background-color: #98fb98;
+}
+
+.pattern .square-gray {
+  background-color: #cccccc;
+}
+
+.pattern .square-yellow {
+  background-color: #ffff00;
+}
+
+.wrap-submit {
+  margin-top: 10px;
+}
+
+/* Overlay */
+.wrap-overlay {
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ccc;
+/*  opacity: .5; */
+}
+.wrap-overlay.hide {
+  display: none;
+}
+.wrap-overlay.show {
+  display: flex;
+}
+
+.overlay {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 500px;
+  height: 300px;
+  border: 2px solid black;
+  background-color: #eee;
+}
+
+.wrap-buttons {
+  margin-top: 10px;
+}
+
