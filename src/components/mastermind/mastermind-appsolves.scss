@@ -1,0 +1,100 @@
+@import '../../css/variables';
+
+$peg-diameter: 40px;
+$code-peg-diameter: 15px;
+$score-peg-wrapper-width: 25px;
+$score-peg-diameter: 10px;
+$score-peg-blank: #ccc;
+
+$peg-blank: $palette-grey-3;
+
+$peg-red: #C33C54;
+$peg-blue: #3F88C5; //#2E86AB;
+$peg-green: #26C485;
+$peg-yellow: #F6E313;
+$peg-black: #130112;
+$peg-purple: #F5A3AB;
+
+.float-container {
+	display: flex;
+	justify-content: space-between;
+}
+
+.peg-wrapper {
+	float:left;
+	display: flex;
+	flex-direction: row;
+}
+.code-selection {
+	border: 2px solid $palette-4;
+	margin-bottom: 1px;
+}
+.selection-complete button {
+
+}
+
+.code-peg {
+	width: $code-peg-diameter;
+	height: $code-peg-diameter;
+	margin: 3px;
+	border-radius: 50%;
+	background-color: $peg-blank;
+}
+
+.peg {
+	width: $peg-diameter;
+	height: $peg-diameter;
+	margin: 3px;
+	border-radius: 50%;
+	background-color: $peg-blank;
+}
+
+.peg-blank {
+	background-color: $peg-blank;
+}
+.peg-red {
+	background-color: $peg-red;
+}
+.peg-green {
+	background-color: $peg-green;
+}
+.peg-blue {
+	background-color: $peg-blue;
+}
+.peg-yellow {
+	background-color: $peg-yellow;
+}
+.peg-black {
+	background-color: $peg-black;
+}
+.peg-purple {
+	background-color: $peg-purple;
+}
+
+.code-picker {
+	width: 100%;
+
+}
+
+.score-peg-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	width: $score-peg-wrapper-width;
+}
+
+.score-peg {
+	width: $score-peg-diameter;
+	height: $score-peg-diameter;
+	margin: 1px;
+	border-radius: 50%;
+	background-color: $score-peg-blank;
+	border: 1px solid gray;
+}
+
+.score-black {
+	background-color: black;
+}
+
+.score-white {
+	background-color: white;
+}

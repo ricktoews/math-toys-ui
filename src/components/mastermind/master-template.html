@@ -1,0 +1,61 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <div ng-show="notyet">
+        <p>The code will contain four letters in the range of A-F. A letter can be used any number of times, so that there are 1,296 possible codes. You will choose the code; the computer will guess, based on your feedback. Click Begin when you have chosen.</p>
+        <p><button ng-click="handleBegin()" class="btn btn-info">Begin</button></p>
+      </div>
+      <div class="info-column">
+        <div ng-hide="notyet || solved">
+          <table class="table table-bordered" ng-hide="isEmpty">
+            <tr class="success">
+              <th>Code</th>
+              <th>Black</th>
+              <th>White</th>
+              <th></th>
+            </tr>
+            <tr>
+              <td>{{code}}</td>
+              <td><input type="text" size=1 black /></td>
+              <td><input type="text" size=1 white /></td>
+              <td><button class="btn" ng-click="handleAccept()">Accept</button></td>
+            </tr>
+          </table>
+        </div>
+
+        <div ng-hide="!solved">
+          <p>Solved!</p>
+        </div>
+
+        <div ng-hide="!oops">
+          <p>Um. OK. So... Something seems to have gone wrong. Based on the feedback you've given me, there aren't any codes left for me to pick from. Not sure how that happened, but ...</p>
+          <p>To investigate and find out what you did wrong--yes YOU--let's have the code you chose.</p>
+          <p><input type="text" size=6 targetcode /> <button class="btn" ng-click="handleGetTarget()">Enter</button></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div>
+        <table class="table table-bordered" ng-hide="isEmpty">
+          <tr class="success">
+            <th>Round</th>
+            <th>Code Entry</th>
+            <th>Score</th>
+            <th>Pool</th>
+          </tr>
+          <tr ng-repeat="entry in entries track by $index" repeat-done="update" id="attempt-{{$index}}">
+            <td>{{$index}}</td>
+            <td>{{entry.code}}</td>
+            <td>Correct position: {{entry.black}}<br/>Correct Elements: {{entry.white}}<div class="correction"></div></td>
+            <td>
+              Pool size: {{entry.pool.length}}
+              <div ng-hide="entry.pool.length > 10">
+                {{entry.pool}}
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

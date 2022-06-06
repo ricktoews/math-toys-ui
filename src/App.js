@@ -7,6 +7,7 @@ import Phi from './components/Phi';
 import PythagCList from './components/PythagCList';
 import PythagTriples from './components/PythagTriples';
 import Calendar from './components/Calendar';
+import Mastermind from './components/mastermind/AppSolves';
 import Denom from './components/Denom';
 
 function App() {
@@ -74,6 +75,7 @@ console.log('new menu state', menuState);
               <li><a href="/pythag">Pythagorean Triples</a></li>
               <li><a href="/calendar">Calendar</a></li>
               <li><a href="/denom">Decimal Expansions</a></li>
+              <li><a href="/mastermind">Mastermind</a></li>
             </ul>
           </nav>
         
@@ -95,6 +97,7 @@ console.log('new menu state', menuState);
         <Route path="/pythag-clist" element={<PythagCList />} />
         <Route path="/pythag" element={<PythagTriples />} />
         <Route path="/calendar" element={<Calendar />} />
+        <Route path="/mastermind" element={<Mastermind />} />
         <Route path="/denom" element={<Denom />} />
       </Routes>
       </div>
