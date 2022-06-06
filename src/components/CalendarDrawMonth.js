@@ -4,7 +4,11 @@ import styled from 'styled-components';
 const CSSRoot = document.querySelector(':root');
 const CSSRootStyle = getComputedStyle(CSSRoot);
 
-const getCSSVar = cssVarName => CSSRootStyle.getPropertyValue(cssVarName);
+const getCSSVar = cssVarName => {
+	let result = CSSRootStyle.getPropertyValue(cssVarName);
+	console.log('getCSSVar', result);
+	return result;
+} 
 
 const monthName = [
   'January', 'February', 'March',
