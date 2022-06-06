@@ -5,9 +5,7 @@ const CSSRoot = document.querySelector(':root');
 const CSSRootStyle = getComputedStyle(CSSRoot);
 
 const getCSSVar = cssVarName => {
-	let result = CSSRootStyle.getPropertyValue(cssVarName);
-	console.log('getCSSVar', result);
-	return result;
+	return CSSRootStyle.getPropertyValue(cssVarName);
 } 
 
 const monthName = [
