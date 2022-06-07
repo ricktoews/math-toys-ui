@@ -71,6 +71,7 @@ console.log('new menu state', menuState);
         
           <nav>
             <ul>
+            <li><a href="/">Main</a></li>
               <li><a href="/phi">Phi</a></li>
               <li><a href="/pythag-clist">Pythag C List</a></li>
               <li><a href="/pythag">Pythagorean Triples</a></li>
