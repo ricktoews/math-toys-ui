@@ -103,12 +103,19 @@ function PythagCList(props) {
 
   return (<div>
     <h1>Pythagorean C List</h1>
-    Settings: 
-    <Form.Check inline type="switch" defaultChecked={onlyPrimes} label="Prime C Values" onClick={handleSwitchOnlyPrimes}></Form.Check>
-    <Button onClick={handleMixButton}>Mix</Button>
 
     <Table striped hover>
-      <thead>
+      <thead className="sticky-table">
+        <tr className="list-settings">
+          <th colSpan="3">
+            <div className="list-settings">
+            <span className="settings-label">Settings:</span>
+            <Form.Check inline type="switch" defaultChecked={onlyPrimes} label="Prime C Values" onClick={handleSwitchOnlyPrimes}></Form.Check>
+            <Button className="app-btn settings-btn" onClick={handleMixButton}>Mix</Button>
+            </div>
+
+          </th>
+        </tr>
         <tr>
           <th></th>
           <th>C</th>

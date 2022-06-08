@@ -113,7 +113,7 @@ function PythagTriples(props) {
       </InputGroup>
     </Form>
     <Table striped hover>
-      <thead>
+      <thead className="sticky-table">
         <tr>
           <th>Triples</th>
         </tr>

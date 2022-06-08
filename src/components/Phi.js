@@ -92,7 +92,7 @@ function Phi(props) {
     return (<div>
       <h1>Powers of Phi</h1>
       <Table striped hover>
-        <thead>
+        <thead className="sticky-table">
           <tr>
             <th>Fraction of Phi<sup>n</sup></th>
             <th>Fibonacci n</th>
