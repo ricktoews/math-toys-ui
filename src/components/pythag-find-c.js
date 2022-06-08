@@ -26,7 +26,24 @@ function layers(c) {
   return result;
 }
 
-export const cList = (config) => {
+const arrangeTriples = (cSquared, squares) => {
+  let results = [];
+  let used = {};
+  for (let sq of squares) {
+      let aSquared = sq;
+      let bSquared = cSquared - aSquared;
+      if (!used[aSquared] && !used[bSquared]) {
+          let [a, b, c] = [aSquared, bSquared, cSquared].map(n => Math.sqrt(n));
+          results.push({a, b, c});
+          used[aSquared] = true;
+          used[bSquared] = true;
+      }
+  }
+
+  return results;
+}
+
+export const getCList = (config) => {
   const { primeOnly, triplesOnly } = config;
   const result = [];
   const primeList = getPrimes();
@@ -35,23 +52,23 @@ export const cList = (config) => {
   for (let i of cCandidates) {
     let a_squares = layers(i);
     if (triplesOnly && a_squares.length > 0 || !triplesOnly) {
+      let triples = arrangeTriples(i*i, a_squares);
       result.push({
         c: i,
-        ab: a_squares.map(item => Math.sqrt(item))
+        ab: a_squares.map(item => Math.sqrt(item)),
+        triples
       });
     }
-
+/*
     if (a_squares.length > 0) {
       let used = {};
       var n = 1;
-      var primes = 0;
       a_squares.forEach(a_squared => {
         let a = Math.pow(a_squared, .5);
         let c = i;
         let b = Math.pow(i * i - a_squared, .5);
         if (!used[a] && !used[b]) {
           if (isRelativePrime(a, b)) {
-            primes++;
 //            console.log(`${n}. triple`, a, b, c, ' => ', c - b, a * a, b * b, c * c, `(prime ${primes})`);
           } else {
 //            console.log(`${n}. triple`, a, b, c, ' => ', c - b, a * a, b * b, c * c);
@@ -62,6 +79,8 @@ export const cList = (config) => {
         n++;
       });
     }
+*/
   }
+
   return result;
 }
