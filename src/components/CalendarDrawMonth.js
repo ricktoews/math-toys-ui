@@ -6,7 +6,6 @@ const CSSRootStyle = getComputedStyle(CSSRoot);
 
 const getCSSVar = cssVarName => {
 	let result = CSSRootStyle.getPropertyValue(cssVarName);
-	console.log(result);
 	return result;
 } 
 

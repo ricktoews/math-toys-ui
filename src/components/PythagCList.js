@@ -1,16 +1,23 @@
 import { Table, Form, Modal, Button } from 'react-bootstrap';
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { getCList } from './pythag-find-c';
 import { getPythagCList } from '../api/math-toys-api';
 
-function formatTriples(triples) {
+function formatTriples(triples, fmt='string') {
   let data = [];
-  triples.forEach(tripleObj => {
+  triples.forEach((tripleObj, key) => {
     let { a, b, c, prime } = tripleObj;
-    let triple = prime
+    if (fmt === 'string') {
+      let triple = prime
       ? <div className="primitive">{a}<sup>2</sup> + {b}<sup>2</sup> = {c}<sup>2</sup></div>
       : <div className="composite">{a}<sup>2</sup> + {b}<sup>2</sup> = {c}<sup>2</sup></div>
-    data.push(triple);
+      data.push(triple);
+    } else {
+      let triple = prime
+      ? <tr key={key} className="primitive"><td>{a}<sup>2</sup></td><td>{b}<sup>2</sup></td><td>{c}<sup>2</sup></td></tr>
+      : <tr key={key} className="composite"><td>{a}<sup>2</sup></td><td>{b}<sup>2</sup></td><td>{c}<sup>2</sup></td></tr>
+      data.push(triple);
+    }
   });
   return data;
 }
@@ -19,12 +26,20 @@ function formatTriples(triples) {
 function MyVerticallyCenteredModal(props) {
   const { data } = props;
   const { factors, triplesData } = data;
-  const [triplesList, setTriplesList] = useState(triplesData[0].triples);
-  const [formatted, setFormatted] = useState(formatTriples(triplesData[0].triples));
-  const [onlyPrimes, setOnlyPrimes] = useState(false);
-  const product = factors.reduce((c, p) => c*p);
-  const tripleCount = triplesList.length;
-  const primeTripleCount = triplesList.filter(item => item.prime).length;
+  const [formatted, setFormatted] = useState([]);
+  const [onlyPrimes, setOnlyPrimes] = useState(true);
+  const [tripleCount, setTripleCount] = useState(0);
+  const [primeTripleCount, setPrimeTripleCount] = useState(0);
+  const [product, setProduct] = useState(0);
+
+  useEffect(() => {
+    let _triplesArray = triplesData[0].triples;
+    setOnlyPrimes(true);
+    setFormatted(formatTriples(_triplesArray.filter(item => item.prime), 'row'));
+    setTripleCount(_triplesArray.length);
+    setPrimeTripleCount(_triplesArray.filter(item => item.prime).length);
+    setProduct(factors.reduce((c, p) => c*p));
+  }, [triplesData[0].triples[0].c]);
 
   const handleSwitchOnlyPrimes = e => {
     let list = triplesData[0].triples;
@@ -32,9 +47,10 @@ function MyVerticallyCenteredModal(props) {
     if (toggleOnlyPrimes) {
       list = list.filter(item => item.prime);
     }
-    setFormatted(formatTriples(list));
-    setOnlyPrimes(!onlyPrimes);
+    setFormatted(formatTriples(list, 'row'));
+    setOnlyPrimes(toggleOnlyPrimes);
   }
+
   return (
     <Modal {...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
       <Modal.Header closeButton>
@@ -45,8 +61,18 @@ function MyVerticallyCenteredModal(props) {
       </Modal.Header>
       <Modal.Body>
         <Form.Check inline type="switch" defaultChecked={onlyPrimes} label="Primitive Triples" onClick={handleSwitchOnlyPrimes}></Form.Check>
-
-        {formatted.map((item, key) => <div key={key}>{item}</div>)}
+        <Table>
+          <thead>
+            <tr>
+              <th>a<sup>2</sup></th>
+              <th>b<sup>2</sup></th>
+              <th>c<sup>2</sup></th>
+            </tr>
+          </thead>
+          <tbody>
+            {formatted.map((item, key) => <React.Fragment key={key}>{item}</React.Fragment>)}    
+          </tbody>
+        </Table>
       </Modal.Body>
       <Modal.Footer>
         <Button className="app-btn" onClick={props.onHide}>Close</Button>
@@ -80,12 +106,13 @@ function PythagCList(props) {
   const handleMixButton = async e => {
     let product = Object.keys(cMix).reduce((prev, curr) => prev * curr);
     console.log('cMix', cMix, product);
-
-    let data = await getPythagCList([product]);
-    setCMixData(data);
-    console.log('pythagData', data);
-  
-    setModalShow(true);
+    if (product < 50000000) {
+      let data = await getPythagCList([product]);
+      setCMixData(data);
+      console.log('pythagData', data);
+    
+      setModalShow(true);
+    }
   }
 
   const handleCRowToggle = e => {

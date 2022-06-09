@@ -40,7 +40,6 @@ function App() {
   }, [])
 
   useEffect(() => {
-console.log('new menu state', menuState);
 
     if (menuState === true) {
       navContainerRef.current.classList.add('show-nav-menu');
