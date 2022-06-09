@@ -3,7 +3,7 @@ const netlifyUrl = 'https://math-toys.netlify.app/.netlify/functions';
 
 const API = {
     get_phi: netlifyUrl + '/phi/',
-    get_pythag_clist: baseUrl + '/pythag_clist/',
+    get_pythag_clist: netlifyUrl + '/pythag_clist/',
     get_pythag_triples: netlifyUrl + '/pythag/',
     get_expansions: netlifyUrl + '/dc/',
     get_by_expansion: baseUrl + '/denom_byexpansion/',
