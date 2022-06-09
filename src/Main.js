@@ -18,7 +18,6 @@ const HomeWrapper = styled.div`
 		font-size: 1.0rem;
 		line-height: 2;
 		margin-bottom: 15px;
-		border-bottom: 1px dotted #66866A;
 	}
 
 	article .article-title {
