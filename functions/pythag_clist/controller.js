@@ -29,7 +29,7 @@ function* getSquares(start) {
  * And, of course, googling would be cheating.
  */
 function isRelativePrime(a, b) {
-  let safety = 500; // Protect against infinite loop;
+  let safety = 1000; // Protect against infinite loop;
   while (safety && Math.abs(b - a) > 1) {
     [b, a] = [Math.max(a, b), Math.min(a, b)];
     b -= a;
