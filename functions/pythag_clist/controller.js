@@ -70,7 +70,7 @@ function getTriples(cList) {
     let triples = [];
     if (aSquares.length > 0) {
       triples = [];
-      let used = [];
+      let used = {};
       let n = 1;
       let primes = 0;
       for (aSquare of aSquares) {
@@ -85,8 +85,8 @@ function getTriples(cList) {
           } else {
             triples.push({ "a": a, "b": b, "c": c, "prime": false })
           }
-          used.push(a);
-          used.push(b);
+          used[a] = true;
+          used[b] = true;
           n += 1;
         }
       }
