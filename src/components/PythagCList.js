@@ -129,7 +129,7 @@ function PythagCList(props) {
   }
 
   return (<div>
-    <h1>Pythagorean C List</h1>
+    <h1>Pythagorean Triples, by C Value</h1>
 
     <Table striped hover>
       <thead className="sticky-table">

@@ -109,9 +109,12 @@ function Denom(props) {
 
   return (
     <div>
+      <p>Enter a denominator to see its decimal expansions. Prime numbers are usually interesting. Try 7, for instance. The reciprocal of 7 is 0.142857. Notice that it's six digits and that if you add the first three (142) to the last three (857), you get 999. This same sort of thing happens with all prime denominators whose expansions have an even number of digits.</p>
+      <p>Another interesting denominator is 41. Here, the reciprocal has five digits: 0.02439. Since the number of digits is odd, you can't split them into two equal groups that add up to all 9s.</p>
+      <p>All prime numbers other than 2 and 5 necessarily belong to one or the other of these categories.</p>
       <Form>
         <InputGroup>
-          <Form.Control ref={denomRef} type="tel" id="denom" />
+          <Form.Control ref={denomRef} type="tel" id="denom" placeholder="Denominator" />
           <Button onClick={handleInput} className="app-btn">Set Denominator</Button>
         </InputGroup>
       </Form>
