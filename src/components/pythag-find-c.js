@@ -47,7 +47,7 @@ export const getCList = (config) => {
   const { primeOnly, triplesOnly } = config;
   const result = [];
   const primeList = getPrimes();
-  const integerList = [...Array(100).keys()].map(item => item+5);
+  const integerList = [...Array(300).keys()].map(item => item+5);
   const cCandidates = primeOnly ? primeList : integerList;
   for (let i of cCandidates) {
     let a_squares = layers(i);
