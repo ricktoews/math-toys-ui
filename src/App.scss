@@ -30,9 +30,6 @@ $palette-grey-3: #9a9a9a;
 h1 {
   color: $palette-3;
   font-size: 14pt;
-  border-radius: 5px;
-  border: 1px solid $palette-4;
-  padding: 3px;
 }
 .list-settings {
   background-color: $palette-2;
@@ -202,6 +199,10 @@ header {
   background-color:$palette-4;
 }
 
+.check-toggle input[type=checkbox]{
+  height: 24px;
+  width: 40px;
+}
 /* Phi Stuff */
 .fibonacci {
   color: var(--palette-2);
