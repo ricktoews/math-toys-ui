@@ -59,6 +59,7 @@ function getExpansions(denom, specifiedNum) {
   let prime = isPrime(denom);
   let expansions = {};
   const nums = [specifiedNum] || Array.from({ length: denom - 1 }, (v, i) => i + 1);
+console.log('====> nums', nums);
   for (let num in nums) {
     // Check each numerator, and calculate the expansion if it hasn't already been done.
     if (!expansions[num]) {
@@ -72,6 +73,7 @@ function getExpansions(denom, specifiedNum) {
       expansions[num].expansion = digitsToExpansion(expansions[num]);
     }
   }
+console.log('====> expansions', expansions);
   let output = {};
   for (let num in nums) {
     let digits = expansions[num].digits;
