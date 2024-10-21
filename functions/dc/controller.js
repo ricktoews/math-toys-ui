@@ -86,7 +86,6 @@ function getExpansions(denom) {
 
 function getSingleExpansion(denom, num) {
     const result = divide(num, denom);
-    delete result.expansionNumerators;
     result.expansionLength = result.expansion.length;
     return result;
 }
