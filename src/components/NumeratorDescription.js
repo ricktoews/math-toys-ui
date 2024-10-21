@@ -32,7 +32,8 @@ function NumeratorDescription(props) {
     console.log('NumeratorDescription, prime denominator')
   } else {
     jsx = <div>
-      {periodJSX}
+      <div>{periodJSX}</div>
+      <div>{numerator} / {denom} has a period length of {period.length}.</div>
     </div>
 
   }

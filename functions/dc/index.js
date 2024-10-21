@@ -2,6 +2,7 @@ const dc = require('./controller.js');
 
 exports.handler = async (event) => {
   const { path } = event;
+console.log('====> dc path', path);
   const denom = path.replace(/\/.*dc\//, '');
   let result = dc.getExpansions(denom);
 
