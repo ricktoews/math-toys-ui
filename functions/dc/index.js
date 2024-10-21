@@ -4,7 +4,6 @@ exports.handler = async (event) => {
   const { path } = event;
   const args = path.replace(/\/.*dc\//, '');
   const [denom, num] = args.split('/');
-  const denom = path.replace(/\/.*dc\//, '');
   let result = dc.getExpansions(denom, num);
 
   return {
