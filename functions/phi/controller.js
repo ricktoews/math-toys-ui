@@ -86,15 +86,17 @@ function getPhiData(max) {
   let rows = [];
   for (let i = 1; i <= max; i++) {
     let [f, l] = [fib(i), lucas(i, 2, 1)];
-    let phi = `(${f} V5 + ${l} / 2`;
+    let phi = `(${f} V5 + ${l} / 2)`;
     let real = (f * SQRT_5 + l) / 2
     let fib_approx = real / SQRT_5
     let fib_exact = Math.round(fib_approx)
     let diff = fib_exact - fib_approx
+    let real_term = f * SQRT_5;
     let row = { 
       "nth": i, 
       "fraction": phi, 
       "real": real, 
+      "real_term": real_term, 
       "fib_approx": fib_approx, 
       "fib_exact": fib_exact, 
       "diff": diff, 
