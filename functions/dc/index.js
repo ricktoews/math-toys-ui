@@ -4,7 +4,12 @@ exports.handler = async (event) => {
   const { path } = event;
   const args = path.replace(/\/.*dc\//, '');
   const [denom, num] = args.split('/');
-  let result = dc.getExpansions(denom, num);
+  let result;
+  if (num) {
+    result = dc.divide(num, denom);
+  } else {
+    result = dc.getExpansions(denom);
+  }
 
   return {
     statusCode: 200,
