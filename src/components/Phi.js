@@ -97,7 +97,6 @@ function Phi(props) {
           <th>Fraction of Phi<sup>n</sup></th>
           <th>Fibonacci n</th>
           <th>Lucas n</th>
-          <th>Fibonacci n x V5</th>
           <th>Real Term</th>
           <th>Whole Term</th>
         </tr>
@@ -113,8 +112,7 @@ function Phi(props) {
             <td><MathJax>{`\\(\\frac{${Fibonacci}\\sqrt{5} + ${Lucas}}{2}\\)`}</MathJax></td>
             <td>{f_l[0]}</td>
             <td>{f_l[2]}</td>
-            <td>{Number.parseFloat(f_l[1]).toFixed(2)}</td>
-            <td>{item.real_term}</td>
+            <td>{item.real_term.toFixed(4)}</td>
             <td>{item.whole_term}</td>
           </tr>)
         })}
