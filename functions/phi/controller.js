@@ -92,11 +92,13 @@ function getPhiData(max) {
     let fib_exact = Math.round(fib_approx)
     let diff = fib_exact - fib_approx
     let real_term = f * SQRT_5;
+    let whole_term = l;
     let row = { 
       "nth": i, 
       "fraction": phi, 
       "real": real, 
       "real_term": real_term, 
+      "whole_term": whole_term, 
       "fib_approx": fib_approx, 
       "fib_exact": fib_exact, 
       "diff": diff, 
