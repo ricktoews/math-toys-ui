@@ -2,9 +2,10 @@ const dc = require('./controller.js');
 
 exports.handler = async (event) => {
   const { path } = event;
-console.log('====> dc path', path);
+  const args = path.replace(/\/.*dc\//, '');
+  const [denom, num] = args.split('/');
   const denom = path.replace(/\/.*dc\//, '');
-  let result = dc.getExpansions(denom);
+  let result = dc.getExpansions(denom, num);
 
   return {
     statusCode: 200,

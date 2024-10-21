@@ -55,10 +55,11 @@ function divide(num, denom) {
  *
  * This feels like it needs to be broken up.
  */
-function getExpansions(denom) {
+function getExpansions(denom, specifiedNum) {
   let prime = isPrime(denom);
   let expansions = {};
-  for (let num = 1; num < denom; num++) {
+  const nums = specifiedNum || Array.from({ length: denom - 1 }, (v, i) => i + 1);
+  for (let num in nums) {
     // Check each numerator, and calculate the expansion if it hasn't already been done.
     if (!expansions[num]) {
       let { expansion, expansionNumerators, beginRepeat } = divide(num, denom);
@@ -72,7 +73,7 @@ function getExpansions(denom) {
     }
   }
   let output = {};
-  for (let num = 1; num < denom; num++) {
+  for (let num in nums) {
     let digits = expansions[num].digits;
     let numerator = num;
     let position = expansions[num].position;
