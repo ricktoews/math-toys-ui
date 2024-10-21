@@ -72,9 +72,8 @@ function getExpansions(denom, specifiedNum) {
       expansions[num].expansion = digitsToExpansion(expansions[num]);
     }
   }
-console.log('====> expansions', expansions);
   let output = {};
-  for (let num in nums) {
+  for (let num = 1; num < denom; num++) {
     let digits = expansions[num].digits;
     let numerator = num;
     let position = expansions[num].position;
