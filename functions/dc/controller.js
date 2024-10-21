@@ -58,8 +58,7 @@ function divide(num, denom) {
 function getExpansions(denom, specifiedNum) {
   let prime = isPrime(denom);
   let expansions = {};
-  const nums = specifiedNum || Array.from({ length: denom - 1 }, (v, i) => i + 1);
-console.log('====> getExpansions nums', nums);
+  const nums = [specifiedNum] || Array.from({ length: denom - 1 }, (v, i) => i + 1);
   for (let num in nums) {
     // Check each numerator, and calculate the expansion if it hasn't already been done.
     if (!expansions[num]) {
