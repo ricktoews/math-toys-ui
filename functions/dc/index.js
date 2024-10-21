@@ -6,7 +6,7 @@ exports.handler = async (event) => {
   const [denom, num] = args.split('/');
   let result;
   if (num) {
-    result = dc.divide(num, denom);
+    result = dc.getSingleExpansion(num, denom);
   } else {
     result = dc.getExpansions(denom);
   }
