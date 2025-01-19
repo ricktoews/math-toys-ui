@@ -71,12 +71,12 @@ function App() {
         <nav>
           <ul>
             <li><a href="/">Main</a></li>
-            <li><a href="/phi">Phi</a></li>
+            <li><a href="/phi">Powers of Phi</a></li>
             {/*
             <li><a href="/pythag-clist">Pythag C List</a></li>
             */}
             <li><a href="/pythag">Pythagorean Triples</a></li>
-            <li><a href="/calendar">Calendar</a></li>
+            <li><a href="/calendar">12-Digit Calendar</a></li>
             <li><a href="/denom">Decimal Expansions</a></li>
             {/*
               <li><a href="/mastermind">Mastermind</a></li>
