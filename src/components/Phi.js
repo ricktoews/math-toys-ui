@@ -98,7 +98,7 @@ function Phi(props) {
 
       Notice also that as the powers increase, the values for a and b√5 converge, with b√5 alternating less than and greater than a.
     </div>
-    <Table striped hover>
+    <Table striped hover className="table">
       <thead className="sticky-table">
         <tr>
           <th>n</th>

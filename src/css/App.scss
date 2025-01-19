@@ -416,16 +416,14 @@ h4 {
   font-size: 12pt;
 }
 
-/*
-thead tr {
+.table thead tr th {
   background-color: #ACC196;
   color: white;
 }
 
-td {
-  padding: 0 10px;
+.table tr td {
+  padding: 5px 10px;
 }
-*/
 
 .numerator-list span {
   width: 40px;

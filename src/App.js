@@ -1,6 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-//import './css/App.scss';
-import './css/table-heading.scss';
+import './css/App.scss';
 import { Routes, Route } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import Main from './Main';
