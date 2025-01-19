@@ -1,14 +1,15 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './css/App.scss';
+//import './css/App.scss';
+import './css/table-heading.scss';
 import { Routes, Route } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import Main from './Main';
 import Phi from './components/Phi';
-import PythagCList from './components/PythagCList';
+//import PythagCList from './components/PythagCList';
 import PythagTriples from './components/PythagTriples';
 import Calendar from './components/Calendar';
-import Mastermind from './components/mastermind/AppSolves';
-import Wordle from './components/wordle/AppSolves';
+//import Mastermind from './components/mastermind/AppSolves';
+//import Wordle from './components/wordle/AppSolves';
 import Denom from './components/Denom';
 
 function App() {
@@ -100,12 +101,14 @@ function App() {
         <Routes>
           <Route path="/" element={<Main />} />
           <Route path="/phi" element={<Phi />} />
-          <Route path="/pythag-clist" element={<PythagCList />} />
+          {/*          <Route path="/pythag-clist" element={<PythagCList />} /> */}
           <Route path="/pythag" element={<PythagTriples />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/denom" element={<Denom />} />
+          {/*
           <Route path="/mastermind" element={<Mastermind />} />
           <Route path="/wordle" element={<Wordle />} />
+*/}
         </Routes>
       </div>
     </div>
