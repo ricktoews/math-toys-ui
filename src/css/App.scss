@@ -1,0 +1,461 @@
+@function set-text-color($color) {
+  @if (lightness($color) > 50) {
+    @return #000000; // Lighter backgorund, return dark color
+  }
+
+  @else {
+    @return #ffffff; // Darker background, return light color
+  }
+}
+
+$palette-1: #14080E;
+$palette-2: #49475B;
+$palette-3: #799496;
+$palette-4: #ACC196;
+$palette-5: #E9EB9E;
+$palette-grey-1: #cccccc;
+$palette-grey-2: #666666;
+$palette-grey-3: #9a9a9a;
+
+:root {
+  --palette-1: #14080E;
+  --palette-2: #49475B;
+  --palette-3: #799496;
+  --palette-4: #ACC196;
+  --palette-5: #E9EB9E;
+  --palette-grey-1: #cccccc;
+  --palette-grey-2: #666666;
+  --palette-grey-3: #9a9a9a;
+}
+
+
+h1 {
+  color: $palette-3;
+  font-size: 14pt;
+}
+
+.list-settings {
+  background-color: $palette-2;
+}
+
+tr.list-settings>th {
+  padding: 4px;
+  font-weight: normal;
+  font-size: 10pt;
+}
+
+.sticky-table {
+  position: sticky;
+  top: 50px;
+  z-index: 10;
+}
+
+.settings-label {
+  color: white;
+  margin-right: 5px;
+}
+
+.App {
+  position: relative;
+}
+
+article .article-title {
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 5px;
+  border-radius: 10px;
+  color: white;
+  background-color: $palette-grey-3;
+}
+
+article ul {
+  font-size: 0.8rem;
+  line-height: 1rem;
+  list-style-type: none;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: rgb(221, 221, 221);
+}
+
+article li:not(:last-child) {
+  padding-bottom: 10px;
+}
+
+article a {
+  color: $palette-4;
+  text-decoration: none;
+  background-color: transparent;
+}
+
+article a:hover {
+  color: $palette-4;
+  text-decoration: underline;
+  background-color: transparent;
+}
+
+.app-content {
+  padding-top: 75px;
+}
+
+.fixed-header {
+  position: fixed;
+  width: 100%;
+  z-index: 20;
+}
+
+.hamburger-icon {
+  position: absolute;
+  z-index: 2;
+  top: 10px;
+  left: 10px;
+  background-color: transparent;
+  width: 33px;
+  height: 33px;
+  cursor: pointer;
+}
+
+.hamburger-icon>.hamburger-line {
+  width: 100%;
+  height: 5px;
+  background-color: white;
+  margin-bottom: 6px;
+  border-radius: 4px;
+}
+
+.nav-container {
+  position: fixed;
+  z-index: 20;
+  width: 200px;
+  height: 100vh;
+  background-color: black;
+}
+
+.show-nav-menu {
+  left: 0;
+  transition-property: left;
+  transition-duration: .5s;
+  transition-delay: 0;
+}
+
+.hide-nav-menu {
+  left: -200vw;
+  transition-property: left;
+  transition-duration: .5s;
+  transition-delay: 0;
+}
+
+header {
+  background-color: #282c34;
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: Futura;
+  font-size: calc(10px + 2vmin);
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  color: white;
+}
+
+.nav-container>nav {
+  margin-top: 50px;
+  min-height: 30px;
+}
+
+.nav-container>nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-container>nav li {
+  margin: 20px;
+}
+
+.nav-container>nav li a {
+  text-decoration: none;
+  color: white;
+}
+
+.nav-container>nav li a:hover {
+  text-decoration: underline;
+  color: white;
+}
+
+.primitive {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.app-btn {
+  background-color: #999;
+  border: none;
+}
+
+.app-btn:hover {
+  background-color: #ccc;
+}
+
+.app-btn:focus {
+  background-color: #ccc;
+}
+
+.settings-btn {
+  padding: 3px;
+  line-height: 16px;
+  border-radius: 10px;
+  font-size: 10pt;
+}
+
+.form-check-label {
+  color: white;
+}
+
+.form-check-input:checked {
+  background-color: $palette-4;
+}
+
+.check-toggle input[type=checkbox] {
+  height: 24px;
+  width: 40px;
+}
+
+/* Phi Stuff */
+.fibonacci {
+  color: var(--palette-2);
+}
+
+.lucas {
+  color: var(--palette-3);
+}
+
+ul.pythag-triple-title {
+  list-style-type: none;
+  display: inline;
+  padding: 0;
+}
+
+.pythag-triple-title li {
+  display: inline;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 14pt;
+}
+
+.pythag-side {
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.pythag-triple {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+}
+
+.pythag-label {
+  font-style: italic;
+}
+
+.pythag-square-wrapper {
+  position: relative;
+}
+
+.pythag-square-cols {
+  position: relative;
+  display: flex;
+}
+
+.a-square,
+.b-square,
+.c-square {
+  width: 20px;
+  height: 20px;
+  margin: 0 1px 1px 0;
+}
+
+.a-wrapper,
+.b-wrapper {
+  position: absolute;
+}
+
+.b-wrapper {
+  bottom: 0;
+  right: 0;
+}
+
+.b-row-wrapper {
+  display: flex;
+}
+
+.b-square {
+  background-color: var(--palette-grey-2);
+}
+
+.a-row-wrapper {
+  display: flex;
+}
+
+.a-square {
+  background-color: var(--palette-grey-3);
+}
+
+.a-label {
+  position: relative;
+  margin-bottom: 1px;
+}
+
+.b-label {
+  position: absolute;
+  writing-mode: vertical-lr;
+  bottom: 0;
+}
+
+.exponent {
+  vertical-align: super;
+  font-size: smaller;
+}
+
+.c-label {
+  position: relative;
+  clear: left;
+}
+
+.c-wrapper {
+  position: relative;
+  float: left;
+  /* to make the width no more than necessary. */
+}
+
+.c-row-wrapper {
+  display: flex;
+}
+
+.c-square {
+  background-color: var(--palette-grey-1);
+}
+
+.a-corner-square {
+  background-color: var(--palette-5);
+}
+
+.a-corner-label,
+.a-side-label,
+.a-top-label {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.a-corner-label {
+  background-color: $palette-5;
+  color: set-text-color($palette-5);
+}
+
+.a-side-square {
+  background-color: var(--palette-3);
+}
+
+.a-side-label {
+  background-color: var(--palette-3);
+  color: set-text-color($palette-3);
+}
+
+.a-top-square {
+  background-color: $palette-4;
+}
+
+.a-top-label {
+  background-color: $palette-4;
+  color: set-text-color($palette-4);
+}
+
+.no-show {
+  display: none;
+}
+
+.year-12-digit-wrapper {
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding: 3px;
+  cursor: pointer;
+}
+
+.current-year {
+  background-color: #ddd;
+}
+
+.century-divider {
+  flex-basis: 100%;
+  height: 0;
+}
+
+.calendar-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.digit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 10px);
+}
+
+.year-label {
+  font-size: 10px;
+  font-weight: bold;
+  grid-column: 1/-1;
+}
+
+.digit-grid>div {
+  font-size: 10px;
+}
+
+.matching-cols {
+  display: flex;
+}
+
+h4 {
+  font-size: 12pt;
+}
+
+thead tr {
+  background-color: #ACC196;
+  color: white;
+}
+
+td {
+  padding: 0 10px;
+}
+
+
+.numerator-list span {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 1rem;
+  margin: 8px;
+  background-color: var(--palette-3);
+  border-radius: 20px;
+}
+
+.numerator-list span {
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  color: #fff;
+}
+
+.first-half {
+  color: var(--palette-2);
+}
+
+.second-half {
+  color: var(--palette-3);
+}
+
+.uncomplementary {
+  color: var(--palette-4);
+}
+
+.digits,
+.period {
+  word-break: break-all;
+}
