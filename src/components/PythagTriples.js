@@ -128,6 +128,9 @@ function PythagTriples(props) {
 
         <p>The drawing illustrates how I visualize a Pythagoran triple, using the familiar (3, 4, 5) triple as an example.</p>
         <p>The 5x5 square is c-squared, which is the sum of a-squared (3x3) and b-squared (4x4). The illustration shows how the nine (3x3) unit squares that comprise a-squared can be redistributed to wrap around b-squared: Since b-squared has four (4) squares on each side, the nine squares of a-squared can be arranged as four squares on the left, four squares on the top, and the remaining square in the upper left corner. So 4 + 4 + 1 = 9.</p>
+        <p>In this case, the "corner" value is 1, since the corner is a 1x1 square. All Pythagorean triples with a corner value of 1 are primitives, since c-b in all such cases is by definition 1.</p>
+        <p>A Pythagorea triple with a corner of 1 can be calculated for every odd number >= 3: the odd number is itself the a value. To find the b value, simply square the a value, subtract 1, and divide by 2. To find the c value, square the a value, add one, and divide by 2.</p>
+        <p>Example: Let a=11. Then b = (11^2 - 1) / 2 = 60, and c = (11^2 + 1) / 2 = 61. (You'll see the (11, 60, 61) triple listed below.)</p>
       </div>
     </div>
     <Form>
