@@ -7,29 +7,30 @@ const makeTripleTitle = triple => {
   const [a, b, c] = triple;
   const title1 = `${a}<span class="exponent">2</span> + ${b}<span class="exponent">2</span> = ${c}<span class="exponent">2</span>`;
   const title2 = <div>
-    <span className="pythag-triple"><span className="pythag-triple-label">a</span> = {a}</span><br/>
-    <span className="pythag-triple"><span className="pythag-triple-label">b</span> = {b}</span><br/>
-    <span className="pythag-triple"><span className="pythag-triple-label">c</span> = {c}</span><br/>
+    <span className="pythag-triple"><span className="pythag-triple-label">a</span> = {a}</span><br />
+    <span className="pythag-triple"><span className="pythag-triple-label">b</span> = {b}</span><br />
+    <span className="pythag-triple"><span className="pythag-triple-label">c</span> = {c}</span><br />
   </div>
   const title3 = <ul className="pythag-triple-title">
-  <li><span className="pythag-label">a</span> = {a}, </li>
-  <li><span className="pythag-label">b</span> = {b}, </li>
-  <li><span className="pythag-label">c</span> = {c}</li>
-</ul>
+    <li><span className="pythag-label">a</span> = {a}, </li>
+    <li><span className="pythag-label">b</span> = {b}, </li>
+    <li><span className="pythag-label">c</span> = {c}</li>
+  </ul>
   return title3;
 }
 
 const makePythagLabel = (label, value) => {
   const labelJSX = <span className="pythag-side">
-    <span className="pythag-label">{label}<span className="exponent">2</span></span> = {value}x{value} = {value*value}
+    <span className="pythag-label">{label}<span className="exponent">2</span></span> = {value}x{value} = {value * value}
   </span>
   return labelJSX;
 }
+
 function MyVerticallyCenteredModal(props) {
   const { triple } = props;
   const [a, b, c] = triple;
   const tripleTitle = makeTripleTitle(triple);
-  
+
   const aLabel = makePythagLabel('a', a);
   const bLabel = makePythagLabel('b', b);
   const cLabel = makePythagLabel('c', c);
@@ -48,7 +49,7 @@ function MyVerticallyCenteredModal(props) {
       </Modal.Header>
       <Modal.Body>
 
-        { Array.isArray(triple) && <PythagSquare triple={triple} labels={{aLabel, bLabel, cLabel}} />}
+        {Array.isArray(triple) && <PythagSquare triple={triple} labels={{ aLabel, bLabel, cLabel }} />}
 
       </Modal.Body>
       <Modal.Footer>
@@ -59,18 +60,31 @@ function MyVerticallyCenteredModal(props) {
 }
 
 
+function Illustration(props) {
+  const { triple } = props;
+  const [a, b, c] = triple;
+
+  const aLabel = makePythagLabel('a', a);
+  const bLabel = makePythagLabel('b', b);
+  const cLabel = makePythagLabel('c', c);
+
+  return (
+    <PythagSquare triple={triple} labels={{ aLabel, bLabel, cLabel }} illus={true} />
+  );
+}
+
 function PythagTriples(props) {
-  const [ modalShow, setModalShow ] = useState(false);
-  const [ pythagData, setPythagData ] = useState([]);
-  const [ corner, setCorner ] = useState(1);
-  const [ selectedTriple, setSelectedTriple ] = useState();
+  const [modalShow, setModalShow] = useState(false);
+  const [pythagData, setPythagData] = useState([]);
+  const [corner, setCorner] = useState(1);
+  const [selectedTriple, setSelectedTriple] = useState();
 
   const cornerRef = useRef(null);
 
   useEffect(() => {
     (async () => {
-        let data = await pythagCorner(corner);
-        setPythagData(data);
+      let data = await pythagCorner(corner);
+      setPythagData(data);
     })();
   }, [pythagData.length]);
 
@@ -82,8 +96,8 @@ function PythagTriples(props) {
   function formatTriple(tripleObj) {
     let { a, b, c, isPrimitive } = tripleObj;
     let triple = isPrimitive
-        ? <div className="primitive">{a}<sup>2</sup> + {b}<sup>2</sup> = {c}<sup>2</sup></div>
-        : <div className="composite">{a}<sup>2</sup> + {b}<sup>2</sup> = {c}<sup>2</sup></div>
+      ? <div className="primitive">{a}<sup>2</sup> + {b}<sup>2</sup> = {c}<sup>2</sup></div>
+      : <div className="composite">{a}<sup>2</sup> + {b}<sup>2</sup> = {c}<sup>2</sup></div>
     return triple;
   }
 
@@ -106,6 +120,15 @@ function PythagTriples(props) {
 
   return (<div>
     <h1>Pythagorean Triples</h1>
+    <div className="explanatory">
+      <div style={{ 'display': 'flex' }}>
+        <div>
+          <p>The drawing illustrates how I visualize a Pythagoran triple, using the familiar (3, 4, 5) triple as an example.</p>
+          <p>The 5x5 square is c-squared, which is the sum of a-squared (3x3) and b-squared (4x4). The illustration shows how the nine (3x3) unit squares that comprise a-squared can be redistributed to wrap around b-squared: Since b-squared has four (4) squares on each side, the nine squares of a-squared can be arranged as four squares on the left, four squares on the top, and the remaining square in the upper left corner. So 4 + 4 + 1 = 9.</p>
+        </div>
+        <Illustration triple={[3, 4, 5]} />
+      </div>
+    </div>
     <Form>
       <InputGroup>
         <Form.Control ref={cornerRef} type="tel" id="a" />
@@ -119,24 +142,24 @@ function PythagTriples(props) {
         </tr>
       </thead>
       <tbody>
-      
-      { pythagData.map((item, key) => {
+
+        {pythagData.map((item, key) => {
           let triple = formatTriple(item);
-          let {a, b, c, isPrimitive} = item;
+          let { a, b, c, isPrimitive } = item;
           return (<tr key={key} onClick={item => { selectTriple([a, b, c], isPrimitive) }}>
             <td>{triple}</td>
           </tr>)
-      })}
+        })}
       </tbody>
     </Table>
 
-    { modalShow && (
-        <MyVerticallyCenteredModal
-          show={modalShow}
-          onHide={() => setModalShow(false)}
-          triple={selectedTriple}
-        />
-      )
+    {modalShow && (
+      <MyVerticallyCenteredModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        triple={selectedTriple}
+      />
+    )
     }
 
   </div>);
