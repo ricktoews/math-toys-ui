@@ -23,7 +23,7 @@ const CalendarMonthGrid = styled.div`
 
 
 const getMatchingYears = (year, jan, isLeap) => {
-  let els = Array.from( document.querySelectorAll('[data-year]'));
+  let els = Array.from(document.querySelectorAll('[data-year]'));
   let matching = els.filter(y => y.dataset.jan === jan && (y.dataset.leap === 'true') === isLeap);
   let matchingJF, matchingMD;
   if (isLeap) {
@@ -42,16 +42,16 @@ const getMatchingYears = (year, jan, isLeap) => {
 function MyVerticallyCenteredModal(props) {
   const { yeardata } = props;
   const { year, jan, leap } = yeardata;
-  const monthData = generateMonthData({year, janDigit: jan, isLeap: leap});
+  const monthData = generateMonthData({ year, janDigit: jan, isLeap: leap });
 
-  let els = Array.from( document.querySelectorAll('[data-year]'));
+  let els = Array.from(document.querySelectorAll('[data-year]'));
   let matching = els.filter(y => y.dataset.jan === jan && (y.dataset.leap === 'true') === leap);
   const matchingData = getMatchingYears(year, jan, leap);
   //console.log('matching', matchingData);
   const matchingJF = matchingData.matching.concat(matchingData.matchingJF);
   const matchingMD = matchingData.matching.concat(matchingData.matchingMD);
-  const proximalPast = matchingMD.map(el => el.dataset.year).filter(y => year-y > 0 && year-y <= 100).sort((a, b)=>b-a);
-  const proximalFuture = matchingMD.map(el => el.dataset.year).filter(y => y-year > 0 && y-year <= 100).sort();
+  const proximalPast = matchingMD.map(el => el.dataset.year).filter(y => year - y > 0 && year - y <= 100).sort((a, b) => b - a);
+  const proximalFuture = matchingMD.map(el => el.dataset.year).filter(y => y - year > 0 && y - year <= 100).sort();
   return (
     <Modal
       {...props}
@@ -67,43 +67,43 @@ function MyVerticallyCenteredModal(props) {
       <Modal.Body>
         <div className="year-popup-layout">
 
-        <CalendarMonthGrid>
-          { monthData.map((m, key) => <DrawMonth key={key} monthData={m} />) }
-        </CalendarMonthGrid>
+          <CalendarMonthGrid>
+            {monthData.map((m, key) => <DrawMonth key={key} monthData={m} />)}
+          </CalendarMonthGrid>
 
-        <div>
-          <h4>Years with matching configuration</h4>
-          <div className="matching-cols">
-            <table className="proximal-past">
-              <thead>
-                <tr>
-                  <th>Year</th>
-                  <th>Difference</th>
-                </tr>
-              </thead>
-              <tbody>
-            {proximalPast.map((y, ndx) => {
-              let prevY = ndx > 0 ? proximalPast[ndx-1] : year;
-              return <tr key={ndx}><td>{y}</td><td>[-{prevY-y}]</td></tr>
-            })}
-              </tbody>
-            </table>
-            <table className="proximal-future">
-              <thead>
-                <tr>
-                  <th>Year</th>
-                  <th>Difference</th>
-                </tr>
-              </thead>
-              <tbody>
-            {proximalFuture.map((y, ndx) => {
-              let prevY = ndx > 0 ? proximalFuture[ndx-1] : year;
-              return <tr key={ndx}><td>{y}</td><td>[+{y-prevY}]</td></tr>
-            })}
-              </tbody>
-            </table>
+          <div>
+            <h4>Years with matching configuration</h4>
+            <div className="matching-cols">
+              <table className="proximal-past">
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Difference</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {proximalPast.map((y, ndx) => {
+                    let prevY = ndx > 0 ? proximalPast[ndx - 1] : year;
+                    return <tr key={ndx}><td>{y}</td><td>[-{prevY - y}]</td></tr>
+                  })}
+                </tbody>
+              </table>
+              <table className="proximal-future">
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Difference</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {proximalFuture.map((y, ndx) => {
+                    let prevY = ndx > 0 ? proximalFuture[ndx - 1] : year;
+                    return <tr key={ndx}><td>{y}</td><td>[+{y - prevY}]</td></tr>
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
         </div>
 
       </Modal.Body>
@@ -136,7 +136,7 @@ const calcYearConfig = (year) => {
   return { jan, isLeap };
 }
 
-const generateYear = ({jan, isLeap}) => {
+const generateYear = ({ jan, isLeap }) => {
   const yearBase = isLeap ? leapYearBase : standardYearBase;
   const monthDigits = [];
   for (let i = 0; i < 12; i++) {
@@ -157,15 +157,15 @@ function Year12Digit(props) {
   }
   return (<div onClick={props.onClick} className={classNames.join(' ')}>
     <div className="digit-grid">
-    <div data-year={year} data-jan={janDigit} data-leap={isLeap} className="year-label">{year}</div>
-    { monthDigits.map((digit, ndx) => <div key={ndx}>{digit}</div>) }
+      <div data-year={year} data-jan={janDigit} data-leap={isLeap} className="year-label">{year}</div>
+      {monthDigits.map((digit, ndx) => <div key={ndx}>{digit}</div>)}
     </div>
   </div>)
 }
 
 function Calendar(props) {
-  const [ selectedYearData, setSelectedYearData ] = useState({});
-  const [ modalShow, setModalShow ] = useState(false);
+  const [selectedYearData, setSelectedYearData] = useState({});
+  const [modalShow, setModalShow] = useState(false);
   const currentYearRef = useRef(null);
 
   useEffect(() => {
@@ -174,7 +174,7 @@ function Calendar(props) {
 
   const years = [];
   for (let i = 0; i < 800; i++) {
-    years.push(1600+i);
+    years.push(1600 + i);
   }
   const d = new Date();
   const currentYear = d.getFullYear();
@@ -190,29 +190,31 @@ function Calendar(props) {
   }
 
   return (<div>
-    12-digit calendar
+    <div className="sticky-page-title">
+      <h1>12-Digit Calendar</h1>
+    </div>
     <div className="calendar-grid">
-    { years.map((year, key) => {
-      const isCurrentYear = year === currentYear;
-      const yearBlockClass = year % 100 === 0 ? 'century-divider' : '';
-  
-      if (year === currentYear) {
-        return <React.Fragment key={key}><div className={yearBlockClass}></div><div ref={currentYearRef}>
-          <Year12Digit key={year} year={year} onClick={handleClick} isCurrentYear={isCurrentYear} />
-        </div></React.Fragment>
-      } else {
-        return <React.Fragment key={key}><div className={yearBlockClass}></div><div>
-          <Year12Digit key={year} year={year} onClick={handleClick} isCurrentYear={isCurrentYear} />
-        </div></React.Fragment>
-      }
-      
-    })}
+      {years.map((year, key) => {
+        const isCurrentYear = year === currentYear;
+        const yearBlockClass = year % 100 === 0 ? 'century-divider' : '';
+
+        if (year === currentYear) {
+          return <React.Fragment key={key}><div className={yearBlockClass}></div><div ref={currentYearRef}>
+            <Year12Digit key={year} year={year} onClick={handleClick} isCurrentYear={isCurrentYear} />
+          </div></React.Fragment>
+        } else {
+          return <React.Fragment key={key}><div className={yearBlockClass}></div><div>
+            <Year12Digit key={year} year={year} onClick={handleClick} isCurrentYear={isCurrentYear} />
+          </div></React.Fragment>
+        }
+
+      })}
     </div>
     <MyVerticallyCenteredModal
-        show={modalShow}
-        onHide={() => setModalShow(false)}
-        yeardata={selectedYearData}
-      />
+      show={modalShow}
+      onHide={() => setModalShow(false)}
+      yeardata={selectedYearData}
+    />
 
   </div>)
 }
