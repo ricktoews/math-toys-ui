@@ -121,12 +121,13 @@ function PythagTriples(props) {
   return (<div>
     <h1>Pythagorean Triples</h1>
     <div className="explanatory">
-      <div style={{ 'display': 'flex' }}>
-        <div>
-          <p>The drawing illustrates how I visualize a Pythagoran triple, using the familiar (3, 4, 5) triple as an example.</p>
-          <p>The 5x5 square is c-squared, which is the sum of a-squared (3x3) and b-squared (4x4). The illustration shows how the nine (3x3) unit squares that comprise a-squared can be redistributed to wrap around b-squared: Since b-squared has four (4) squares on each side, the nine squares of a-squared can be arranged as four squares on the left, four squares on the top, and the remaining square in the upper left corner. So 4 + 4 + 1 = 9.</p>
+      <div>
+        <div style={{ "float": "right", "padding": "0 30px" }}>
+          <Illustration triple={[3, 4, 5]} />
         </div>
-        <Illustration triple={[3, 4, 5]} />
+
+        <p>The drawing illustrates how I visualize a Pythagoran triple, using the familiar (3, 4, 5) triple as an example.</p>
+        <p>The 5x5 square is c-squared, which is the sum of a-squared (3x3) and b-squared (4x4). The illustration shows how the nine (3x3) unit squares that comprise a-squared can be redistributed to wrap around b-squared: Since b-squared has four (4) squares on each side, the nine squares of a-squared can be arranged as four squares on the left, four squares on the top, and the remaining square in the upper left corner. So 4 + 4 + 1 = 9.</p>
       </div>
     </div>
     <Form>
