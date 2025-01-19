@@ -50,7 +50,7 @@ function MyVerticallyCenteredModal(props) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <NumeratorDescription {...numeratordata} power10={power10} periodJSX={periodJSX} />
+        <NumeratorDescription {...numeratordata} power10={power10} periodJSX={periodJSX} digits={digits} />
       </Modal.Body>
       <Modal.Footer>
         <Button className="app-btn" onClick={props.onHide}>Close</Button>

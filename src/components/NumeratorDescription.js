@@ -19,17 +19,16 @@ Composite:
 
 */
 function NumeratorDescription(props) {
-  const { periodJSX, numerator, denom, period, position, power10, denomIsPrime } = props;
-  console.log('NumeratorDescription denomIsPrime', denomIsPrime, typeof denomIsPrime);
+  const { periodJSX, numerator, denom, period, position, power10, denomIsPrime, digits } = props;
   let jsx;
   if (denomIsPrime) {
     jsx = <div>
-      <div>{periodJSX}</div>
-      <div>{numerator} / {denom} has a period length of {period.length}. The period begins at position {position} within the expansion digits.</div>
-      <div>The lowest value of <i>10<sup>n</sup> - 1</i> that {denom} divides without remainder is 10<sup>{power10}</sup> - 1.</div>
-      <div className="digits">0.{periodJSX}</div>
+      <div style={{ "word-break": "break-all" }}>
+        <p>{numerator} / {denom} = <span className="digits">0.{periodJSX}</span>, having a period length of {period.length}.</p>
+        <p>The period begins at position {position} within the expansion digits {digits}.</p>
+        <p>The lowest value of <i>10<sup>n</sup> - 1</i> that {denom} divides without remainder is 10<sup>{power10}</sup> - 1.</p>
+      </div>
     </div>;
-    console.log('NumeratorDescription, prime denominator')
   } else {
     jsx = <div>
       <div>{periodJSX}</div>
