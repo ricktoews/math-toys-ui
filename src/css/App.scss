@@ -30,8 +30,14 @@ $palette-grey-3: #9a9a9a;
 
 
 h1 {
-  color: $palette-3;
-  font-size: 14pt;
+  text-align: center;
+  color: #001f3f;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  letter-spacing: .2em;
+  font-variant: small-caps;
+
+  font-size: 25pt;
+  margin-bottom: 20px;
 }
 
 .list-settings {
@@ -423,6 +429,13 @@ h4 {
 
 .table tr td {
   padding: 5px 10px;
+}
+
+.explanatory {
+  line-height: 2;
+  padding: 10px;
+  border: 1px solid gray;
+  margin-bottom: 10px;
 }
 
 .numerator-list span {

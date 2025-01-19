@@ -91,12 +91,13 @@ function Phi(props) {
 
   return (<div>
     <h1>Powers of Phi</h1>
-    <div>
-      Phi is (√5 + 1) / 2, which is approximately 1.618. It's associated with the Fibonacci series, in that the ratio of a given elment in that series to the previous element approximates phi. This approximation increases in accuracy as one progresses through the series.
+    <div className="explanatory">
+      <p>Phi is (√5 + 1) / 2, which is approximately 1.618. It's associated with the Fibonacci series, in that the ratio of a given elment in that series to the previous element approximates phi.</p>
+      <p>For example, the first several Fibonacci numbers are 1, 1, 2, 3, 5, 8, 13, 21... The ratio of 8/5 is 1.6, 13/8 is 1.625, 21/13 is approximately 1.615, etc. This approximation increases in accuracy as one progresses through the series.</p>
 
-      Each power of phi can be expressed in the form (a√5 + b) / 2. Notice the values of a and b for progressive powers of phi. For a, the values are the Fibonacci numbers.
+      <p>Each power of phi can be expressed in the form (a√5 + b) / 2. Notice the values of a and b for progressive powers of phi. For a, the values are the Fibonacci numbers.</p>
 
-      Notice also that as the powers increase, the values for a and b√5 converge, with b√5 alternating less than and greater than a.
+      <p>Notice also that as the powers increase, the values for a and b√5 converge, with b√5 alternating less than and greater than a.</p>
     </div>
     <Table striped hover className="table">
       <thead className="sticky-table">
