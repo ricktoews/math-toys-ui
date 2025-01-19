@@ -22,7 +22,7 @@ function App() {
       const el = e.target;
       const currentEl = e.currentTarget;
       if (navContainerRef.current.contains(el)) {
-          console.log('handleClick clicked in nav menu; leave open');
+        console.log('handleClick clicked in nav menu; leave open');
         setMenuState(true);
       } else {
         // Close outside of nav container. Close menu unless clicked on hamburger icon.
@@ -67,20 +67,24 @@ function App() {
   return (
     <div className="App">
       <div ref={navContainerRef} onClick={checkMenuClick} className="nav-container">
-        
-          <nav>
-            <ul>
+
+        <nav>
+          <ul>
             <li><a href="/">Main</a></li>
-              <li><a href="/phi">Phi</a></li>
-              <li><a href="/pythag-clist">Pythag C List</a></li>
-              <li><a href="/pythag">Pythagorean Triples</a></li>
-              <li><a href="/calendar">Calendar</a></li>
-              <li><a href="/denom">Decimal Expansions</a></li>
+            <li><a href="/phi">Phi</a></li>
+            {/*
+            <li><a href="/pythag-clist">Pythag C List</a></li>
+            */}
+            <li><a href="/pythag">Pythagorean Triples</a></li>
+            <li><a href="/calendar">Calendar</a></li>
+            <li><a href="/denom">Decimal Expansions</a></li>
+            {/*
               <li><a href="/mastermind">Mastermind</a></li>
               <li><a href="/wordle">Wordle</a></li>
-            </ul>
-          </nav>
-        
+              */}
+          </ul>
+        </nav>
+
       </div>
       <div className="fixed-header">
         <div ref={hamburgerIconRef} className="hamburger-icon" onClick={toggleMenu}>
@@ -89,20 +93,20 @@ function App() {
           <div className="hamburger-line"></div>
         </div>
         <header>
-        M&Lambda;th Toy&Sigma;
+          M&Lambda;th Toy&Sigma;
         </header>
       </div>
       <div className="container app-content">
-      <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/phi" element={<Phi />} />
-        <Route path="/pythag-clist" element={<PythagCList />} />
-        <Route path="/pythag" element={<PythagTriples />} />
-        <Route path="/calendar" element={<Calendar />} />
-        <Route path="/denom" element={<Denom />} />
-        <Route path="/mastermind" element={<Mastermind />} />
-        <Route path="/wordle" element={<Wordle />} />
-      </Routes>
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/phi" element={<Phi />} />
+          <Route path="/pythag-clist" element={<PythagCList />} />
+          <Route path="/pythag" element={<PythagTriples />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/denom" element={<Denom />} />
+          <Route path="/mastermind" element={<Mastermind />} />
+          <Route path="/wordle" element={<Wordle />} />
+        </Routes>
       </div>
     </div>
   );
