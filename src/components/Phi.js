@@ -54,7 +54,7 @@ function Phi(props) {
 
   useEffect(() => {
     (async () => {
-      let data = await phi(18);
+      let data = await phi(20);
       console.log('useEffect data', data);
       setPhiData(data);
     })();
@@ -91,29 +91,39 @@ function Phi(props) {
 
   return (<div>
     <h1>Powers of Phi</h1>
+    <div>
+      Phi is (√5 + 1) / 2, which is approximately 1.618. It's associated with the Fibonacci series, in that the ratio of a given elment in that series to the previous element approximates phi. This approximation increases in accuracy as one progresses through the series.
+
+      Each power of phi can be expressed in the form (a√5 + b) / 2. Notice the values of a and b for progressive powers of phi. For a, the values are the Fibonacci numbers.
+
+      Notice also that as the powers increase, the values for a and b√5 converge, with b√5 alternating less than and greater than a.
+    </div>
     <Table striped hover>
       <thead className="sticky-table">
         <tr>
+          <th>n</th>
           <th>Fraction of Phi<sup>n</sup></th>
-          <th>Fibonacci n</th>
+          <th>Coefficient of √5</th>
+          <th>Coefficient x √5</th>
           <th>Lucas n</th>
-          <th>Real Term</th>
-          <th>Whole Term</th>
+          <th>Difference</th>
         </tr>
       </thead>
       <tbody>
 
         {phiData.map((item, key) => {
           let f_l = item['[F, F*SQRT_5, L, L/SQRT_5]'];
+          const power = key + 1;
           const Fibonacci = f_l[0];
           const Lucas = f_l[2];
 
           return (<tr onClick={handleRowClick} key={key} data-power={key + 1}>
+            <td>{power}</td>
             <td><MathJax>{`\\(\\frac{${Fibonacci}\\sqrt{5} + ${Lucas}}{2}\\)`}</MathJax></td>
             <td>{f_l[0]}</td>
-            <td>{f_l[2]}</td>
             <td>{item.real_term.toFixed(4)}</td>
-            <td>{item.whole_term}</td>
+            <td>{f_l[2]}</td>
+            <td>{(item.real_term - f_l[2]).toFixed(4)}</td>
           </tr>)
         })}
       </tbody>
