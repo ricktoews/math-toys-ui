@@ -97,17 +97,17 @@ function Phi(props) {
 
       <p>Each power of phi can be expressed in the form (a√5 + b) / 2. Notice the values of a and b for progressive powers of phi. For a, the values are the Fibonacci numbers.</p>
 
-      <p>Notice also that as the powers increase, the values for a and b√5 converge, with b√5 alternating less than and greater than a.</p>
+      <p>Notice also that as the powers increase, the values for a√5 and b converge, with a√5 alternating less than and greater than b.</p>
     </div>
     <Table striped hover className="table">
       <thead className="sticky-table">
         <tr>
           <th>n</th>
           <th>Fraction of Phi<sup>n</sup></th>
-          <th>Coefficient of √5</th>
-          <th>Coefficient x √5</th>
-          <th>Lucas n</th>
-          <th>Difference</th>
+          <th>a</th>
+          <th>b</th>
+          <th>a√5</th>
+          <th>a√5 - b</th>
         </tr>
       </thead>
       <tbody>
@@ -122,8 +122,8 @@ function Phi(props) {
             <td>{power}</td>
             <td><MathJax>{`\\(\\frac{${Fibonacci}\\sqrt{5} + ${Lucas}}{2}\\)`}</MathJax></td>
             <td>{f_l[0]}</td>
-            <td>{item.real_term.toFixed(4)}</td>
             <td>{f_l[2]}</td>
+            <td>{item.real_term.toFixed(4)}</td>
             <td>{(item.real_term - f_l[2]).toFixed(4)}</td>
           </tr>)
         })}
