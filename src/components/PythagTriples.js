@@ -83,8 +83,8 @@ function PythagTriples(props) {
 
   useEffect(() => {
     (async () => {
-      let data = await pythagCorner(corner);
-      setPythagData(data);
+      let result = await pythagCorner(corner);
+      setPythagData(result.data);
     })();
   }, [pythagData.length]);
 
@@ -94,8 +94,8 @@ function PythagTriples(props) {
   }
 
   function formatTriple(tripleObj) {
-    let { a, b, c, isPrimitive } = tripleObj;
-    let triple = isPrimitive
+    let { a, b, c, is_primitive } = tripleObj;
+    let triple = is_primitive
       ? <div className="primitive">{a}<sup>2</sup> + {b}<sup>2</sup> = {c}<sup>2</sup></div>
       : <div className="composite">{a}<sup>2</sup> + {b}<sup>2</sup> = {c}<sup>2</sup></div>
     return triple;
@@ -103,8 +103,8 @@ function PythagTriples(props) {
 
   const processCorner = async a => {
     setCorner(a);
-    let data = await pythagCorner(a);
-    setPythagData(data);
+    let result = await pythagCorner(a);
+    setPythagData(result.data);
   }
 
   const handleInput = e => {

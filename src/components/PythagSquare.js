@@ -35,7 +35,7 @@ const highlightAParts = (area, state) => {
 }
 
 function PythagSquare(props) {
-  const [mode, setMode] = useState('square');
+  const [mode, setMode] = useState('wrap');
   const [cArea, setCArea] = useState(200);
 
   //console.log('Pythagorean Square triple', props.triple);
@@ -50,7 +50,6 @@ function PythagSquare(props) {
   useEffect(() => {
     if (props.illus) {
       setCArea(100);
-      setMode('wrap');
     }
   }, []);
 

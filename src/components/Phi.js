@@ -54,9 +54,9 @@ function Phi(props) {
 
   useEffect(() => {
     (async () => {
-      let data = await phi(24);
-      console.log('useEffect data', data);
-      setPhiData(data);
+      let result = await phi(24);
+      console.log('useEffect data', result.data);
+      setPhiData(result.data);
     })();
   }, [phiData.length]);
 
@@ -113,18 +113,19 @@ function Phi(props) {
       <tbody>
 
         {phiData.map((item, key) => {
-          let f_l = item['[F, F*SQRT_5, L, L/SQRT_5]'];
+          //let f_l = item['[F, F*SQRT_5, L, L/SQRT_5]'];
+          let f_l = item['[a, b]'];
           const power = key + 1;
           const Fibonacci = f_l[0];
-          const Lucas = f_l[2];
+          const Lucas = f_l[1];
 
           return (<tr onClick={handleRowClick} key={key} data-power={key + 1}>
             <td>{power}</td>
             <td><MathJax>{`\\(\\frac{${Fibonacci}\\sqrt{5} + ${Lucas}}{2}\\)`}</MathJax></td>
-            <td>{f_l[0]}</td>
-            <td>{f_l[2]}</td>
-            <td>{item.real_term.toFixed(4)}</td>
-            <td>{(item.real_term - f_l[2]).toFixed(4)}</td>
+            <td>{Fibonacci}</td>
+            <td>{Lucas}</td>
+            <td>{item['phi^n'].toFixed(4)}</td>
+            <td>{(item['phi^n'] - Lucas).toFixed(4)}</td>
           </tr>)
         })}
       </tbody>

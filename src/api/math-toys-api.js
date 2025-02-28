@@ -1,12 +1,12 @@
-const baseUrl = 'https://arithmo.toewsweb.net:3000';
+const baseUrl = 'https://4dl83sd9wg.execute-api.us-east-1.amazonaws.com';
 const netlifyUrl = 'https://math-toys.netlify.app/.netlify/functions';
 
 const API = {
-    get_phi: netlifyUrl + '/phi/',
-    get_pythag_clist: netlifyUrl + '/pythag_clist/',
-    get_pythag_triples: netlifyUrl + '/pythag/',
-    get_expansions: netlifyUrl + '/dc/',
-    get_by_expansion: baseUrl + '/denom_byexpansion/',
+  get_phi: baseUrl + '/phi/',
+  get_pythag_clist: netlifyUrl + '/pythag_clist/',
+  get_pythag_triples: baseUrl + '/pythag/',
+  get_expansions: baseUrl + '/dc/',
+  get_by_expansion: baseUrl + '/denom_byexpansion/',
 }
 
 async function getPhi(n) {

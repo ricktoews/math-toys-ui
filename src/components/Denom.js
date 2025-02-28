@@ -75,10 +75,11 @@ function Denom(props) {
   const denomRef = useRef(null);
 
   async function getDenomData(selectedDenom) {
-    let results = await getExpansions(selectedDenom);
-    console.log('getDenomData, expansionData', results);
-    let organizeExpansionData = results.byExpansion;
-    let expansionData = results.byNumerator;
+    const results = await getExpansions(selectedDenom);
+    const data = results.data;
+    console.log('getDenomData, expansionData', data);
+    let organizeExpansionData = data.byExpansion;
+    let expansionData = data.byNumerator;
     const factors = getDenominatorFactors(selectedDenom);
     const formattedFactors = factors.length > 0 ? formatDenominatorFactors(factors) : <></>;
     setDenom(selectedDenom);
