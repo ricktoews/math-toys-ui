@@ -55,7 +55,7 @@ function Phi(props) {
   useEffect(() => {
     (async () => {
       let result = await phi(24);
-      console.log('useEffect data', result.data);
+      console.log('useEffect result', result);
       setPhiData(result.data);
     })();
   }, [phiData.length]);

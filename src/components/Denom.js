@@ -4,7 +4,7 @@ import { Form, InputGroup } from 'react-bootstrap'
 import { Table } from 'react-bootstrap';
 import NumeratorList from './NumeratorList';
 import NumeratorDescription from './NumeratorDescription';
-import { getDenomByExpansion, getExpansions } from '../api/math-toys-api';
+import { getDenomByExpansion, getExpansions, postExpansions } from '../api/math-toys-api';
 import { getDenominatorFactors, parsedPeriod, getPeriodJSX } from './denom-helper';
 
 function formatDenominatorFactors(factors) {
