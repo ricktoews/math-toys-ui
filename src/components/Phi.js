@@ -18,6 +18,10 @@ function MyVerticallyCenteredModal(props) {
   const termsExponentsSuperscript = convertToSuperscript(termsExponents.join(' + '));
   const fibonacciSum = eval(reducedFibonacci);
 
+  setTimeout(() => {
+    console.trace('sourcemap probe from within Phi.js');
+  }, 0);
+
   return (
     <Modal
       {...props}
