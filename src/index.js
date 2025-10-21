@@ -1,3 +1,5 @@
+import SessionRecorder from '@multiplayer-app/session-recorder-browser';
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -5,8 +7,6 @@ import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import { MathJaxContext } from 'better-react-mathjax';
 import reportWebVitals from './reportWebVitals';
-
-import SessionRecorder from '@multiplayer-app/session-recorder-browser';
 
 SessionRecorder.init({
   application: 'MathToys',
