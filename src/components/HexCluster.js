@@ -1,41 +1,82 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Button, ButtonGroup, InputGroup, Form } from "react-bootstrap";
 
+/**
+ * Responsive HexCluster for React
+ * - Auto-sizes canvas to parent container width (square)
+ * - HiDPI crisp lines
+ * - Toggle triangles ↔ rings (buttons)
+ * - Show/hide numbers (button)
+ * - Robust mobile-friendly "n" input with +/- controls
+ */
 export default function HexCluster({
-  width = 900,
-  height = 900,
   initialN = 4,
   showControls = true,
+  // Optional: override how high the cluster sits (fraction of canvas height; negative raises)
+  verticalOffsetFactor = -0.14, // ~ -125px on a 900px canvas
 }) {
+  const wrapRef = useRef(null);
   const canvasRef = useRef(null);
+
+  // Responsive canvas size (CSS pixels)
+  const [size, setSize] = useState({ w: 900, h: 900 });
+
+  // n: validated number; rawN: text shown in input (can be empty while editing)
   const [n, setN] = useState(Math.max(1, Math.floor(initialN)));
+  const [rawN, setRawN] = useState(String(Math.max(1, Math.floor(initialN))));
+
   const [showNums, setShowNums] = useState(true);
   const [colorByRing, setColorByRing] = useState(false);
 
-  // --- color palettes ---
-  const pastel = ["#bcd4e6","#d0f0c0","#ffe4b5","#f7c8d0","#e8d3ff","#faf3b3"];
-  const ringPastel = [...pastel, "#c7e6e2", "#f5d6b0"]; // 8 total, same style
+  // Palettes
+  const pastel = useMemo(
+    () => ["#bcd4e6","#d0f0c0","#ffe4b5","#f7c8d0","#e8d3ff","#faf3b3"],
+    []
+  );
+  // Rings palette = triangles + 2 harmonious additions
+  const ringPastel = useMemo(
+    () => [...pastel, "#c7e6e2", "#f5d6b0"],
+    [pastel]
+  );
 
-  // layout constants
+  // Layout/paint constants
   const margin = 24;
   const strokeColor = "#666";
   const neutralFill = "#eee";
   const textColor = "#333";
-  const verticalOffset = -125; // raise cluster upward
 
-  // directions
-  const DIRS = [
-    [1, 0],
-    [1, -1],
-    [0, -1],
-    [-1, 0],
-    [-1, 1],
-    [0, 1],
-  ];
+  // Axial directions (flat-top), CW: E, NE, NW, W, SW, SE
+  const DIRS = useMemo(
+    () => [
+      [1, 0],
+      [1, -1],
+      [0, -1],
+      [-1, 0],
+      [-1, 1],
+      [0, 1],
+    ],
+    []
+  );
   const key = (q, r) => `${q},${r}`;
 
+  // ===== Responsive sizing =====
+  useEffect(() => {
+    if (!wrapRef.current) return;
+
+    const ro = new ResizeObserver(entries => {
+      const cr = entries[0].contentRect;
+      const w = Math.max(240, Math.floor(cr.width)); // keep sensible minimum
+      const h = w; // square canvas
+      setSize({ w, h });
+    });
+
+    ro.observe(wrapRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  // ===== Hex helpers & builders =====
   function computeSideLength(radius, cssW, cssH, m = margin) {
-    if (radius <= 0) return 60;
+    if (radius <= 0) return Math.min(cssW, cssH) / 8; // nice center size
     const maxHalfX = 1.5 * radius + 1;
     const maxHalfY = Math.sqrt(3) * 1.5 * radius + 1;
     const sX = (cssW / 2 - m) / maxHalfX;
@@ -60,7 +101,7 @@ export default function HexCluster({
     for (let ring = 1; ring <= radius; ring++) {
       let q = 0, p = -ring;
       const arr = [];
-      const stepDirs = [0, 5, 4, 3, 2, 1];
+      const stepDirs = [0, 5, 4, 3, 2, 1]; // E, SE, SW, W, NW, NE
       for (let side = 0; side < 6; side++) {
         const [dq, dp] = DIRS[stepDirs[side]];
         for (let i = 0; i < ring; i++) {
@@ -74,9 +115,7 @@ export default function HexCluster({
   }
 
   const ringSides = (ringArray, r) =>
-    Array.from({ length: 6 }, (_, k) =>
-      ringArray.slice(k * r, k * r + r)
-    );
+    Array.from({ length: 6 }, (_, k) => ringArray.slice(k * r, k * r + r));
 
   function buildWedgesBySides(rings, radius) {
     const wedges = Array.from({ length: 6 }, () => []);
@@ -97,23 +136,31 @@ export default function HexCluster({
     return numbering;
   }
 
-  // draw everything
+  // ===== Draw =====
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    const { w, h } = size;
     const dpr = window.devicePixelRatio || 1;
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-    canvas.width = Math.floor(width * dpr);
-    canvas.height = Math.floor(height * dpr);
+
+    // HiDPI backing store
+    canvas.style.width = `${w}px`;
+    canvas.style.height = `${h}px`;
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+
     const ctx = canvas.getContext("2d");
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     const radius = Math.max(0, n - 1);
-    const s = computeSideLength(radius, width, height, margin);
+    const s = computeSideLength(radius, w, h, margin);
     const R = s;
-    const CX = width / 2;
-    const CY = height / 2 + verticalOffset;
+
+    // Center point with adaptive vertical offset
+    const vo = Math.round(h * verticalOffsetFactor); // e.g. -0.14 * h
+    const CX = w / 2;
+    const CY = h / 2 + vo;
 
     const hexToPixel = (q, r) => {
       const x = 1.5 * s * q;
@@ -121,7 +168,7 @@ export default function HexCluster({
       return [CX + x, CY + y];
     };
 
-    const drawHex = (x, y, fill) => {
+    const drawHex = (x, y, fill, lineWidth = 1.5, stroke = strokeColor) => {
       ctx.beginPath();
       for (let i = 0; i < 6; i++) {
         const a = (i * Math.PI) / 3;
@@ -133,8 +180,8 @@ export default function HexCluster({
       ctx.fillStyle = fill;
       ctx.fill();
       ctx.lineJoin = "round";
-      ctx.strokeStyle = strokeColor;
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = lineWidth;
       ctx.stroke();
     };
 
@@ -143,15 +190,15 @@ export default function HexCluster({
     const wedges = buildWedgesBySides(rings, radius);
     const numbering = buildNumbering(rings, radius);
 
-    ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, w, h);
 
-    // base
+    // Base
     cells.forEach(({ q, r }) => {
       const [x, y] = hexToPixel(q, r);
       drawHex(x, y, neutralFill);
     });
 
-    // fill
+    // Fill: triangles or rings
     if (n >= 2) {
       if (!colorByRing) {
         wedges.forEach((wedge, i) => {
@@ -172,11 +219,11 @@ export default function HexCluster({
       }
     }
 
-    // center
+    // Center on top
     const [cx, cy] = hexToPixel(0, 0);
     drawHex(cx, cy, "#9dc5bb");
 
-    // numbers
+    // Numbers
     if (showNums) {
       const fontSize = Math.max(9, Math.min(16, Math.round(0.28 * s)));
       ctx.font = `bold ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif`;
@@ -189,9 +236,36 @@ export default function HexCluster({
         ctx.fillText(num, x, y);
       });
     }
-  }, [n, showNums, colorByRing, width, height]);
+  }, [n, showNums, colorByRing, size, verticalOffsetFactor, pastel, ringPastel]);
 
-  const cycleN = () => setN((prev) => (prev >= 6 ? 2 : prev + 1));
+  // ===== Controls =====
+
+  const applyN = (candidate) => {
+    const parsed = parseInt(candidate, 10);
+    const valid = Number.isFinite(parsed) && parsed >= 1 ? parsed : 1;
+    setN(valid);
+    setRawN(String(valid));
+  };
+
+  const onInputChange = (e) => {
+    // Let the user clear/enter freely
+    setRawN(e.target.value);
+  };
+
+  const onInputBlur = () => {
+    applyN(rawN);
+  };
+
+  const onInputKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.currentTarget.blur(); // triggers onBlur/validation
+    }
+  };
+
+  const decN = () => applyN((n - 1).toString());
+  const incN = () => applyN((n + 1).toString());
+  const cycleN = () => applyN((n >= 6 ? 2 : n + 1).toString());
+
   const downloadPNG = () => {
     const a = document.createElement("a");
     a.download = `hex_n${n}_${colorByRing ? "rings" : "triangles"}.png`;
@@ -200,20 +274,29 @@ export default function HexCluster({
   };
 
   return (
-    <div>
+    <div ref={wrapRef} style={{ width: "100%" }}>
       {showControls && (
         <div className="d-flex align-items-center gap-3 mb-2 flex-wrap">
-          <InputGroup style={{ width: 160 }}>
+          <InputGroup style={{ width: 220 }}>
             <InputGroup.Text>n</InputGroup.Text>
             <Form.Control
-              type="number"
-              min={1}
-              value={n}
-              onChange={(e) => setN(Math.max(1, Math.floor(+e.target.value || 1)))}
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              placeholder="1+"
+              value={rawN}
+              onChange={onInputChange}
+              onBlur={onInputBlur}
+              onKeyDown={onInputKeyDown}
             />
+            <Button variant="outline-secondary" onClick={decN} disabled={n <= 1}>
+              –
+            </Button>
+            <Button variant="outline-secondary" onClick={incN}>
+              +
+            </Button>
           </InputGroup>
 
-          {/* Button toggles */}
           <ButtonGroup>
             <Button
               variant={showNums ? "primary" : "outline-secondary"}
@@ -242,14 +325,13 @@ export default function HexCluster({
 
       <canvas
         ref={canvasRef}
-        width={width}
-        height={height}
         style={{
+          display: "block",
           border: "1px solid #ccc",
           background: "#fff",
-          width,
-          height,
-          cursor: "pointer",
+          width: "100%",
+          height: "auto",      // height is controlled via backing store; CSS keeps aspect
+          aspectRatio: "1 / 1" // ensure square box in modern browsers
         }}
         onClick={cycleN}
       />
