@@ -71,7 +71,7 @@ export default () => {
       <article>
         <div className="article-title">The 12-digit Calendar, Part 2</div>
 
-        <ToggleRead className="article-open">
+        <ToggleRead className="article-opened">
 
         <p>OK, so you can get the day of the week for any date in 2021. That's neat. But what about for other years?</p>
 
@@ -92,7 +92,7 @@ export default () => {
           <li><b>First, get the base number for the year</b>.</li>
           <li>Start with the last two digits of the year you want.</li>
           <li>Divide that by 4, and add the integer result to your year<sup>*</sup>. (<i>If your year is a leap year, AND you're finding a date in January or February, subtract 1</i>.)</li>
-          <li><b>Next, find your taget month</b>.</li>
+          <li><b>Next, find your target month</b>.</li>
           <li>Get the month's offset value from the above table, and add it to the base number for the year. This is the target month's number. <i>Note: You can divide this by 7 and use the remainder, if that's more convenient for you</i>.</li>
           <li><b>Finally, get the day of the week</b>.</li>
           <li>Add the date to the target month's number.</li>
@@ -172,9 +172,9 @@ export default () => {
 
 	    <p>Another triple is (6, 8, 10), since 36 + 64 = 100. However, this isn't a primitive, as a, b, and c are all divisible by 2.</p>
 
-	    <p>My approach to generating a Pythagorean triple is to start with c - b and then calculate values for a^2. I envison b^2 positioned within c^2, so that the two share the lower right corner. Then, a^2 wraps around b^2, with the corner of a^2 being the square of (c - b).</p>
+	    <p>My approach to generating a Pythagorean triple is to start with c - b and then calculate values for a^2. I envision b^2 positioned within c^2, so that the two share the lower right corner. Then, a^2 wraps around b^2, with the corner of a^2 being the square of (c - b).</p>
 
-	    <p>Let n = (c - b). Then the area of a^2 is n^2 + 2(nb). Since this must be square, I rearrange the terms: n(n + 2b). If n is square, then (n + 2b) must also be square. If n isn't square, then (n + 2b) must be a square, multiplied by some number that, if mulplied by n would yield a square. (For example, if n is 12, (n + 2b) would have to be a square multiplied by 3&mdash;or 3 times some square.)</p>
+	    <p>Let n = (c - b). Then the area of a^2 is n^2 + 2(nb). Since this must be square, I rearrange the terms: n(n + 2b). If n is square, then (n + 2b) must also be square. If n isn't square, then (n + 2b) must be a square, multiplied by some number that, if multiplied by n would yield a square. (For example, if n is 12, (n + 2b) would have to be a square multiplied by 3&mdash;or 3 times some square.)</p>
 
 	    <p>Since I'm interested in primitives, I want to find triples that don't have common factors. This is true for all triples where n = 1. What about for n = 2? Since 2 isn't a square, (n + 2b) must be a square multiplied by 2. With (c - b) of 2, a^2 will be even, and a will therefore be even. Therefore, b must be odd if we want a primitive triple. So with n = 2, we are looking for square products of 2(2+2b) such that b is an odd number. Algebra: 2(2+2b) = 4+4b = 4(1 + b). Since 4 is square, 1 + b must be square, and b must be one less than an even square. So: 3, 15, 35, 63, &c. Let's look at these.</p>
 
@@ -193,7 +193,7 @@ export default () => {
 
         <p>So a Mersenne prime is a prime number of the form 2^n - 1. All known perfect numbers are based on Mersenne primes. I was toying one night with why the power of 2 for a Mersenne prime must itself be prime. I'm sure an algebraic proof would show that 2^n - 1 is factorable (and therefore not prime) if n is composite. But it was a different approach that occurred to me as I was lying there.</p>
 
-        <p>Think of 2^n - 1 in its binary representation. It's just a repdigit of n 1s, right? So if n is composite&mdash;say axb&mdash;then 2^n - 1 can be described as a groups of b 1s, which is itself obviously composite. To illustrate, suppose n is 15 with a = 3, b = 5. Then 2^15 - 1 = 111111111111111, or 3 groups of 5 1s. Any number whose digits form multiple groups of the same pattern of digits can be expressed as a multiple of that pattern of digits&mdash;and therefore not a prime number.</p>
+        <p>Think of 2^n - 1 in its binary representation. It's just a repdigit of n 1s, right? So if n is composite&mdash;say a x b&mdash;then 2^n - 1 can be described as a group of b 1s, which is itself obviously composite. To illustrate, suppose n is 15 with a = 3, b = 5. Then 2^15 - 1 = 111111111111111, or 3 groups of 5 1s. Any number whose digits form multiple groups of the same pattern of digits can be expressed as a multiple of that pattern of digits&mdash;and therefore not a prime number.</p>
         </ToggleRead>
       </article>
  
@@ -205,9 +205,9 @@ export default () => {
 
         <p>Familiar: phi, the Golden Ratio, in its fractional form is (1 + sqrt(5)) / 2.</p>
 
-        <p>The powers of phi have interested me in their fractional form, with 2 as the constant denominator (even when it's possible to reduce): (a + b x sqrt(5)) / 2, since each a and b is the sum of the previous two, so that each a is a Lucas number and each b is a Fibonacci number&mdash; so: (1 + 1√5) / 2, (3 + 1√5) / 2, (4 + 2√5) / 2, 7 + 3√5) / 2. </p>
+        <p>The powers of phi have interested me in their fractional form, with 2 as the constant denominator (even when it's possible to reduce): (a + b x sqrt(5)) / 2, since each a and b is the sum of the previous two, so that each a is a Lucas number and each b is a Fibonacci number&mdash; so: (1 + 1√5) / 2, (3 + 1√5) / 2, (4 + 2√5) / 2, (7 + 3√5) / 2. </p>
 
-        <p>The interesting thing is that as that as these powers increase, the ratio of a / b approaches <math><msqrt><mn>5</mn></msqrt></math>, 2.23606...:</p>
+        <p>The interesting thing is that as these powers increase, the ratio of a / b approaches <math><msqrt><mn>5</mn></msqrt></math>, 2.23606...:</p>
 <Table variant="math" bordered>
   <thead>
   <tr className="success text-success">
@@ -250,7 +250,7 @@ export default () => {
         <div className="article-title">Fibonacci Numbers as Sums of Products of Fibonacci Numbers</div>
 	<ToggleRead className="article-closed">
 
-        <p>Let (a, b) be two consecutive fibonacci numbers, and let (c, d) be two consecutive Fibonacci numbers. (a, b) can overlap (c, d). The number ac + bd is a Fibonacci number. Examples: (a=3, b=5), (c=8, d=13). Then ac = 24, bd = 65, ac + bd = 89.</p>
+        <p>Let (a, b) be two consecutive Fibonacci numbers, and let (c, d) be two consecutive Fibonacci numbers. (a, b) can overlap (c, d). The number ac + bd is a Fibonacci number. Examples: (a=3, b=5), (c=8, d=13). Then ac = 24, bd = 65, ac + bd = 89.</p>
 
         <p>I don't have a proof that this always works, though I'm pretty sure it does.</p>
 
