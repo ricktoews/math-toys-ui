@@ -21,11 +21,24 @@ export default function HexCluster({
     // n >= 2 for this morph visualization
     const [n, setN] = useState(Math.max(2, Math.floor(initialN || 2)));
 
-    // ===== Colors & constants =====
-    const wedgeFill = ["#bcd4e6", "#d0f0c0", "#ffe4b5", "#f7c8d0", "#e8d3ff", "#faf3b3"];
-    const extra1 = "#f5d6b0";
-    const extra2 = "#c7e6e2";
-    const centerColor = "#9dc5bb";
+    // Wedge colors by index (0–5):
+    //   (5,0) = blue family
+    //   (1,2) = green family
+    //   (3,4) = warm/orange family
+    const wedgeFill = [
+    "#9ec5ff", // 0: soft sky blue
+    "#9fe3b0", // 1: light mint green
+    "#59c484", // 2: richer green
+    "#ffb88a", // 3: soft peach
+    "#ff7f5f", // 4: warm coral
+    "#346cbf", // 5: deeper blue
+    ];
+
+    // Extra rectangle (square-only): purple family
+    const extra1 = "#c7a4ff"; // lighter lavender
+    const extra2 = "#8b6bff"; // deeper violet
+    
+    const centerColor = "#333333";
     const stroke = "#555";
 
     const SQRT3 = Math.sqrt(3);
