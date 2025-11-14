@@ -145,9 +145,9 @@ export default function SquarePyramidalStack({
       }
 
       // Center vertically
-      const box = new THREE.Box3().setFromPoints(pts);
+      const boxCenters = new THREE.Box3().setFromPoints(pts);
       const center = new THREE.Vector3();
-      box.getCenter(center);
+      boxCenters.getCenter(center);
       for (const p of pts) p.z -= center.z;
 
       // Build instanced spheres
@@ -175,12 +175,16 @@ export default function SquarePyramidalStack({
       if (instanced.instanceColor) instanced.instanceColor.needsUpdate = true;
       group.add(instanced);
 
-      // --- Camera framing based on center lattice only (ignores sphere size) ---
-      // Tuned to “fit” nicely on most screens: lower factor => closer camera => larger on screen
-      const VIEW_FIT = 0.72; // sweet spot; try 0.68–0.80 if you want to tweak later
+      // --- Camera framing: fit the *centers* plus a margin for sphere radius ---
+      const VIEW_FIT = 0.72; // baseline closeness (lower = closer)
+
+      // Inflate the center-lattice box by sphere radius so small tiers don't clip
+      const camBox = boxCenters.clone();
+      camBox.min.addScalar(-sphereRadius);
+      camBox.max.addScalar(sphereRadius);
 
       const size = new THREE.Vector3();
-      box.getSize(size); // from centers only
+      camBox.getSize(size);
       const maxDim = Math.max(size.x, size.y, size.z) || (4 * layoutRadius);
       const dist = maxDim * VIEW_FIT / Math.tan((Math.PI * camera.fov) / 360);
 
