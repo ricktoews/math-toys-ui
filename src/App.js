@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import Main from './Main';
 import Phi from './components/Phi';
 import HexCluster from './components/HexCluster';
+import SquarePyramidalStack from './components/SquarePyramidalStack';
 //import PythagCList from './components/PythagCList';
 import PythagTriples from './components/PythagTriples';
 import Calendar from './components/Calendar';
@@ -80,6 +81,7 @@ function App() {
             <li><a href="/calendar">12-Digit Calendar</a></li>
             <li><a href="/denom">Decimal Expansions</a></li>
             <li><a href="/hex-cluster">Hex Cluster</a></li>
+            <li><a href="/square-pyramidal-stack">Square Pyramidal Stack</a></li>
             {/*
               <li><a href="/mastermind">Mastermind</a></li>
               <li><a href="/wordle">Wordle</a></li>
@@ -107,6 +109,7 @@ function App() {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/denom" element={<Denom />} />
           <Route path="/hex-cluster" element={<HexCluster />} />
+          <Route path="/square-pyramidal-stack" element={<SquarePyramidalStack />} />
           {/*
           <Route path="/mastermind" element={<Mastermind />} />
           <Route path="/wordle" element={<Wordle />} />

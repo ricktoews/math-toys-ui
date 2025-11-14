@@ -39,7 +39,7 @@ export default function HexCluster({
     const extra2 = "#8b6bff"; // deeper violet
     
     const centerColor = "#333333";
-    const stroke = "#555";
+    const stroke = "#fff";
 
     const SQRT3 = Math.sqrt(3);
     const DIRS = [
