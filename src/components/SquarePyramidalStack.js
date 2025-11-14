@@ -6,12 +6,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 function triangularNumber(n) {
   return (n * (n + 1)) / 2;
 }
-
 function tetrahedralNumber(n) {
   return (n * (n + 1) * (n + 2)) / 6;
 }
 
-// basic sanity checks
+// sanity checks (keep these)
 console.assert(triangularNumber(1) === 1, 'triangularNumber(1) should be 1');
 console.assert(triangularNumber(4) === 10, 'triangularNumber(4) should be 10');
 console.assert(tetrahedralNumber(1) === 1, 'tetrahedralNumber(1) should be 1');
@@ -90,13 +89,16 @@ export default function SquarePyramidalStack({
     resizeRendererToDisplaySize();
     window.addEventListener('resize', resizeRendererToDisplaySize);
 
-    // buildStack function that uses refs for scene/group, parameters for tiers/colorMode
+    // ---------------- buildStack ----------------
     buildStackRef.current = function buildStack(tiersValue, colorModeValue) {
       const group = groupRef.current;
       const sphereMatLocal = sphereMatRef.current;
-      if (!group || !sphereMatLocal) return;
+      const scene = sceneRef.current;
+      const camera = cameraRef.current;
+      const controls = controlsRef.current;
+      if (!group || !sphereMatLocal || !scene || !camera || !controls) return;
 
-      // Clear previous geometry/base
+      // Clear previous mesh/base
       if (instancedRef.current) {
         group.remove(instancedRef.current);
         instancedRef.current.geometry.dispose();
@@ -109,38 +111,31 @@ export default function SquarePyramidalStack({
         baseMeshRef.current = null;
       }
 
-      //const radius = 3;
-      const layoutRadius = 3 / (tiersValue + 3);   // controls spacing
-      const sphereScale = 3;                       // how much bigger spheres should be
-      const sphereRadius = layoutRadius * sphereScale;
+      // --- layout vs sphere size ---
+      const layoutRadius = 3 / (tiersValue + 3); // center-to-center driver
+      const sphereRadius = 0.92 * layoutRadius;  // keep distinct spheres (small gap)
 
-      const a = 2 * sphereRadius;                  // grid spacing in X/Y (unchanged)
-      const v = 2 * sphereRadius;                  // vertical spacing between tiers
+      const a = 2 * layoutRadius; // spacing in X/Y (centers)
+      const v = 2 * layoutRadius; // spacing in Z (centers)
+
       const pts = [];
-      const which = []; // 0 = large tetrahedron, 1 = small tetrahedron
-      const layers = [];
+      const which = [];   // 0 = large tetrahedron, 1 = small tetrahedron
+      const layers = [];  // 1..tiersValue
 
-
-      // Build two right-triangular tetrahedra whose union at each level n forms an n×n square
-      // For level n (1..tiers), we place an n×n grid and split it into two right triangles:
-      //   large:  i >= j  (T_n spheres)
-      //   small:  i <  j  (T_{n-1} spheres)
-      // Total per level = n^2 = T_n + T_{n-1}.
+      // Build two right-triangular tetrahedra whose union at level n is an n×n square
       for (let n = 1; n <= tiersValue; n++) {
         const side = n;
-        const z = (tiersValue - n) * v; // largest (n = tiers) at the bottom
+        const z = (tiersValue - n) * v; // largest layer at the bottom
         const offset = (side - 1) / 2;
         for (let i = 0; i < side; i++) {
           for (let j = 0; j < side; j++) {
             const x = (i - offset) * a;
             const y = (j - offset) * a;
             if (i >= j) {
-              // part of the larger n-tier tetrahedron
               pts.push(new THREE.Vector3(x, y, z));
               which.push(0);
               layers.push(n);
             } else if (n > 1) {
-              // part of the smaller (n-1)-tier tetrahedron
               pts.push(new THREE.Vector3(x, y, z));
               which.push(1);
               layers.push(n);
@@ -149,64 +144,54 @@ export default function SquarePyramidalStack({
         }
       }
 
-      // Overall centering: stack is already centered in X/Y by construction; just center in Z.
+      // Center vertically
       const box = new THREE.Box3().setFromPoints(pts);
       const center = new THREE.Vector3();
       box.getCenter(center);
-      for (const p of pts) {
-        p.z -= center.z;
-      }
+      for (const p of pts) p.z -= center.z;
 
       // Build instanced spheres
       const geo = new THREE.SphereGeometry(sphereRadius, 32, 32);
       const instanced = new THREE.InstancedMesh(geo, sphereMatLocal, pts.length);
       instancedRef.current = instanced;
+
       const matrix = new THREE.Matrix4();
       const color = new THREE.Color();
-
       for (let index = 0; index < pts.length; index++) {
         const p = pts[index];
         matrix.makeTranslation(p.x, p.y, p.z);
         instanced.setMatrixAt(index, matrix);
 
         if (colorModeValue === 'tetra') {
-          // Color by tetrahedron: big vs small
-          if (which[index] === 0) {
-            color.set('#0080dd'); // darker blue
-          } else {
-            color.set('#00e0ff'); // cyan
-          }
+          color.set(which[index] === 0 ? '#0080dd' : '#00e0ff');
         } else {
-          // Color by layer: alternating the same two blues by tier
-          const level = layers[index]; // 1..tiers
-          if (level % 2 === 0) {
-            color.set('#0080dd'); // darker blue on even tiers
-          } else {
-            color.set('#00e0ff'); // lighter/cyan on odd tiers
-          }
+          const level = layers[index];
+          color.set(level % 2 === 0 ? '#0080dd' : '#00e0ff');
         }
-
         instanced.setColorAt(index, color);
       }
+
       instanced.instanceMatrix.needsUpdate = true;
       if (instanced.instanceColor) instanced.instanceColor.needsUpdate = true;
       group.add(instanced);
 
-      // Camera framing based on centers only (ignores sphere radius)
+      // --- Camera framing based on center lattice only (ignores sphere size) ---
+      // Tuned to “fit” nicely on most screens: lower factor => closer camera => larger on screen
+      const VIEW_FIT = 0.72; // sweet spot; try 0.68–0.80 if you want to tweak later
+
       const size = new THREE.Vector3();
-      box.getSize(size);
+      box.getSize(size); // from centers only
       const maxDim = Math.max(size.x, size.y, size.z) || (4 * layoutRadius);
-      const dist = maxDim * 1.4 / Math.tan(Math.PI * camera.fov / 360);
+      const dist = maxDim * VIEW_FIT / Math.tan((Math.PI * camera.fov) / 360);
+
       camera.position.set(dist, dist, dist);
       controls.target.set(0, 0, 0);
       camera.lookAt(0, 0, 0);
-
     };
+    // --------------------------------------------------
 
     // initial build
-    if (buildStackRef.current) {
-      buildStackRef.current(tiers, colorMode);
-    }
+    if (buildStackRef.current) buildStackRef.current(initialTiers, 'tetra');
 
     // animation loop
     let frameId;
@@ -236,16 +221,12 @@ export default function SquarePyramidalStack({
 
   // --- rebuild stack when tiers or colorMode changes ---
   useEffect(() => {
-    if (buildStackRef.current) {
-      buildStackRef.current(tiers, colorMode);
-    }
+    if (buildStackRef.current) buildStackRef.current(tiers, colorMode);
   }, [tiers, colorMode]);
 
   // --- keep autoRotate in sync ---
   useEffect(() => {
-    if (controlsRef.current) {
-      controlsRef.current.autoRotate = autoRotate;
-    }
+    if (controlsRef.current) controlsRef.current.autoRotate = autoRotate;
   }, [autoRotate]);
 
   // stats for the white box
@@ -266,7 +247,6 @@ export default function SquarePyramidalStack({
     overflow: 'hidden',
     border: '1px solid rgba(255,255,255,0.08)',
   };
-
   const headerStyle = {
     padding: '8px 12px',
     display: 'flex',
@@ -275,14 +255,7 @@ export default function SquarePyramidalStack({
     borderBottom: '1px solid rgba(255,255,255,0.1)',
     fontSize: '13px',
   };
-
-  const controlsStyle = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '8px',
-    marginLeft: 'auto',
-  };
-
+  const controlsStyle = { display: 'flex', flexWrap: 'wrap', gap: '8px', marginLeft: 'auto' };
   const ctrlBlockStyle = {
     display: 'flex',
     alignItems: 'center',
@@ -292,12 +265,7 @@ export default function SquarePyramidalStack({
     borderRadius: '8px',
     border: '1px solid rgba(255,255,255,0.08)',
   };
-
-  const viewStyle = {
-    position: 'relative',
-    flex: 1,
-  };
-
+  const viewStyle = { position: 'relative', flex: 1 };
   const statsStyle = {
     position: 'absolute',
     top: 10,
@@ -310,11 +278,7 @@ export default function SquarePyramidalStack({
     fontSize: '12px',
     lineHeight: 1.4,
   };
-
-  const canvasHostStyle = {
-    width: '100%',
-    height: '100%',
-  };
+  const canvasHostStyle = { width: '100%', height: '100%' };
 
   // --- JSX ---
   return (
@@ -392,15 +356,9 @@ export default function SquarePyramidalStack({
       <div style={viewStyle}>
         <div ref={mountRef} style={canvasHostStyle} />
         <div style={statsStyle}>
-          <div>
-            tiers: {tiers} • spheres: {sphereCount}
-          </div>
-          <div>
-            square pyramidal P<sub>{tiers}</sub> = {squarePyr}
-          </div>
-          <div>
-            = T<sub>{tiers - 1}</sub> ({smallTet}) + T<sub>{tiers}</sub> ({bigTet})
-          </div>
+          <div>tiers: {tiers} • spheres: {sphereCount}</div>
+          <div>square pyramidal P<sub>{tiers}</sub> = {squarePyr}</div>
+          <div>= T<sub>{tiers - 1}</sub> ({smallTet}) + T<sub>{tiers}</sub> ({bigTet})</div>
         </div>
       </div>
     </div>
