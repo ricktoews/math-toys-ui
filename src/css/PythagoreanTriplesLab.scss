@@ -1,0 +1,610 @@
+// ---- simple theming variables ----
+$pt-text-main: #222;
+$pt-text-muted: #666;
+$pt-text-subtle: #999;
+$pt-border: #ddd;
+$pt-border-soft: #eee;
+$pt-card-bg: #fafafa;
+$pt-chip-bg: #ffffff;
+$pt-chip-border: #ccc;
+$pt-chip-active-bg: #12b0c9; // tweak to taste
+$pt-chip-active-text: #ffffff;
+$pt-accent: #12b0c9; // primary accent (slider / buttons)
+$pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
+
+// ---- root container ----
+// No padding / background here: let the site layout handle that.
+.pt-page {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+  color: $pt-text-main;
+}
+
+// optional local title if you keep it
+.pt-page-header {
+  max-width: 960px;
+  margin: 0 auto 1rem;
+}
+
+.pt-page-title {
+  font-size: 1.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+// ---- main layout ----
+.pt-main {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.pt-section-title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: $pt-text-muted;
+  margin-bottom: 0.4rem;
+}
+
+
+// ---- corner selector ----
+.pt-corner-selector {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: $pt-card-bg;
+  border: 1px solid $pt-border-soft;
+  box-shadow: $pt-shadow-soft;
+}
+
+.pt-corner-container {
+  max-width: 960px;
+  margin: 0 auto 0.5rem;
+}
+
+/* When expanded, we reuse .pt-corner-selector from before */
+
+/* Collapsed pill */
+.pt-corner-toggle {
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid $pt-border-soft;
+  background: #f7f7f7;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.pt-corner-toggle:hover {
+  background: #f0f0f0;
+}
+
+.pt-corner-toggle-icon {
+  font-size: 0.75rem;
+  color: $pt-text-subtle;
+}
+
+/* Optional: align "Done" button in the expanded view */
+.pt-corner-done-row {
+  margin-top: 0.9rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+
+.pt-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.pt-inline-custom {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 0.8rem;
+}
+
+.pt-inline-label {
+  font-size: 0.85rem;
+  color: $pt-text-muted;
+}
+
+.pt-chip {
+  border-radius: 999px;
+  border: 1px solid $pt-chip-border;
+  background: $pt-chip-bg;
+  color: $pt-text-main;
+  padding: 0.25rem 0.9rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.12s ease-out, border-color 0.12s ease-out,
+    transform 0.08s ease-out, box-shadow 0.12s ease-out;
+}
+
+.pt-chip:hover {
+  background: #f2f2f2;
+  border-color: darken($pt-chip-border, 8%);
+}
+
+.pt-chip-active {
+  background: $pt-chip-active-bg;
+  border-color: $pt-chip-active-bg;
+  color: $pt-chip-active-text;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03);
+}
+
+// custom input
+.pt-custom-input-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.7rem;
+  font-size: 0.9rem;
+}
+
+.pt-custom-input-row label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.pt-input {
+  padding: 0.3rem 0.6rem;
+  border-radius: 7px;
+  border: 1px solid $pt-border;
+  background: #ffffff;
+  color: $pt-text-main;
+  width: 5rem;
+  font-size: 0.9rem;
+}
+
+.pt-input:focus {
+  outline: none;
+  border-color: $pt-accent;
+  box-shadow: 0 0 0 1px rgba($pt-accent, 0.35);
+}
+
+// ---- buttons ----
+.pt-btn,
+.pt-btn-secondary {
+  border-radius: 999px;
+  border: none;
+  padding: 0.33rem 0.9rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.08s ease-out, box-shadow 0.12s ease-out,
+    background 0.12s ease-out;
+}
+
+.pt-btn {
+  background: $pt-accent;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba($pt-accent, 0.3);
+}
+
+.pt-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba($pt-accent, 0.35);
+}
+
+.pt-btn:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow: 0 2px 10px rgba($pt-accent, 0.25);
+}
+
+.pt-btn-secondary {
+  background: #ffffff;
+  color: $pt-text-main;
+  border: 1px solid $pt-border;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+}
+
+.pt-btn-secondary:hover {
+  background: #f4f4f4;
+}
+
+// ---- cards (analysis + triples) ----
+.pt-card {
+  background: $pt-card-bg;
+  border-radius: 10px;
+  padding: 0.9rem 1rem 1rem;
+  border: 1px solid $pt-border-soft;
+  box-shadow: $pt-shadow-soft;
+}
+
+.pt-card-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: $pt-text-muted;
+  margin-bottom: 0.5rem;
+}
+
+// analysis
+.pt-analysis-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.pt-label {
+  color: $pt-text-muted;
+}
+
+.pt-analysis-note {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: $pt-text-subtle;
+}
+
+// ---- triples table ----
+.pt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.pt-table th,
+.pt-table td {
+  padding: 0.35rem 0.2rem;
+  text-align: left;
+}
+
+.pt-table th {
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: $pt-text-muted;
+  border-bottom: 1px solid $pt-border;
+}
+
+.pt-table tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.pt-table tbody tr:hover {
+  background: rgba($pt-accent, 0.06);
+}
+
+// ---- info link ----
+.pt-info-link-section {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pt-info-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.85rem;
+  color: darken($pt-accent, 8%);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.pt-info-link:hover {
+  text-decoration: underline;
+}
+
+// ---- modals ----
+// here we *do* want a dim backdrop that overlays everything
+.pt-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.pt-modal {
+  background: #ffffff;
+  border-radius: 12px;
+  width: min(640px, 92vw);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.35);
+  border: 1px solid $pt-border;
+  overflow: hidden;
+}
+
+.pt-info-modal {
+  width: min(560px, 92vw);
+}
+
+.pt-modal-header {
+  position: relative;
+  background: #1e1f23; // or your existing dark gradient
+  color: #fff;
+  padding: 1rem 1.5rem;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  display: flex;
+  justify-content: center; // title centered
+  align-items: center;
+}
+
+.pt-modal-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.pt-modal-close-btn {
+  position: absolute;
+  right: .75rem;
+  top: 0rem;
+  font-size: 1.4rem;
+  font-weight: 300;
+  color: #ccc;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+
+.pt-modal-body {
+  padding: 0.8rem 1rem;
+  overflow-y: auto;
+  font-size: 0.9rem;
+}
+
+.pt-modal-body p {
+  margin: 0 0 0.6rem;
+}
+
+.pt-modal-body ul {
+  padding-left: 1.1rem;
+  margin: 0.4rem 0;
+}
+
+.pt-modal-body li {
+  margin-bottom: 0.25rem;
+}
+
+.pt-modal-body code {
+  background: #f2f2f2;
+  padding: 0.1rem 0.25rem;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+
+.pt-modal-placeholder {
+  margin-top: 0.6rem;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px dashed $pt-border;
+  text-align: center;
+  font-size: 0.85rem;
+  color: $pt-text-subtle;
+}
+
+.pt-modal-footer {
+  padding: 0.6rem 1rem 0.8rem;
+  border-top: 1px solid $pt-border-soft;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pt-prime-builder {
+  margin-top: 0.9rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid $pt-border-soft;
+  font-size: 0.85rem;
+}
+
+.pt-prime-builder-title {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: $pt-text-subtle;
+  margin-bottom: 0.4rem;
+}
+
+.pt-prime-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
+}
+
+.pt-prime-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center; // so the check button lines up
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
+}
+
+.pt-prime-apply-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  border: 1px solid $pt-border;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: 0.4rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.pt-prime-apply-icon:hover:not(:disabled) {
+  background: $pt-accent;
+  color: #fff;
+  border-color: $pt-accent;
+}
+
+.pt-prime-apply-icon:disabled {
+  cursor: default;
+  opacity: 0.4;
+  box-shadow: none;
+}
+.pt-prime-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid $pt-border;
+  background: #fff;
+}
+
+.pt-prime-label {
+  font-weight: 500;
+}
+
+.pt-prime-btn {
+  border: none;
+  background: #f5f5f5;
+  border-radius: 999px;
+  width: 1.4rem;
+  height: 1.4rem;
+  line-height: 1.4rem;
+  text-align: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.pt-prime-btn:hover {
+  background: #e9e9e9;
+}
+
+.pt-prime-exp {
+  font-size: 0.8rem;
+  color: $pt-text-muted;
+}
+
+.pt-prime-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.pt-prime-apply {
+  font-size: 0.8rem;
+  padding-inline: 0.9rem;
+}
+
+.pt-modal-grid-wrapper {
+  margin-top: 0.8rem;
+}
+
+.pt-summary-sep {
+  color: $pt-text-subtle;
+  margin: 0 0.25rem;
+}
+
+.pt-summary-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.pt-summary-label {
+  color: $pt-text-muted;
+}
+
+.pt-summary-value {
+  font-weight: 500;
+}
+
+.pt-info-icon {
+  margin-left: 0.4rem;
+  font-size: 0.9rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #666;
+}
+
+.pt-info-icon:hover {
+  color: #000;
+}
+
+/* Tooltip backdrop */
+.pt-corner-tooltip-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+/* Tooltip panel */
+.pt-corner-tooltip {
+  background: #fff;
+  padding: 1rem 1.2rem;
+  border-radius: 10px;
+  width: 260px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  text-align: center;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.pt-corner-tooltip-title {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  font-size: 1rem;
+}
+
+.pt-corner-tooltip-graphic {
+  margin: 0.5rem 0;
+}
+
+.pt-corner-tooltip-text {
+  font-size: 0.86rem;
+  margin: 0.2rem 0 0.8rem;
+  color: #444;
+  line-height: 1.25rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ---- responsive tweaks ----
+@media (max-width: 640px) {
+  .pt-main {
+    gap: 1rem;
+  }
+
+  .pt-card {
+    padding: 0.8rem 0.85rem 0.9rem;
+  }
+
+  .pt-analysis-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+

@@ -69,9 +69,28 @@ export default () => {
 	return (
     <HomeWrapper className="container">
       <article>
+        <div className="article-title">Odd Square Minus 1 - Always Divisible By 8</div>
+
+        <ToggleRead className="article-closed">
+        <p>2025 is an odd square. At first glance, one less than an odd number is even, and so divisible by 2. But what can we say beyond that?</p>
+
+        <p>Let's take a closer look at the square. In general, an odd number is 2x + 1 for some integer x. The square of this is (2x + 1)^2 = 4x^2 + 4x + 1.</p>
+
+        <p>Now, if we subtract 1 from this expression, we get 4x^2 + 4x + 1 - 1 = 4x^2 + 4x, which is clearly divisible by 4. But is it also divisible by 8?</p>
+
+        <p>To determine this, we can factor out a 4: 4(x^2 + x). Now, we need to see if (x^2 + x) is even, because if it is, then the entire expression will be divisible by 8.</p>
+
+        <p>Notice that (x^2 + x) can be factored as x(x + 1). This product is always even because one of the two consecutive integers x or (x + 1) must be even. Therefore, (x^2 + x) is even, and we can express it as 2k for some integer k.</p>
+
+        <p>Substituting this back into our expression, we have 4 * 2k = 8k, which shows that the entire expression is divisible by 8.</p>
+        
+        </ToggleRead>
+      </article>
+
+      <article>
         <div className="article-title">The 12-digit Calendar, Part 2</div>
 
-        <ToggleRead className="article-opened">
+        <ToggleRead className="article-closed">
 
         <p>OK, so you can get the day of the week for any date in 2021. That's neat. But what about for other years?</p>
 

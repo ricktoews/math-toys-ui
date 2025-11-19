@@ -12,6 +12,7 @@ import Calendar from './components/Calendar';
 //import Mastermind from './components/mastermind/AppSolves';
 //import Wordle from './components/wordle/AppSolves';
 import Denom from './components/Denom';
+import PythagoreanTriplesLab from './components/PythagoreanTriplesLab';
 
 function App() {
   const [menuState, setMenuState] = useState(false);
@@ -77,7 +78,7 @@ function App() {
             {/*
             <li><a href="/pythag-clist">Pythag C List</a></li>
             */}
-            <li><a href="/pythag">Pythagorean Triples</a></li>
+            <li><a href="/pythagorean-triples-lab">Pythagorean Triples</a></li>
             <li><a href="/calendar">12-Digit Calendar</a></li>
             <li><a href="/denom">Decimal Expansions</a></li>
             <li><a href="/hex-cluster">Hex Cluster</a></li>
@@ -110,6 +111,7 @@ function App() {
           <Route path="/denom" element={<Denom />} />
           <Route path="/hex-cluster" element={<HexCluster />} />
           <Route path="/square-pyramidal-stack" element={<SquarePyramidalStack />} />
+          <Route path="/pythagorean-triples-lab" element={<PythagoreanTriplesLab />} />
           {/*
           <Route path="/mastermind" element={<Mastermind />} />
           <Route path="/wordle" element={<Wordle />} />
