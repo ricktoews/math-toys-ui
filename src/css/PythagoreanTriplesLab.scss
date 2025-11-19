@@ -605,10 +605,30 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   line-height: 1.25rem;
 }
 
-.pt-gcd-cell {
+.pt-table .pt-gcd-cell {
   text-align: center;
   width: 4rem;
 }
+
+.pt-star-icon {
+  width: 1.7rem;   // adjust size to taste
+  height: 1.7rem;
+}
+
+.pt-star-shape {
+  fill: #d4a017;       // gold
+  stroke: #8f6a00;     // darker outline
+  stroke-width: 3;
+}
+
+.pt-star-text {
+  fill: #fff;
+  font-size: 42px;
+  font-weight: 700;
+  font-family: "Inter", sans-serif;
+  dominant-baseline: middle;
+}
+
 
 
 @keyframes fadeIn {

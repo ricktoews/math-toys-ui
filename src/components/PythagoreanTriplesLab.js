@@ -112,7 +112,33 @@ function TriplesList({ triples, onSelectTriple }) {
                             <tr key={`${t.a}-${t.b}-${t.c}-${idx}`}>
                                 <td>{t.a}, {t.b}, {t.c}</td>
                                 <td>{t.a}² + {t.b}² = {t.c}²</td>
-                                <td className="pt-gcd-cell">{t.gcd}</td>
+                                <td className="pt-gcd-cell">
+                                    {t.gcd === 1 ? (
+                                        <span className="pt-gcd-star-svg" title="Primitive triple">
+                                            <svg
+                                                viewBox="0 0 100 100"
+                                                className="pt-star-icon"
+                                                aria-hidden="true"
+                                            >
+                                                <polygon
+                                                    points="50,8 61,38 93,38 67,58 78,90 50,72 22,90 33,58 7,38 39,38"
+                                                    className="pt-star-shape"
+                                                />
+                                                <text
+                                                    x="50"
+                                                    y="57"     // ← OPTICAL CENTER
+                                                    textAnchor="middle"
+                                                    className="pt-star-text"
+                                                >
+                                                    1
+                                                </text>
+                                            </svg>
+                                        </span>
+                                    ) : (
+                                        t.gcd
+                                    )}
+                                </td>
+
 
                                 <td>
                                     <button
