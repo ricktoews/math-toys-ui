@@ -501,9 +501,13 @@ h4 {
 /* all movable a-squares animate their transform */
 .a-square.movable {
   position: relative;
-  transition: transform 0.8s ease-in-out;
-  /* optional: make them appear above b^2 / c^2 */
+  transition: transform 0.8s ease-in-out, background-color 0.6s ease-in-out;
   z-index: 2;
+}
+
+/* pick any color you like here */
+.a-square.movable.a-unified {
+  background-color: #b0b0b0; /* example: mid-gray */
 }
 
 /* when in "square" mode, move each a-square by its --tx / --ty */

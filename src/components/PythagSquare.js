@@ -41,25 +41,23 @@ const makePythagLabel = (label, value, triple, format = 'square') => {
 };
 
 const highlightAParts = (area, state) => {
+  let label = document.querySelector(`[data-animate="a-${area}-label"]`);
+  if (!label) return;
+
   if (state) {
-    let squares = document.querySelectorAll(
-      `[data-animate="a-${area}-square"]`
-    );
-    squares.forEach((s) => s.classList.add(`a-${area}-square`));
-    let label = document.querySelector(`[data-animate="a-${area}-label"]`);
-    label?.classList?.add(`a-${area}-label`);
+    label.classList.add(`a-${area}-label`);
   } else {
-    let squares = document.querySelectorAll(`.a-${area}-square`);
-    squares.forEach((s) => s.classList.remove(`a-${area}-square`));
-    let label = document.querySelector(`[data-animate="a-${area}-label"]`);
-    label?.classList?.remove(`a-${area}-label`);
+    label.classList.remove(`a-${area}-label`);
   }
 };
+
 
 function PythagSquare(props) {
   const [mode, setMode] = useState('wrap');
   const [cArea, setCArea] = useState(200);
   const [triple, setTriple] = useState(props.triple);
+  const [unified, setUnified] = useState(false);
+  const unifyTimeoutRef = useRef(null);
 
   const [a, b, c] = triple;
 
@@ -89,6 +87,7 @@ function PythagSquare(props) {
     highlightAParts('side', mode === 'wrap');
     highlightAParts('top', mode === 'wrap');
   }, [mode]);
+
 
   // Measure actual spacing between neighboring a-squares
   useEffect(() => {
@@ -143,6 +142,38 @@ function PythagSquare(props) {
       });
     }
   }, [cArea, triple]);
+
+  useEffect(() => {
+    // clear any previous timer
+    if (unifyTimeoutRef.current) {
+      clearTimeout(unifyTimeoutRef.current);
+      unifyTimeoutRef.current = null;
+    }
+
+    if (mode === 'square') {
+      const MOVE_DURATION = 800;  // ms, must match CSS transform duration
+      const EXTRA_DELAY = 500;    // ms, how long they sit before turning gray
+      const totalDelay = MOVE_DURATION + EXTRA_DELAY;
+
+      // start square mode with original colors
+      setUnified(false);
+
+      unifyTimeoutRef.current = setTimeout(() => {
+        setUnified(true); // now they fade to gray
+      }, totalDelay);
+    } else {
+      // as soon as we go back to wrap, drop the unified gray
+      setUnified(false);
+    }
+
+    return () => {
+      if (unifyTimeoutRef.current) {
+        clearTimeout(unifyTimeoutRef.current);
+        unifyTimeoutRef.current = null;
+      }
+    };
+  }, [mode]);
+
 
   const handleAClicked = () => {
     if (mode === 'square') {
@@ -199,14 +230,17 @@ function PythagSquare(props) {
           '--ty': `${(destRow - row) * stepY}px`,
         };
 
+        const areaClass = area ? `a-${area}-square` : '';
+
         cols.push(
           <div
             key={`${row}-${col}`}
             style={style}
             data-animate={`a-${area}-square`}
-            className="a-square movable"
+            className={`a-square movable ${areaClass} ${unified ? 'a-unified' : ''}`}
           ></div>
         );
+
 
         index++;
       }
@@ -216,9 +250,8 @@ function PythagSquare(props) {
     return (
       <div
         onClick={handleAClicked}
-        className={`a-wrapper ${
-          mode === 'square' ? 'square-mode' : 'wrap-mode'
-        }`}
+        className={`a-wrapper ${mode === 'square' ? 'square-mode' : 'wrap-mode'
+          }`}
       >
         {wraparoundRows.map((row, key) => (
           <div key={key} className="a-row-wrapper">
