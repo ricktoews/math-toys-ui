@@ -50,7 +50,6 @@ function factorsToString(factors) {
         .join(" · ");
 }
 
-// Generate triples for fixed k = c - b
 function generateTriples(k, maxC, maxResults) {
     const triples = [];
     const absK = Math.abs(k);
@@ -71,8 +70,10 @@ function generateTriples(k, maxC, maxResults) {
         if (!Number.isInteger(b) || b <= 0 || c > maxC) continue;
         if (a >= b) continue; // enforce ordering a < b < c
 
-        const primitive = gcd3(a, b, c) === 1;
-        triples.push({ a, b, c, primitive });
+        const g = gcd3(a, b, c);
+        const primitive = g === 1;
+
+        triples.push({ a, b, c, primitive, gcd: g });
 
         if (triples.length >= maxResults) break;
     }
@@ -101,18 +102,18 @@ function TriplesList({ triples, onSelectTriple }) {
                         <tr>
                             <th>Triple</th>
                             <th>Equation</th>
-                            <th>Primitive?</th>
+                            <th>gcd(a, b, c)</th>
                             <th></th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {triples.map((t, idx) => (
                             <tr key={`${t.a}-${t.b}-${t.c}-${idx}`}>
                                 <td>{t.a}, {t.b}, {t.c}</td>
-                                <td>
-                                    {t.a}² + {t.b}² = {t.c}²
-                                </td>
-                                <td>{t.primitive ? <span className="pt-check">✓</span> : <span>&nbsp;</span>}</td>
+                                <td>{t.a}² + {t.b}² = {t.c}²</td>
+                                <td className="pt-gcd-cell">{t.gcd}</td>
+
                                 <td>
                                     <button
                                         className="pt-btn pt-btn-secondary"
@@ -124,6 +125,7 @@ function TriplesList({ triples, onSelectTriple }) {
                             </tr>
                         ))}
                     </tbody>
+
                 </table>
             </div>
         </section>
@@ -133,10 +135,7 @@ function TriplesList({ triples, onSelectTriple }) {
 function TripleModal({ triple, onClose }) {
     if (!triple) return null;
 
-    const { a, b, c, primitive } = triple;
-
-    // gcd3 + factorize + factorsToString are the same helpers you already have
-    const g = gcd3(a, b, c);
+    const { a, b, c, primitive, gcd: g } = triple;
     const commonFactorStr = primitive
         ? null
         : factorsToString(factorize(g)); // e.g. "2 · 3²"
@@ -336,101 +335,101 @@ function PrimeCornerBuilder({ onApply }) {
 }
 
 function CornerInfoTooltip({ open, onClose }) {
-  if (!open) return null;
+    if (!open) return null;
 
-  return (
-    <div className="pt-corner-tooltip-backdrop" onClick={onClose}>
-      <div
-        className="pt-corner-tooltip"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="pt-corner-tooltip-title">What is the corner?</div>
+    return (
+        <div className="pt-corner-tooltip-backdrop" onClick={onClose}>
+            <div
+                className="pt-corner-tooltip"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="pt-corner-tooltip-title">What is the corner?</div>
 
-        <div className="pt-corner-tooltip-graphic">
-          {/* Tiny visual diagram modeled on c = 5, b = 4, a = 3 */}
-          <svg width="150" height="150">
-            {/* c² background */}
-            <rect
-              x="10"
-              y="10"
-              width="100"
-              height="100"
-              fill="#f6f6f6"
-              stroke="#555"
-            />
+                <div className="pt-corner-tooltip-graphic">
+                    {/* Tiny visual diagram modeled on c = 5, b = 4, a = 3 */}
+                    <svg width="150" height="150">
+                        {/* c² background */}
+                        <rect
+                            x="10"
+                            y="10"
+                            width="100"
+                            height="100"
+                            fill="#f6f6f6"
+                            stroke="#555"
+                        />
 
-            {/* vertical strip on the left: width = c - b */}
-            <rect
-              x="10"
-              y="30"
-              width="20"
-              height="80"
-              fill="#999999"
-              stroke="#f6f6f6"
-              strokeWidth="1"
-            />
+                        {/* vertical strip on the left: width = c - b */}
+                        <rect
+                            x="10"
+                            y="30"
+                            width="20"
+                            height="80"
+                            fill="#999999"
+                            stroke="#f6f6f6"
+                            strokeWidth="1"
+                        />
 
-            {/* horizontal strip on top: height = c - b */}
-            <rect
-              x="30"
-              y="10"
-              width="80"
-              height="20"
-              fill="#999999"
-              stroke="#f6f6f6"
-              strokeWidth="1"
-            />
+                        {/* horizontal strip on top: height = c - b */}
+                        <rect
+                            x="30"
+                            y="10"
+                            width="80"
+                            height="20"
+                            fill="#999999"
+                            stroke="#f6f6f6"
+                            strokeWidth="1"
+                        />
 
-            {/* corner square (c−b)²: overlaps of the two strips */}
-            <rect
-              x="10"
-              y="10"
-              width="20"
-              height="20"
-              fill="#000099"
-              stroke="#f6f6f6"
-              strokeWidth="1"
-            />
+                        {/* corner square (c−b)²: overlaps of the two strips */}
+                        <rect
+                            x="10"
+                            y="10"
+                            width="20"
+                            height="20"
+                            fill="#000099"
+                            stroke="#f6f6f6"
+                            strokeWidth="1"
+                        />
 
-            {/* b² anchored at lower-right */}
-            <rect
-              x="30"
-              y="30"
-              width="80"
-              height="80"
-              fill="#666"
-              stroke="#f6f6f6"
-              strokeWidth="1"
-            />
+                        {/* b² anchored at lower-right */}
+                        <rect
+                            x="30"
+                            y="30"
+                            width="80"
+                            height="80"
+                            fill="#666"
+                            stroke="#f6f6f6"
+                            strokeWidth="1"
+                        />
 
-            {/* Labels */}
-            <text x="58" y="72" fontSize="9" fill="#f6f6f6">
-              b²
-            </text>
-            <text x="52" y="126" fontSize="9" fill="#333">
-              c²
-            </text>
-          </svg>
+                        {/* Labels */}
+                        <text x="58" y="72" fontSize="9" fill="#f6f6f6">
+                            b²
+                        </text>
+                        <text x="52" y="126" fontSize="9" fill="#333">
+                            c²
+                        </text>
+                    </svg>
+                </div>
+
+                <p className="pt-corner-tooltip-text">
+                    We draw the <strong>c²</strong> square and place the{" "}
+                    <strong>b²</strong> square snug in the lower right corner. This
+                    leaves a vertical strip on the left and a horizontal strip across
+                    the top. Each strip has thickness <strong>c − b</strong>.
+                </p>
+                <p className="pt-corner-tooltip-text">
+                    Where those two strips overlap in the upper left, you get a small
+                    square of size <strong>(c − b) × (c − b)</strong>. That little
+                    square is what we call the <strong>corner</strong>.
+                </p>
+
+                <button className="pt-btn" onClick={onClose}>
+                    Close
+                </button>
+            </div>
         </div>
-
-        <p className="pt-corner-tooltip-text">
-          We draw the <strong>c²</strong> square and place the{" "}
-          <strong>b²</strong> square snug in the lower right corner. This
-          leaves a vertical strip on the left and a horizontal strip across
-          the top. Each strip has thickness <strong>c − b</strong>.
-        </p>
-        <p className="pt-corner-tooltip-text">
-          Where those two strips overlap in the upper left, you get a small
-          square of size <strong>(c − b) × (c − b)</strong>. That little
-          square is what we call the <strong>corner</strong>.
-        </p>
-
-        <button className="pt-btn" onClick={onClose}>
-          Close
-        </button>
-      </div>
-    </div>
-  );
+    );
 }
 
 

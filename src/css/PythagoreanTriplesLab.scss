@@ -271,6 +271,7 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   font-size: 0.75rem;
   color: $pt-text-muted;
   border-bottom: 1px solid $pt-border;
+  white-space: nowrap;
 }
 
 .pt-table tbody tr:nth-child(even) {
@@ -280,6 +281,23 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
 .pt-table tbody tr:hover {
   background: rgba($pt-accent, 0.06);
 }
+
+.pt-table td:last-child,
+.pt-table th:last-child {
+  text-align: right;
+  padding-right: 0.75rem; // optional, just looks nicer
+}
+
+.pt-primitive-cell {
+  text-align: center;
+  width: 4rem; /* optional but helps keep column neat */
+}
+
+.pt-check {
+  display: inline-block;
+  text-align: center;
+}
+
 
 // ---- info link ----
 .pt-info-link-section {
@@ -586,6 +604,12 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   color: #444;
   line-height: 1.25rem;
 }
+
+.pt-gcd-cell {
+  text-align: center;
+  width: 4rem;
+}
+
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
