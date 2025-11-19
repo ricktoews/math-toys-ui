@@ -184,83 +184,143 @@ function PythagSquare(props) {
     setMode(mode === 'square' ? 'wrap' : 'square');
   };
 
-  function drawASquare(triple) {
-    const [a, b, c] = triple;
-    const corner = c - b;
-    const cellSize = Math.floor(cArea / c);
-    const side = cellSize + 'px';
+function drawASquare(triple) {
+  const [a, b, c] = triple;
+  const corner = c - b;
+  const cellSize = Math.floor(cArea / c);
+  const side = cellSize + 'px';
 
-    const stepX = step.dx || cellSize;
-    const stepY = step.dy || cellSize;
+  const stepX = step.dx || cellSize;
+  const stepY = step.dy || cellSize;
 
-    let wraparoundRows = [];
-    let index = 0; // counts squares that belong to a^2
+  // First pass: collect all a^2 squares and their positions
+  // index is 1..a^2 in row-major order over the wraparound region
+  let aCells = []; // { row, col, index, area }
+  let index = 0;
 
-    for (let row = 0; row < c; row++) {
-      let cols = [];
-      for (let col = 0; col < c; col++) {
-        // part of b^2 only
-        if (row >= corner && col >= corner) {
-          cols.push(
-            <div
-              key={`${row}-${col}`}
-              style={{ width: side, height: side }}
-              className="a-square no-show"
-            ></div>
-          );
-          continue;
-        }
+  for (let row = 0; row < c; row++) {
+    for (let col = 0; col < c; col++) {
+      // b^2 region (bottom-right): not part of a^2
+      if (row >= corner && col >= corner) continue;
 
-        let area = '';
-        if (row < corner && col < corner) {
-          area = 'corner';
-        } else if (row < corner) {
-          area = 'top';
-        } else if (col < corner) {
-          area = 'side';
-        }
+      // classify which part of a^2 this cell belongs to
+      let area = '';
+      if (row < corner && col < corner) {
+        area = 'corner';
+      } else if (row < corner) {
+        area = 'top';
+      } else if (col < corner) {
+        area = 'side';
+      }
 
-        const destRow = Math.floor(index / a);
-        const destCol = index % a;
+      index += 1;
+      aCells.push({ row, col, index, area });
+    }
+  }
 
-        const style = {
-          width: side,
-          height: side,
-          '--tx': `${(destCol - col) * stepX}px`,
-          '--ty': `${(destRow - row) * stepY}px`,
-        };
+  // Partition into "stay" and "move"
+  const stays = [];
+  const moves = [];
+  for (const cell of aCells) {
+    if (cell.row < a && cell.col < a) {
+      stays.push(cell);
+    } else {
+      moves.push(cell);
+    }
+  }
 
-        const areaClass = area ? `a-${area}-square` : '';
+  // Destinations inside the a x a block
+  const destByIndex = {};
+  const destTaken = new Set();
 
+  // Stays: keep their current positions
+  for (const cell of stays) {
+    const key = `${cell.row},${cell.col}`;
+    destTaken.add(key);
+    destByIndex[cell.index] = { row: cell.row, col: cell.col };
+  }
+
+  // Collect free target cells within the a x a square
+  const freeTargets = [];
+  for (let r = 0; r < a; r++) {
+    for (let cCol = 0; cCol < a; cCol++) {
+      const key = `${r},${cCol}`;
+      if (!destTaken.has(key)) {
+        freeTargets.push({ row: r, col: cCol });
+      }
+    }
+  }
+
+  // Assign each mover to the next free target (row-major order)
+  moves.forEach((cell, i) => {
+    const target = freeTargets[i];
+    destByIndex[cell.index] = { row: target.row, col: target.col };
+  });
+
+  // For quick lookup by position during render
+  const aCellByPos = new Map();
+  for (const cell of aCells) {
+    aCellByPos.set(`${cell.row},${cell.col}`, cell);
+  }
+
+  // Second pass: build the actual grid, using destByIndex for transforms
+  let wraparoundRows = [];
+
+  for (let row = 0; row < c; row++) {
+    let cols = [];
+    for (let col = 0; col < c; col++) {
+      // non-a^2 region (pure b^2)
+      if (row >= corner && col >= corner) {
         cols.push(
           <div
             key={`${row}-${col}`}
-            style={style}
-            data-animate={`a-${area}-square`}
-            className={`a-square movable ${areaClass} ${unified ? 'a-unified' : ''}`}
+            style={{ width: side, height: side }}
+            className="a-square no-show"
           ></div>
         );
-
-
-        index++;
+        continue;
       }
-      wraparoundRows.push(cols);
-    }
 
-    return (
-      <div
-        onClick={handleAClicked}
-        className={`a-wrapper ${mode === 'square' ? 'square-mode' : 'wrap-mode'
-          }`}
-      >
-        {wraparoundRows.map((row, key) => (
-          <div key={key} className="a-row-wrapper">
-            {row}
-          </div>
-        ))}
-      </div>
-    );
+      const cell = aCellByPos.get(`${row},${col}`);
+      const dest = destByIndex[cell.index];
+
+      const style = {
+        width: side,
+        height: side,
+        '--tx': `${(dest.col - col) * stepX}px`,
+        '--ty': `${(dest.row - row) * stepY}px`,
+      };
+
+      const areaClass = cell.area ? `a-${cell.area}-square` : '';
+
+      cols.push(
+        <div
+          key={`${row}-${col}`}
+          style={style}
+          data-animate={`a-${cell.area}-square`}
+          className={`a-square movable ${areaClass}`}
+        ></div>
+      );
+    }
+    wraparoundRows.push(cols);
   }
+
+  return (
+    <div
+      onClick={handleAClicked}
+      className={`a-wrapper ${
+        mode === 'square' ? 'square-mode' : 'wrap-mode'
+      }`}
+    >
+      {wraparoundRows.map((row, key) => (
+        <div key={key} className="a-row-wrapper">
+          {row}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 
   function drawBSquare(triple) {
     const [a, b, c] = triple;
