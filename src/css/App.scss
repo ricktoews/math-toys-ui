@@ -477,3 +477,41 @@ h4 {
 .period {
   word-break: break-all;
 }
+
+
+
+.a-square,
+.b-square,
+.c-square {
+  box-sizing: border-box;
+  /* whatever border you already have */
+  /* border: 1px solid #fff; */
+}
+
+
+.a-wrapper.square-mode .a-square.movable {
+  transform: translate(var(--tx), var(--ty));
+}
+/* existing .a-square, .b-square, .c-square styles stay as-is */
+
+.a-wrapper {
+  cursor: pointer;
+}
+
+/* all movable a-squares animate their transform */
+.a-square.movable {
+  position: relative;
+  transition: transform 0.8s ease-in-out;
+  /* optional: make them appear above b^2 / c^2 */
+  z-index: 2;
+}
+
+/* when in "square" mode, move each a-square by its --tx / --ty */
+.a-wrapper.square-mode .a-square.movable {
+  transform: translate(var(--tx), var(--ty));
+}
+
+/* optional: in wrap mode, ensure no transform is applied */
+.a-wrapper.wrap-mode .a-square.movable {
+  transform: none;
+}
