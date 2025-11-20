@@ -125,6 +125,55 @@ function MyVerticallyCenteredModal(props) {
   );
 }
 
+function ExpansionRow({ expansion, expansionData, periodList, onClickNumerator, isExpanded, onToggle }) {
+  const numeratorData = [];
+  const periodData = parsedPeriod(
+    expansion,
+    expansionData[expansion][0].beginRepeat
+  );
+  const periodJSX = getPeriodJSX(periodData);
+  
+  expansionData[expansion].forEach(item => {
+    numeratorData[item.numerator] = {
+      position: item.position,
+      beginRepeat: item.beginRepeat
+    };
+  });
+
+  const numeratorCount = Object.keys(numeratorData).length;
+
+  return (
+    <tr className={isExpanded ? "expansion-row-expanded" : "expansion-row-collapsed"}>
+      <td>
+        <div 
+          className="expansion-row-header"
+          onClick={onToggle}
+        >
+          <div className="digits">{periodJSX}</div>
+          <div className="expansion-toggle-indicator">
+            <span className="expansion-numerator-count">
+              {numeratorCount} numerator{numeratorCount !== 1 ? 's' : ''}
+            </span>
+            <span className="expansion-toggle-icon">
+              {isExpanded ? '▴' : '▾'}
+            </span>
+          </div>
+        </div>
+        
+        {isExpanded && (
+          <div className="expansion-row-content">
+            <NumeratorList
+              digits={expansion}
+              numeratorData={numeratorData}
+              onClick={onClickNumerator}
+            />
+          </div>
+        )}
+      </td>
+    </tr>
+  );
+}
+
 function Denom(props) {
   const [denom, setDenom] = useState();
   const [inputValue, setInputValue] = useState('');
@@ -139,6 +188,7 @@ function Denom(props) {
   const [denomIsPrime, setDenomIsPrime] = useState(false);
   const [error, setError] = useState('');
   const [denomCollapsed, setDenomCollapsed] = useState(false);
+  const [expandedRow, setExpandedRow] = useState(null);
 
   const primeQuickPicks = [
     3, 7, 11, 13, 17, 19,
@@ -170,6 +220,9 @@ function Denom(props) {
     setExpansionData(organizeExpansionData);
     setPeriodList(expansionData);
 
+    // Reset expanded row when new data loads
+    setExpandedRow(null);
+    
     // Collapse the selection panel after a successful selection
     setDenomCollapsed(true);
   }
@@ -212,31 +265,47 @@ function Denom(props) {
     getDenomData(n);
   };
 
+  const handleToggleRow = (expansion) => {
+    setExpandedRow(prevExpanded => prevExpanded === expansion ? null : expansion);
+  };
+
   // Summary info for collapsed pill
   const factorStr = denom ? factorsToString(denomFactorsRaw) : '';
   const expansionCount = expansionKeys.length;
+  
+  // Get the reciprocal expansion (numerator = 1)
+  const reciprocalExpansion = denom && periodList[1] ? periodList[1].expansion : null;
+  const reciprocalBeginRepeat = denom && periodList[1] ? periodList[1].beginRepeat : 0;
+  
+  // Format the reciprocal for display
+  let reciprocalDisplay = null;
+  if (reciprocalExpansion) {
+    const periodData = parsedPeriod(reciprocalExpansion, reciprocalBeginRepeat);
+    reciprocalDisplay = getPeriodJSX(periodData);
+  }
 
   return (
-    <div className="denom-page">
-      <h1>Decimal Expansions</h1>
+  <div className="denom-page">
+    <h1>Decimal Expansions</h1>
 
-      <main className="denom-main">
-        {/* Denominator selector */}
-        <section className="denom-selector-container">
-          {denomCollapsed ? (
-            // COLLAPSED PILL
+    <main className="denom-main">
+      {/* Denominator selector */}
+      <section className="denom-selector-container">
+        {denomCollapsed ? (
+          <>
+            {/* COLLAPSED PILL */}
             <button
               type="button"
               className="denom-toggle"
               onClick={() => setDenomCollapsed(false)}
             >
-              <span className="denom-summary-label">Denominator</span>
+              <span className="denom-summary-label">Denominator:</span>
               <span className="denom-summary-value">{denom}</span>
 
               {factorStr && (
                 <>
                   <span className="denom-summary-sep">·</span>
-                  <span className="denom-summary-label">Factors</span>
+                  <span className="denom-summary-label">Factors:</span>
                   <span className="denom-summary-value">{factorStr}</span>
                 </>
               )}
@@ -244,86 +313,99 @@ function Denom(props) {
               {expansionCount > 0 && (
                 <>
                   <span className="denom-summary-sep">·</span>
-                  <span className="denom-summary-label">Expansions</span>
+                  <span className="denom-summary-label">Expansions:</span>
                   <span className="denom-summary-value">{expansionCount}</span>
                 </>
               )}
 
               <span className="denom-toggle-icon">▾</span>
             </button>
-          ) : (
-            // EXPANDED TOOLS
-            <div className="denom-selector">
-              <div className="denom-section-title">
-                Denominator Selection
-                <button
-                  type="button"
-                  className="denom-info-icon"
-                  onClick={() => setInfoShow(true)}
-                  aria-label="Info about decimal expansions"
-                >
-                  ⓘ
+
+            {/* RECIPROCAL DISPLAY BELOW PILL */}
+            {reciprocalDisplay && (
+              <div className="denom-reciprocal-info">
+                <span className="denom-reciprocal-label">Reciprocal:</span>
+                <span className="denom-reciprocal-value">
+                  0.{reciprocalDisplay}
+                </span>
+              </div>
+            )}
+          </>
+        ) : (
+          // EXPANDED TOOLS
+          <div className="denom-selector">
+            <div className="denom-section-title">
+              Denominator Selection
+              <button
+                type="button"
+                className="denom-info-icon"
+                onClick={() => setInfoShow(true)}
+                aria-label="Info about decimal expansions"
+              >
+                ⓘ
+              </button>
+            </div>
+
+            {/* Custom input */}
+            <form className="denom-custom-input" onSubmit={handleSubmit}>
+              <label>
+                <span className="denom-input-label">Enter denominator:</span>
+                <input
+                  className="denom-input"
+                  type="number"
+                  min={2}
+                  step={1}
+                  value={inputValue}
+                  onChange={e => setInputValue(e.target.value)}
+                  placeholder="e.g. 7, 13, 41"
+                />
+                <button className="denom-btn" type="submit">
+                  Go
                 </button>
-              </div>
-
-              {/* Custom input */}
-              <form className="denom-custom-input" onSubmit={handleSubmit}>
-                <label>
-                  <span className="denom-input-label">Enter denominator:</span>
-                  <input
-                    className="denom-input"
-                    type="number"
-                    min={2}
-                    step={1}
-                    value={inputValue}
-                    onChange={e => setInputValue(e.target.value)}
-                    placeholder="e.g. 7, 13, 41"
-                  />
-                  <button className="denom-btn" type="submit">
-                    Go
-                  </button>
-                </label>
-                {error && (
-                  <div className="denom-error">
-                    {error}
-                  </div>
-                )}
-              </form>
-
-              {/* Prime quick picks */}
-              <div className="denom-primes-section">
-                <div className="denom-primes-label">
-                  Prime denominators (≤ 109, excluding 2 and 5)
-                </div>
-                <div className="denom-chip-grid">
-                  {primeQuickPicks.map(p => (
-                    <button
-                      key={p}
-                      className={denom === p ? "denom-chip denom-chip-active" : "denom-chip"}
-                      type="button"
-                      onClick={() => handleQuickPick(p)}
-                    >
-                      {p}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Done button */}
-              {denom && (
-                <div className="denom-done-row">
-                  <button
-                    className="denom-btn"
-                    type="button"
-                    onClick={() => setDenomCollapsed(true)}
-                  >
-                    Done
-                  </button>
+              </label>
+              {error && (
+                <div className="denom-error">
+                  {error}
                 </div>
               )}
+            </form>
+
+            {/* Prime quick picks */}
+            <div className="denom-primes-section">
+              <div className="denom-primes-label">
+                Prime denominators (≤ 109, excluding 2 and 5)
+              </div>
+              <div className="denom-chip-grid">
+                {primeQuickPicks.map(p => (
+                  <button
+                    key={p}
+                    className={denom === p ? "denom-chip denom-chip-active" : "denom-chip"}
+                    type="button"
+                    onClick={() => handleQuickPick(p)}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
             </div>
-          )}
-        </section>
+
+            {/* Done button */}
+            {denom && (
+              <div className="denom-done-row">
+                <button
+                  className="denom-btn"
+                  type="button"
+                  onClick={() => setDenomCollapsed(true)}
+                >
+                  Done
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
+      {/* Rest of the component stays the same... */}
 
         {/* Main expansions table */}
         {expansionKeys.length > 0 && (
@@ -336,32 +418,17 @@ function Denom(props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {expansionKeys.map((expansion, key) => {
-                    const numeratorData = [];
-                    const periodData = parsedPeriod(
-                      expansion,
-                      expansionData[expansion][0].beginRepeat
-                    );
-                    const periodJSX = getPeriodJSX(periodData);
-                    expansionData[expansion].forEach(item => {
-                      numeratorData[item.numerator] = {
-                        position: item.position,
-                        beginRepeat: item.beginRepeat
-                      };
-                    });
-                    return (
-                      <tr key={key}>
-                        <td>
-                          <div className="digits">{periodJSX}</div>
-                          <NumeratorList
-                            digits={expansion}
-                            numeratorData={numeratorData}
-                            onClick={handleClickNumerator}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {expansionKeys.map((expansion, key) => (
+                    <ExpansionRow
+                      key={key}
+                      expansion={expansion}
+                      expansionData={expansionData}
+                      periodList={periodList}
+                      onClickNumerator={handleClickNumerator}
+                      isExpanded={expandedRow === expansion}
+                      onToggle={() => handleToggleRow(expansion)}
+                    />
+                  ))}
                 </tbody>
               </Table>
             </div>

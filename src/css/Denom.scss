@@ -232,3 +232,81 @@ $denom-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   padding: 0.5rem;
   box-shadow: $denom-shadow-soft;
 }
+
+
+// ---- expansion row collapsible styles ----
+.expansion-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.25rem 0;
+  transition: background 0.12s ease-out;
+}
+
+.expansion-row-header:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.expansion-toggle-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: $denom-text-muted;
+}
+
+.expansion-numerator-count {
+  font-weight: 500;
+}
+
+.expansion-toggle-icon {
+  color: $denom-text-subtle;
+  font-size: 0.75rem;
+  transition: transform 0.12s ease-out;
+}
+
+.expansion-row-expanded .expansion-toggle-icon {
+  transform: rotate(0deg);
+}
+
+.expansion-row-collapsed .expansion-toggle-icon {
+  transform: rotate(0deg);
+}
+
+.expansion-row-content {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid $denom-border-soft;
+}
+
+// Add this after the other denom-summary styles
+.denom-reciprocal-display {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+// ---- reciprocal display below pill ----
+.denom-reciprocal-info {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: $denom-card-bg;
+  border: 1px solid $denom-border-soft;
+  border-radius: 8px;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.denom-reciprocal-label {
+  color: $denom-text-muted;
+  font-weight: 500;
+}
+
+.denom-reciprocal-value {
+  font-family: 'Courier New', monospace;
+  color: $denom-text-main;
+  font-weight: 600;
+  word-break: break-all; // Allow wrapping for very long expansions
+}
