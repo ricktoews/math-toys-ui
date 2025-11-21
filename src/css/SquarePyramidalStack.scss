@@ -78,7 +78,7 @@ $sqpyr-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; // Prevent wrapping
 }
 
 // ---- control buttons ----
@@ -129,6 +129,7 @@ $sqpyr-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.12s ease-out, border-color 0.12s ease-out;
+  white-space: nowrap; // Prevent text wrapping inside buttons
 }
 
 .sqpyr-toggle-off {

@@ -17,6 +17,46 @@ console.assert(triangularNumber(4) === 10, 'triangularNumber(4) should be 10');
 console.assert(tetrahedralNumber(1) === 1, 'tetrahedralNumber(1) should be 1');
 console.assert(tetrahedralNumber(4) === 20, 'tetrahedralNumber(4) should be 20');
 
+// Calculate positions for regular tetrahedra (all faces equilateral triangles)
+function calculateRegularTetrahedronPositions(n, layoutRadius) {
+  const positions = [];
+  
+  // Edge length for equilateral triangle
+  const a = 2 * layoutRadius;
+  
+  // For a regular tetrahedron with edge length a:
+  // - Base is an equilateral triangle in XY plane
+  // - Height between layers is a * sqrt(2/3)
+  const layerHeight = a * Math.sqrt(2 / 3);
+  
+  // Build from bottom layer to apex
+  for (let layer = 0; layer < n; layer++) {
+    const numInLayer = n - layer; // Triangular number for this layer
+    const z = layer * layerHeight;
+    
+    // Build equilateral triangle grid for this layer
+    // Each layer is a smaller equilateral triangle
+    for (let row = 0; row < numInLayer; row++) {
+      const numInRow = row + 1;
+      
+      for (let col = 0; col < numInRow; col++) {
+        // Equilateral triangle geometry:
+        // - Horizontal spacing is 'a'
+        // - Vertical spacing between rows is a * sqrt(3)/2
+        const x = (col - row / 2) * a;
+        const y = row * a * Math.sqrt(3) / 2;
+        
+        // Center the triangle for this layer
+        const centerOffset = (numInLayer - 1) * a * Math.sqrt(3) / 6;
+        
+        positions.push(new THREE.Vector3(x, y - centerOffset, z));
+      }
+    }
+  }
+  
+  return positions;
+}
+
 export default function SquarePyramidalStack({
   initialTiers = 5,
   maxTiers = 15,
@@ -35,8 +75,68 @@ export default function SquarePyramidalStack({
   const [tiers, setTiers] = useState(initialTiers);
   const [colorMode, setColorMode] = useState('tetra'); // 'tetra' | 'layer'
   const [autoRotate, setAutoRotate] = useState(true);
+  const [isMerged, setIsMerged] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [isRebuilding, setIsRebuilding] = useState(false);
 
   const buildStackRef = useRef(null);
+  const mergedPositionsRef = useRef([]);
+  const separatedPositionsRef = useRef([]);
+  const animationProgressRef = useRef(0); // Start at 0 (separated)
+  const animationFrameRef = useRef(null);
+
+  // --- Animation handler ---
+  const animate = () => {
+    if (!isAnimating || !instancedRef.current || isRebuilding) return;
+    
+    const speed = 0.02; // Animation speed
+    const targetProgress = isMerged ? 1 : 0;
+    
+    animationProgressRef.current += (targetProgress - animationProgressRef.current) * speed;
+    
+    // Update sphere positions
+    const matrix = new THREE.Matrix4();
+    const merged = mergedPositionsRef.current;
+    const separated = separatedPositionsRef.current;
+    
+    for (let i = 0; i < merged.length; i++) {
+      const t = animationProgressRef.current;
+      const pos = new THREE.Vector3(
+        separated[i].x + (merged[i].x - separated[i].x) * t,
+        separated[i].y + (merged[i].y - separated[i].y) * t,
+        separated[i].z + (merged[i].z - separated[i].z) * t
+      );
+      matrix.makeTranslation(pos.x, pos.y, pos.z);
+      instancedRef.current.setMatrixAt(i, matrix);
+    }
+    instancedRef.current.instanceMatrix.needsUpdate = true;
+    
+    // Check if animation is complete
+    if (Math.abs(animationProgressRef.current - targetProgress) < 0.001) {
+      animationProgressRef.current = targetProgress;
+      setIsAnimating(false);
+    } else {
+      animationFrameRef.current = requestAnimationFrame(animate);
+    }
+  };
+
+  // --- Animation loop effect ---
+  useEffect(() => {
+    if (isAnimating) {
+      animate();
+    }
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [isAnimating]); // Removed isMerged dependency to prevent re-triggering
+
+  // --- Toggle merge/separate ---
+  const handleToggleMerge = () => {
+    setIsMerged(prev => !prev);
+    setIsAnimating(true);
+  };
 
   // --- one-time scene setup ---
   useEffect(() => {
@@ -60,7 +160,7 @@ export default function SquarePyramidalStack({
     controls.enableDamping = true;
     controls.autoRotate = autoRotate;
     controls.autoRotateSpeed = 0.8;
-    controls.target.set(0, 0, -2.0);
+    controls.target.set(0, 0, 0.35); // Adjusted to raise pyramid on screen
     controls.enablePan = false; // Prevent panning that would move the target
     controlsRef.current = controls;
 
@@ -147,12 +247,99 @@ export default function SquarePyramidalStack({
         }
       }
 
-      // Instead of centering vertically, anchor the base at a consistent position
+      // Store merged positions (right tetrahedra)
+      mergedPositionsRef.current = pts.map(p => p.clone());
+
+      // Build separated state: same right tetrahedra, just positioned apart
+      // They maintain their right tetrahedron structure throughout - just translate horizontally
+      
+      const separatedPtsFinal = [];
+      
+      // Find the center of each tetrahedron in merged state
+      const tetra0Points = [];
+      const tetra1Points = [];
+      
+      for (let i = 0; i < pts.length; i++) {
+        if (which[i] === 0) {
+          tetra0Points.push(pts[i]);
+        } else {
+          tetra1Points.push(pts[i]);
+        }
+      }
+      
+      const box0 = new THREE.Box3().setFromPoints(tetra0Points);
+      const box1 = new THREE.Box3().setFromPoints(tetra1Points);
+      const center0 = new THREE.Vector3();
+      const center1 = new THREE.Vector3();
+      box0.getCenter(center0);
+      box1.getCenter(center1);
+      
+      // Determine which tetrahedron is on the left/right based on their centers
+      const tetra0IsLeft = center0.x < center1.x;
+      
+      // Calculate separation: move them apart by gap + half their widths
+      const gapBetweenSpheres = 0.375; // ~25px
+      const width0 = box0.max.x - box0.min.x;
+      const width1 = box1.max.x - box1.min.x;
+      const totalSeparation = width0 / 2 + width1 / 2 + gapBetweenSpheres;
+      
+      // Offset each tetrahedron based on which side they're naturally on
+      const offset0 = tetra0IsLeft ? -totalSeparation / 2 : totalSeparation / 2;
+      const offset1 = tetra0IsLeft ? totalSeparation / 2 : -totalSeparation / 2;
+      
+      // Create separated positions by offsetting each tetrahedron
+      for (let i = 0; i < pts.length; i++) {
+        const pos = pts[i].clone();
+        if (which[i] === 0) {
+          pos.x += offset0;
+          // Lower dark blue (tetra0) by 100px (~1.5 units), then raise by 50px (~0.75 units)
+          pos.z -= 0.75; // Net: -1.5 + 0.75 = -0.75
+        } else {
+          pos.x += offset1;
+          // Lower light blue (tetra1) by 200px (~3.0 units)
+          pos.z -= 3.0;
+        }
+        separatedPtsFinal.push(pos);
+      }
+      
+      // Align the bases: find the Y range of each tetrahedron at their base level
+      // and center them on the same Y coordinate
+      const tetra0SepPoints = [];
+      const tetra1SepPoints = [];
+      
+      for (let i = 0; i < separatedPtsFinal.length; i++) {
+        if (which[i] === 0) {
+          tetra0SepPoints.push(separatedPtsFinal[i]);
+        } else {
+          tetra1SepPoints.push(separatedPtsFinal[i]);
+        }
+      }
+      
+      const sepBox0 = new THREE.Box3().setFromPoints(tetra0SepPoints);
+      const sepBox1 = new THREE.Box3().setFromPoints(tetra1SepPoints);
+      const sepCenter0Y = (sepBox0.min.y + sepBox0.max.y) / 2;
+      const sepCenter1Y = (sepBox1.min.y + sepBox1.max.y) / 2;
+      
+      // Align on Y axis (shift tetra1 to match tetra0's Y center)
+      const yAlignment = sepCenter0Y - sepCenter1Y;
+      for (let i = 0; i < separatedPtsFinal.length; i++) {
+        if (which[i] === 1) {
+          separatedPtsFinal[i].y += yAlignment;
+        }
+      }
+      
+      // Anchor both position sets at the base
       const boxCenters = new THREE.Box3().setFromPoints(pts);
-      const baseZ = boxCenters.min.z; // Find the lowest point (base)
-      const targetBaseZ = -2.1; // Target position for the base (lowered)
+      const baseZ = boxCenters.min.z;
+      const targetBaseZ = -2.1 - 3.0; // Lower by 200px (3.0 units) to keep below buttons
       const zShift = targetBaseZ - baseZ;
+      
       for (const p of pts) p.z += zShift;
+      
+      separatedPositionsRef.current = separatedPtsFinal;
+      
+      // Set animation progress to match current merged state
+      animationProgressRef.current = isMerged ? 1 : 0;
 
       // Build instanced spheres
       const geo = new THREE.SphereGeometry(sphereRadius, 32, 32);
@@ -161,8 +348,10 @@ export default function SquarePyramidalStack({
 
       const matrix = new THREE.Matrix4();
       const color = new THREE.Color();
+      // Use current merged state to determine initial positions
+      const initialPositions = isMerged ? pts : separatedPtsFinal;
       for (let index = 0; index < pts.length; index++) {
-        const p = pts[index];
+        const p = initialPositions[index];
         matrix.makeTranslation(p.x, p.y, p.z);
         instanced.setMatrixAt(index, matrix);
 
@@ -193,8 +382,8 @@ export default function SquarePyramidalStack({
       const dist = maxDim * VIEW_FIT / Math.tan((Math.PI * camera.fov) / 360);
 
       camera.position.set(dist, dist, dist);
-      controls.target.set(0, 0, -2.0);
-      camera.lookAt(0, 0, -2.0);
+      controls.target.set(0, 0, 0.35); // Adjusted to raise pyramid on screen
+      camera.lookAt(0, 0, 0.35);
     };
     // --------------------------------------------------
 
@@ -228,8 +417,15 @@ export default function SquarePyramidalStack({
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // --- rebuild stack when tiers or colorMode changes ---
+  // --- when tiers/colorMode change, rebuild ---
   useEffect(() => {
-    if (buildStackRef.current) buildStackRef.current(tiers, colorMode);
+    if (buildStackRef.current) {
+      setIsRebuilding(true);
+      setIsAnimating(false); // Stop any ongoing animation
+      buildStackRef.current(tiers, colorMode);
+      // Small delay to ensure mesh is created before clearing rebuild flag
+      setTimeout(() => setIsRebuilding(false), 0);
+    }
   }, [tiers, colorMode]);
 
   // --- keep autoRotate in sync ---
@@ -256,8 +452,16 @@ export default function SquarePyramidalStack({
         <div className="sqpyr-info-pill">
           <span className="sqpyr-info-label">Structure:</span>
           <span className="sqpyr-info-value">
-            P<sub>{tiers}</sub> = {squarePyr} spheres = 
-            T<sub>{tiers - 1}</sub> ({smallTet}) + T<sub>{tiers}</sub> ({bigTet})
+            {isMerged ? (
+              <>
+                P<sub>{tiers}</sub> = {squarePyr} spheres = 
+                T<sub>{tiers - 1}</sub> ({smallTet}) + T<sub>{tiers}</sub> ({bigTet})
+              </>
+            ) : (
+              <>
+                T<sub>{tiers}</sub> ({bigTet} spheres) and T<sub>{tiers - 1}</sub> ({smallTet} spheres)
+              </>
+            )}
           </span>
         </div>
 
@@ -275,22 +479,15 @@ export default function SquarePyramidalStack({
               Auto-rotate: {autoRotate ? 'On' : 'Off'}
             </button>
 
-            <div className="sqpyr-color-group">
-              <button
-                type="button"
-                onClick={() => setColorMode('tetra')}
-                className={colorMode === 'tetra' ? "sqpyr-color-btn sqpyr-color-left sqpyr-color-active" : "sqpyr-color-btn sqpyr-color-left"}
-              >
-                By tetrahedra
-              </button>
-              <button
-                type="button"
-                onClick={() => setColorMode('layer')}
-                className={colorMode === 'layer' ? "sqpyr-color-btn sqpyr-color-right sqpyr-color-active" : "sqpyr-color-btn sqpyr-color-right"}
-              >
-                By layer
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={handleToggleMerge}
+              className={isMerged ? "sqpyr-toggle-btn sqpyr-toggle-on" : "sqpyr-toggle-btn sqpyr-toggle-off"}
+              disabled={isAnimating}
+              aria-label="Toggle merge/separate"
+            >
+              {isMerged ? 'Separate' : 'Merge'}
+            </button>
           </div>
 
           {/* Minus button - top left */}
