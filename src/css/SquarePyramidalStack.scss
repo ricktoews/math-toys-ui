@@ -1,0 +1,224 @@
+// ---- theming variables (match other components) ----
+$sqpyr-text-main: #222;
+$sqpyr-text-muted: #666;
+$sqpyr-text-subtle: #999;
+$sqpyr-border: #ddd;
+$sqpyr-border-soft: #eee;
+$sqpyr-card-bg: #fafafa;
+$sqpyr-accent: #12b0c9;
+$sqpyr-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
+
+// ---- root container ----
+.sqpyr-page {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+  color: $sqpyr-text-main;
+}
+
+// ---- main layout ----
+.sqpyr-main {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+// ---- info pill ----
+.sqpyr-info-pill {
+  max-width: 960px;
+  margin: 0 auto 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid $sqpyr-border-soft;
+  border-radius: 999px;
+  font-size: 14px;
+  line-height: 1.4;
+  box-shadow: $sqpyr-shadow-soft;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sqpyr-info-label {
+  font-weight: 600;
+  color: $sqpyr-text-muted;
+}
+
+.sqpyr-info-value {
+  color: $sqpyr-text-main;
+}
+
+// ---- canvas container ----
+.sqpyr-canvas-container {
+  width: 100%;
+  max-width: 800px;
+  height: 600px;
+  margin: 0 auto;
+  position: relative;
+  background: #0b1020;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: $sqpyr-shadow-soft;
+  overflow: hidden;
+}
+
+.sqpyr-canvas-host {
+  width: 100%;
+  height: 100%;
+}
+
+// ---- top center controls ----
+.sqpyr-top-controls {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+// ---- control buttons ----
+.sqpyr-control-btn {
+  position: absolute;
+  top: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #888;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.08s ease-out, box-shadow 0.12s ease-out,
+    background 0.12s ease-out;
+  color: $sqpyr-text-main;
+}
+
+.sqpyr-control-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  background: $sqpyr-accent;
+  color: #fff;
+}
+
+.sqpyr-btn-minus {
+  left: 8px;
+}
+
+.sqpyr-btn-plus {
+  right: 8px;
+}
+
+// ---- toggle button (auto-rotate) ----
+.sqpyr-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid $sqpyr-border;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s ease-out, border-color 0.12s ease-out;
+}
+
+.sqpyr-toggle-off {
+  background: rgba(255, 255, 255, 0.9);
+  color: $sqpyr-text-muted;
+  border-color: $sqpyr-border;
+}
+
+.sqpyr-toggle-off:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: darken($sqpyr-border, 10%);
+}
+
+.sqpyr-toggle-on {
+  background: $sqpyr-accent;
+  color: #fff;
+  border-color: $sqpyr-accent;
+}
+
+.sqpyr-toggle-on:hover {
+  background: darken($sqpyr-accent, 5%);
+  border-color: darken($sqpyr-accent, 5%);
+}
+
+// ---- color mode button group ----
+.sqpyr-color-group {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sqpyr-color-btn {
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  color: $sqpyr-text-main;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.12s ease-out, color 0.12s ease-out;
+  white-space: nowrap;
+}
+
+.sqpyr-color-left {
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.sqpyr-color-btn:hover:not(.sqpyr-color-active) {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.sqpyr-color-active {
+  background: $sqpyr-accent;
+  color: #fff;
+  font-weight: 500;
+}
+
+// ---- checkbox and select labels ----
+.sqpyr-checkbox-label,
+.sqpyr-select-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid $sqpyr-border;
+  font-size: 13px;
+  color: $sqpyr-text-main;
+  cursor: pointer;
+  transition: background 0.12s ease-out;
+}
+
+.sqpyr-checkbox-label:hover,
+.sqpyr-select-label:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+.sqpyr-select {
+  background: #fff;
+  color: $sqpyr-text-main;
+  border: 1px solid $sqpyr-border;
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.sqpyr-select:focus {
+  outline: none;
+  border-color: $sqpyr-accent;
+}

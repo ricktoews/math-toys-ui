@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import '../css/SquarePyramidalStack.scss';
 
 // --- helper math functions + tiny tests ---
 function triangularNumber(n) {
@@ -17,7 +18,7 @@ console.assert(tetrahedralNumber(1) === 1, 'tetrahedralNumber(1) should be 1');
 console.assert(tetrahedralNumber(4) === 20, 'tetrahedralNumber(4) should be 20');
 
 export default function SquarePyramidalStack({
-  initialTiers = 6,
+  initialTiers = 5,
   maxTiers = 15,
   height = 500, // px
 }) {
@@ -239,132 +240,77 @@ export default function SquarePyramidalStack({
   const squarePyr = (tiers * (tiers + 1) * (2 * tiers + 1)) / 6;
   const sphereCount = squarePyr; // identity: P_n = T_n + T_{n-1}
 
-  // styling
-  const containerStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    height: height,
-    maxHeight: '100%',
-    background: '#0b1020',
-    color: '#e8f0ff',
-    borderRadius: '8px',
-    overflow: 'hidden',
-    border: '1px solid rgba(255,255,255,0.08)',
-  };
-  const headerStyle = {
-    padding: '8px 12px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    borderBottom: '1px solid rgba(255,255,255,0.1)',
-    fontSize: '13px',
-  };
-  const controlsStyle = { display: 'flex', flexWrap: 'wrap', gap: '8px', marginLeft: 'auto' };
-  const ctrlBlockStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-    background: '#12172b',
-    padding: '4px 8px',
-    borderRadius: '8px',
-    border: '1px solid rgba(255,255,255,0.08)',
-  };
-  const viewStyle = { position: 'relative', flex: 1 };
-  const statsStyle = {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    background: '#ffffff',
-    color: '#000000',
-    border: '1px solid rgba(0,0,0,0.2)',
-    padding: '6px 10px',
-    borderRadius: '6px',
-    fontSize: '12px',
-    lineHeight: 1.4,
-  };
-  const canvasHostStyle = { width: '100%', height: '100%' };
+  const decTiers = () => setTiers((v) => Math.max(1, v - 1));
+  const incTiers = () => setTiers((v) => Math.min(maxTiers, v + 1));
 
   // --- JSX ---
   return (
-    <div style={containerStyle}>
-      <div style={headerStyle}>
-        <div style={{ fontWeight: 600, fontSize: 14 }}>
-          Square Pyramidal (Two Right Tetrahedra)
+    <div className="sqpyr-page">
+      <h1>Square Pyramidal Numbers</h1>
+
+      <main className="sqpyr-main">
+        {/* Info pill */}
+        <div className="sqpyr-info-pill">
+          <span className="sqpyr-info-label">Structure:</span>
+          <span className="sqpyr-info-value">
+            P<sub>{tiers}</sub> = {squarePyr} spheres = 
+            T<sub>{tiers - 1}</sub> ({smallTet}) + T<sub>{tiers}</sub> ({bigTet})
+          </span>
         </div>
-        <div style={controlsStyle}>
-          <label style={ctrlBlockStyle}>
-            Tiers
-            <input
-              type="range"
-              min={1}
-              max={maxTiers}
-              step={1}
-              value={tiers}
-              onChange={(e) => {
-                const v = parseInt(e.target.value, 10) || 1;
-                setTiers(Math.max(1, Math.min(maxTiers, v)));
-              }}
-            />
-            <input
-              type="number"
-              min={1}
-              max={maxTiers}
-              step={1}
-              value={tiers}
-              onChange={(e) => {
-                const v = parseInt(e.target.value, 10) || 1;
-                setTiers(Math.max(1, Math.min(maxTiers, v)));
-              }}
-              style={{
-                width: 56,
-                background: '#0e1428',
-                color: '#e8f0ff',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: 6,
-                padding: '3px 5px',
-                fontSize: 12,
-              }}
-            />
-          </label>
 
-          <label style={ctrlBlockStyle}>
-            <input
-              type="checkbox"
-              checked={autoRotate}
-              onChange={(e) => setAutoRotate(e.target.checked)}
-            />
-            Auto-rotate
-          </label>
+        <div className="sqpyr-canvas-container">
+          <div ref={mountRef} className="sqpyr-canvas-host" />
 
-          <label style={ctrlBlockStyle}>
-            Colors
-            <select
-              value={colorMode}
-              onChange={(e) => setColorMode(e.target.value)}
-              style={{
-                background: '#0e1428',
-                color: '#e8f0ff',
-                borderRadius: 6,
-                border: '1px solid rgba(255,255,255,0.2)',
-                padding: '3px 6px',
-                fontSize: 12,
-              }}
+          {/* Top center controls */}
+          <div className="sqpyr-top-controls">
+            <button
+              type="button"
+              onClick={() => setAutoRotate(!autoRotate)}
+              className={autoRotate ? "sqpyr-toggle-btn sqpyr-toggle-on" : "sqpyr-toggle-btn sqpyr-toggle-off"}
+              aria-label="Toggle auto-rotate"
             >
-              <option value="tetra">By tetrahedra</option>
-              <option value="layer">By layer</option>
-            </select>
-          </label>
-        </div>
-      </div>
+              Auto-rotate: {autoRotate ? 'On' : 'Off'}
+            </button>
 
-      <div style={viewStyle}>
-        <div ref={mountRef} style={canvasHostStyle} />
-        <div style={statsStyle}>
-          <div>tiers: {tiers} • spheres: {sphereCount}</div>
-          <div>square pyramidal P<sub>{tiers}</sub> = {squarePyr}</div>
-          <div>= T<sub>{tiers - 1}</sub> ({smallTet}) + T<sub>{tiers}</sub> ({bigTet})</div>
+            <div className="sqpyr-color-group">
+              <button
+                type="button"
+                onClick={() => setColorMode('tetra')}
+                className={colorMode === 'tetra' ? "sqpyr-color-btn sqpyr-color-left sqpyr-color-active" : "sqpyr-color-btn sqpyr-color-left"}
+              >
+                By tetrahedra
+              </button>
+              <button
+                type="button"
+                onClick={() => setColorMode('layer')}
+                className={colorMode === 'layer' ? "sqpyr-color-btn sqpyr-color-right sqpyr-color-active" : "sqpyr-color-btn sqpyr-color-right"}
+              >
+                By layer
+              </button>
+            </div>
+          </div>
+
+          {/* Minus button - top left */}
+          <button
+            type="button"
+            onClick={decTiers}
+            aria-label="Decrease tiers"
+            className="sqpyr-control-btn sqpyr-btn-minus"
+          >
+            –
+          </button>
+
+          {/* Plus button - top right */}
+          <button
+            type="button"
+            onClick={incTiers}
+            aria-label="Increase tiers"
+            className="sqpyr-control-btn sqpyr-btn-plus"
+          >
+            +
+          </button>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
