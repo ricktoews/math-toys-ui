@@ -60,6 +60,8 @@ export default function SquarePyramidalStack({
     controls.enableDamping = true;
     controls.autoRotate = autoRotate;
     controls.autoRotateSpeed = 0.8;
+    controls.target.set(0, 0, -2.0);
+    controls.enablePan = false; // Prevent panning that would move the target
     controlsRef.current = controls;
 
     const group = new THREE.Group();
@@ -145,11 +147,12 @@ export default function SquarePyramidalStack({
         }
       }
 
-      // Center vertically
+      // Instead of centering vertically, anchor the base at a consistent position
       const boxCenters = new THREE.Box3().setFromPoints(pts);
-      const center = new THREE.Vector3();
-      boxCenters.getCenter(center);
-      for (const p of pts) p.z -= center.z;
+      const baseZ = boxCenters.min.z; // Find the lowest point (base)
+      const targetBaseZ = -2.1; // Target position for the base (lowered)
+      const zShift = targetBaseZ - baseZ;
+      for (const p of pts) p.z += zShift;
 
       // Build instanced spheres
       const geo = new THREE.SphereGeometry(sphereRadius, 32, 32);
@@ -190,8 +193,8 @@ export default function SquarePyramidalStack({
       const dist = maxDim * VIEW_FIT / Math.tan((Math.PI * camera.fov) / 360);
 
       camera.position.set(dist, dist, dist);
-      controls.target.set(0, 0, 0);
-      camera.lookAt(0, 0, 0);
+      controls.target.set(0, 0, -2.0);
+      camera.lookAt(0, 0, -2.0);
     };
     // --------------------------------------------------
 
