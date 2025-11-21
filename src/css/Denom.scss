@@ -310,3 +310,16 @@ $denom-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   font-weight: 600;
   word-break: break-all; // Allow wrapping for very long expansions
 }
+
+.denom-catalog-prime {
+  background: none;
+  border: none;
+  color: #0a58ca;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 600;
+}
+
+.denom-catalog-prime:hover {
+  text-decoration: underline;
+}

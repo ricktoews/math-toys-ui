@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import "../css/HexCluster.scss";
 
 export default function HexCluster({
     initialN = 4,
@@ -338,30 +339,17 @@ export default function HexCluster({
         const mode = modeRef.current;
         const phase = extrasPhaseRef.current;
 
-        let statusHtml = "";
-
         if (mode === "hex") {
-            statusHtml = `<code>1 + 6·T<sub>k</sub> = ${hexCount}</code>`;
+            el.innerHTML = `
+                <span class="hex-math-label">Hexagon:</span>
+                <span class="hex-math-value">1 center + 6 triangles (T<sub>${k}</sub> = ${T} each) = ${hexCount} circles</span>
+            `;
         } else {
-            const phaseLabel =
-                phase === "hidden"
-                    ? "extras hidden"
-                    : phase === "fadingIn"
-                        ? "extras fading in…"
-                        : "extras shown";
-            statusHtml = `
-        <code>1 + 6·T<sub>k</sub> + 2·T<sub>k</sub> = ${squareCount}</code>
-        &nbsp; <span style="color:#666;">(${phaseLabel})</span>
-      `;
+            el.innerHTML = `
+                <span class="hex-math-label">Square:</span>
+                <span class="hex-math-value">1 center + 8 triangles (T<sub>${k}</sub> = ${T} each) = ${squareCount} circles = (${side})²</span>
+            `;
         }
-
-        el.innerHTML = `
-      <div><strong>Live math</strong></div>
-      <div>n = <code>${n}</code>, k = n−1 = <code>${k}</code>, T<sub>k</sub> = <code>${T}</code></div>
-      <div>(2n−1)² = <code>(${side})² = ${squareCount}</code></div>
-      <div>Identity: <code>1 + 6·T<sub>k</sub> + 2·T<sub>k</sub> = (2n−1)²</code></div>
-      <div style="color:#666;">now showing: ${statusHtml}</div>
-    `;
     }
 
     function draw() {
@@ -560,122 +548,56 @@ export default function HexCluster({
 
     // ===== Render =====
     return (
-        <div
-            ref={wrapRef}
-            style={{
-                width: "100%",
-                maxWidth: "640px",
-                margin: "0 auto",
-                position: "relative",
-            }}
-        >
-            <canvas
-                ref={canvasRef}
-                style={{
-                    display: "block",
-                    border: "1px solid #ccc",
-                    background: "#fff",
-                    width: "100%",
-                    height: "auto",
-                    aspectRatio: "1 / 1",
-                    cursor: "pointer",
-                }}
-                onClick={toggleMode}
-            />
+        <div className="hex-page">
+            <h1>Centered Hexagonal Numbers</h1>
 
-            {showControls && (
-                <>
-                    {/* n label - top center */}
-                    <div
-                        style={{
-                            position: "absolute",
-                            top: 8,
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            padding: "2px 10px",
-                            borderRadius: 999,
-                            background: "rgba(255,255,255,0.9)",
-                            border: "1px solid #ccc",
-                            fontSize: 14,
-                            fontWeight: 600,
-                            pointerEvents: "none",
-                        }}
-                    >
-                        n = {n}
-                    </div>
+            <main className="hex-main">
+                {/* Live math panel - horizontal pill */}
+                <div
+                    ref={mathBoxRef}
+                    className="hex-math-pill"
+                />
 
-                    {/* Minus button - top left */}
-                    <button
-                        type="button"
-                        onClick={decN}
-                        aria-label="Decrease n"
-                        style={{
-                            position: "absolute",
-                            top: 8,
-                            left: 8,
-                            width: 40,
-                            height: 40,
-                            borderRadius: "50%",
-                            border: "1px solid #888",
-                            background: "#fff",
-                            boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: 22,
-                            fontWeight: 600,
-                            cursor: "pointer",
-                        }}
-                    >
-                        –
-                    </button>
+                <div
+                    ref={wrapRef}
+                    className="hex-canvas-container"
+                >
+                    <canvas
+                        ref={canvasRef}
+                        className="hex-canvas"
+                        onClick={toggleMode}
+                    />
 
-                    {/* Plus button - top right */}
-                    <button
-                        type="button"
-                        onClick={incN}
-                        aria-label="Increase n"
-                        style={{
-                            position: "absolute",
-                            top: 8,
-                            right: 8,
-                            width: 40,
-                            height: 40,
-                            borderRadius: "50%",
-                            border: "1px solid #888",
-                            background: "#fff",
-                            boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: 22,
-                            fontWeight: 600,
-                            cursor: "pointer",
-                        }}
-                    >
-                        +
-                    </button>
-                </>
-            )}
+                    {showControls && (
+                        <>
+                            {/* n label - top center */}
+                            <div className="hex-n-label">
+                                n = {n}
+                            </div>
 
-            {/* Live math panel */}
-            <div
-                ref={mathBoxRef}
-                style={{
-                    position: "absolute",
-                    right: 8,
-                    bottom: 8,
-                    background: "rgba(255,255,255,0.9)",
-                    border: "1px solid #ddd",
-                    borderRadius: 10,
-                    padding: "6px 10px",
-                    fontSize: 12,
-                    lineHeight: 1.35,
-                    boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
-                    maxWidth: 280,
-                    pointerEvents: "none",
-                }}
-            />
+                            {/* Minus button - top left */}
+                            <button
+                                type="button"
+                                onClick={decN}
+                                aria-label="Decrease n"
+                                className="hex-control-btn hex-btn-minus"
+                            >
+                                –
+                            </button>
+
+                            {/* Plus button - top right */}
+                            <button
+                                type="button"
+                                onClick={incN}
+                                aria-label="Increase n"
+                                className="hex-control-btn hex-btn-plus"
+                            >
+                                +
+                            </button>
+                        </>
+                    )}
+                </div>
+            </main>
         </div>
     );
 }
