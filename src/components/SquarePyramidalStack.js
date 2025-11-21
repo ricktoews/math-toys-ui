@@ -251,7 +251,7 @@ export default function SquarePyramidalStack({
       mergedPositionsRef.current = pts.map(p => p.clone());
 
       // Build separated state: same right tetrahedra, just positioned apart
-      // They maintain their right tetrahedron structure throughout - just translate horizontally
+      // Keep the same structure to avoid sphere swapping during animation
       
       const separatedPtsFinal = [];
       
@@ -286,6 +286,8 @@ export default function SquarePyramidalStack({
       // Offset each tetrahedron based on which side they're naturally on
       const offset0 = tetra0IsLeft ? -totalSeparation / 2 : totalSeparation / 2;
       const offset1 = tetra0IsLeft ? totalSeparation / 2 : -totalSeparation / 2;
+      
+      // Create separated positions by offsetting each tetrahedron
       
       // Create separated positions by offsetting each tetrahedron
       for (let i = 0; i < pts.length; i++) {
@@ -439,8 +441,14 @@ export default function SquarePyramidalStack({
   const squarePyr = (tiers * (tiers + 1) * (2 * tiers + 1)) / 6;
   const sphereCount = squarePyr; // identity: P_n = T_n + T_{n-1}
 
-  const decTiers = () => setTiers((v) => Math.max(1, v - 1));
-  const incTiers = () => setTiers((v) => Math.min(maxTiers, v + 1));
+  const decTiers = () => {
+    setIsMerged(false);
+    setTiers((v) => Math.max(1, v - 1));
+  };
+  const incTiers = () => {
+    setIsMerged(false);
+    setTiers((v) => Math.min(maxTiers, v + 1));
+  };
 
   // --- JSX ---
   return (
