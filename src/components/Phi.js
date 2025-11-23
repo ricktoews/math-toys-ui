@@ -11,6 +11,35 @@ const convertToSuperscript = (str) => {
 }
 const radicalSymbol = '√';
 const radicalSymbol5 = radicalSymbol + '5';
+
+function InfoModal(props) {
+  return (
+    <Modal
+      {...props}
+      size="lg"
+      aria-labelledby="phi-info-title"
+      centered
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="phi-info-title">
+          About Powers of Phi
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>Phi is (√5 + 1) / 2, which is approximately 1.618. It's associated with the Fibonacci series, in that the ratio of a given element in that series to the previous element approximates phi.</p>
+        <p>For example, the first several Fibonacci numbers are 1, 1, 2, 3, 5, 8, 13, 21... The ratio of 8/5 is 1.6, 13/8 is 1.625, 21/13 is approximately 1.615, etc. This approximation increases in accuracy as one progresses through the series.</p>
+        <p>Each power of phi can be expressed in the form (a√5 + b) / 2. Notice the values of a and b for progressive powers of phi. For a, the values are the Fibonacci numbers.</p>
+        <p>Notice also that as the powers increase, the values for a√5 and b converge, with a√5 alternating less than and greater than b.</p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button className="app-btn" onClick={props.onHide}>
+          Close
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
+
 function MyVerticallyCenteredModal(props) {
   const { data } = props;
   const { power, pascalRow, xyPower, termsExponents = [], terms = [], fibonacciTerms, reducedFibonacci } = data;
@@ -53,12 +82,13 @@ function MyVerticallyCenteredModal(props) {
 
 function Phi(props) {
   const [modalShow, setModalShow] = useState(false);
+  const [infoShow, setInfoShow] = useState(false);
   const [phiData, setPhiData] = useState([]);
   const [phiDissect, setPhiDissect] = useState({});
 
   useEffect(() => {
     (async () => {
-      let result = await phi(24);
+      let result = await phi(34);
       console.log('useEffect result', result);
       setPhiData(result.data);
     })();
@@ -94,22 +124,24 @@ function Phi(props) {
   }
 
   return (<div>
-    <h1>Powers of Phi</h1>
-    <div className="explanatory">
-      <p>Phi is (√5 + 1) / 2, which is approximately 1.618. It's associated with the Fibonacci series, in that the ratio of a given elment in that series to the previous element approximates phi.</p>
-      <p>For example, the first several Fibonacci numbers are 1, 1, 2, 3, 5, 8, 13, 21... The ratio of 8/5 is 1.6, 13/8 is 1.625, 21/13 is approximately 1.615, etc. This approximation increases in accuracy as one progresses through the series.</p>
-
-      <p>Each power of phi can be expressed in the form (a√5 + b) / 2. Notice the values of a and b for progressive powers of phi. For a, the values are the Fibonacci numbers.</p>
-
-      <p>Notice also that as the powers increase, the values for a√5 and b converge, with a√5 alternating less than and greater than b.</p>
-    </div>
+    <h1>
+      Powers of Phi
+      <button
+        type="button"
+        className="info-button"
+        onClick={() => setInfoShow(true)}
+        aria-label="Info about Powers of Phi"
+        style={{ marginLeft: '1rem', fontSize: '1rem', cursor: 'pointer', background: 'none', border: 'none' }}
+      >
+        ⓘ Info
+      </button>
+    </h1>
     <Table striped hover className="table">
       <thead className="sticky-table">
         <tr>
           <th>n</th>
           <th>Fraction of Phi<sup>n</sup></th>
-          <th>a</th>
-          <th>b</th>
+          <th>Phi<sup>n</sup></th>
           <th>a√5</th>
           <th>a√5 - b</th>
         </tr>
@@ -122,13 +154,13 @@ function Phi(props) {
           const power = key + 1;
           const Fibonacci = f_l[0];
           const Lucas = f_l[1];
+          const phiNValue = (Fibonacci * Math.sqrt(5) + Lucas) / 2;
 
           return (<tr onClick={handleRowClick} key={key} data-power={key + 1}>
             <td>{power}</td>
             <td><MathJax>{`\\(\\frac{${Fibonacci}\\sqrt{5} + ${Lucas}}{2}\\)`}</MathJax></td>
-            <td>{Fibonacci}</td>
-            <td>{Lucas}</td>
-            <td>{item['phi^n'].toFixed(4)}</td>
+            <td>{Math.floor(phiNValue * 10000) / 10000}</td>
+            <td>{item['phi^n'].toFixed(power > 20 ? 1 : 4)}</td>
             <td>{(item['phi^n'] - Lucas).toFixed(4)}</td>
           </tr>)
         })}
@@ -139,6 +171,7 @@ function Phi(props) {
       onHide={() => setModalShow(false)}
       data={phiDissect}
     />
+    <InfoModal show={infoShow} onHide={() => setInfoShow(false)} />
   </div>)
 }
 
