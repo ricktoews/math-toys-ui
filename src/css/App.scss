@@ -1,3 +1,5 @@
+@import 'variables';
+
 @function set-text-color($color) {
   @if (lightness($color) > 50) {
     @return #000000; // Lighter backgorund, return dark color
@@ -16,6 +18,8 @@ $palette-5: #E9EB9E;
 $palette-grey-1: #cccccc;
 $palette-grey-2: #666666;
 $palette-grey-3: #9a9a9a;
+
+$table-header-bg: $indigo-velvet;
 
 :root {
   --palette-1: #14080E;
@@ -429,7 +433,7 @@ h4 {
 }
 
 .table thead tr th {
-  background-color: #ACC196;
+  background-color: $table-header-bg;
   color: white;
 }
 
