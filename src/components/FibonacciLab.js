@@ -194,7 +194,7 @@ const FibonacciLab = () => {
             <>
               {' • '}
               F<sub>{productInfo.x}</sub><sup>2</sup> = {productInfo.fxSquare}
-              {' | '}
+              <br />
               {fib[selectedIndex] * fib[selectedIndex]} {productInfo.sign} {productInfo.fxSquare} = {productInfo.product}
               {' • '}
               F<sub>{selectedIndex}-{productInfo.x}</sub> × F<sub>{selectedIndex}+{productInfo.x}</sub> = {fib[productInfo.leftIndex]} × {fib[productInfo.rightIndex]} = {productInfo.product}
