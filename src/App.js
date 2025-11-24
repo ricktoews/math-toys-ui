@@ -14,6 +14,7 @@ import Calendar from './components/Calendar';
 import Denom from './components/Denom';
 import PythagoreanTriplesLab from './components/PythagoreanTriplesLab';
 import LucasLab from './components/LucasLab';
+import FibonacciLab from './components/FibonacciLab';
 
 function App() {
   const [menuState, setMenuState] = useState(false);
@@ -81,6 +82,7 @@ function App() {
             */}
             <li><a href="/pythagorean-triples-lab">Pythagorean Triples</a></li>
             <li><a href="/lucas-lab">Lucas Lab</a></li>
+            <li><a href="/fibonacci-lab">Fibonacci Lab</a></li>
             <li><a href="/calendar">12-Digit Calendar</a></li>
             <li><a href="/denom">Decimal Expansions</a></li>
             <li><a href="/hex-cluster">Hex Cluster</a></li>
@@ -112,6 +114,7 @@ function App() {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/denom" element={<Denom />} />
           <Route path="/lucas-lab" element={<LucasLab />} />
+          <Route path="/fibonacci-lab" element={<FibonacciLab />} />
           <Route path="/hex-cluster" element={<HexCluster />} />
           <Route path="/square-pyramidal-stack" element={<SquarePyramidalStack />} />
           <Route path="/pythagorean-triples-lab" element={<PythagoreanTriplesLab />} />

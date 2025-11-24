@@ -1,0 +1,210 @@
+@import 'variables';
+
+// ---- theming variables ----
+$fib-text-main: #222;
+$fib-text-muted: #666;
+$fib-text-subtle: #999;
+$fib-border: #ddd;
+$fib-border-soft: #eee;
+$fib-card-bg: #fafafa;
+$fib-accent: $glaucous;
+$fib-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
+$fib-highlight: #a7f3d0;
+
+.fibonacci-lab-wrapper {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+  color: $fib-text-main;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem;
+
+  h1 {
+    margin-bottom: 1.5rem;
+  }
+
+  h2 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: $fib-text-muted;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  p {
+    max-width: 60rem;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    color: $fib-text-main;
+  }
+
+  code {
+    background: rgba($fib-accent, 0.1);
+    padding: 0.1rem 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 0.85em;
+    color: darken($fib-accent, 20%);
+  }
+
+  .fib-equation-panel {
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    background: $fib-card-bg;
+    border: 1px solid $fib-border-soft;
+    box-shadow: $fib-shadow-soft;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: $fib-text-main;
+  }
+
+  .fib-list-container {
+    position: relative;
+    margin-top: 1.5rem;
+    min-height: 200px;
+    padding-bottom: 180px;
+    border-radius: 10px;
+    border: 1px solid $fib-border-soft;
+    background: $fib-card-bg;
+    padding: 1rem;
+    overflow-x: auto;
+    box-shadow: $fib-shadow-soft;
+  }
+
+  .fib-list {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    row-gap: 40px;
+    align-items: flex-start;
+  }
+
+  .fib-square {
+    position: relative;
+    min-width: 50px;
+    height: 70px;
+    background: #ffffff;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    box-sizing: border-box;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+    border: 1px solid $fib-border-soft;
+
+    &.highlight {
+      box-shadow: 0 0 0 2px $fib-highlight;
+      transform: translateY(-2px);
+    }
+
+    &.highlight-distance {
+      box-shadow: 0 0 0 2px #93c5fd;
+      transform: translateY(-2px);
+    }
+  }
+
+  .fib-index {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 0.65rem;
+    color: $fib-text-subtle;
+    font-weight: 500;
+  }
+
+  .fib-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    user-select: none;
+    border: 1px solid $fib-border;
+    transition: background-color 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+    color: $fib-text-main;
+    font-weight: 500;
+
+    &:hover {
+      transform: scale(1.05);
+      border-color: $fib-accent;
+    }
+
+    &.on {
+      border: 2px solid darken($fib-accent, 10%);
+      box-shadow: 0 4px 12px rgba($fib-accent, 0.3);
+    }
+  }
+
+  .square-display {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    color: $fib-text-main;
+    white-space: nowrap;
+  }
+
+  .product-display,
+  .x-square-display,
+  .equation-display {
+    font-size: 0.8rem;
+    color: $fib-text-main;
+  }
+
+  .product-display {
+    font-weight: 600;
+  }
+
+  .divider {
+    margin: 2rem 0 0.75rem;
+    border: none;
+    border-top: 1px solid $fib-border-soft;
+  }
+
+  .phi-info {
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    background: $fib-card-bg;
+    border: 1px solid $fib-border-soft;
+    margin-top: 0.5rem;
+    box-shadow: $fib-shadow-soft;
+
+    h2 {
+      margin-top: 0.5rem;
+    }
+
+    p {
+      margin: 0.25rem 0;
+    }
+  }
+
+  .fraction {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.9em;
+    vertical-align: middle;
+    margin: 0 0.15rem;
+
+    .numerator {
+      border-bottom: 1px solid currentColor;
+      padding: 0 0.2rem;
+    }
+
+    .denominator {
+      padding: 0 0.2rem;
+    }
+  }
+}
