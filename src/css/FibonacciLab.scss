@@ -60,6 +60,9 @@ $fib-highlight: #a7f3d0;
     text-align: center;
     font-size: 0.95rem;
     color: $fib-text-main;
+    /* Provide a stable vertical space but allow content to flow normally */
+    min-height: 100px;
+    line-height: 1.2rem;
   }
 
   .fib-list-container {
