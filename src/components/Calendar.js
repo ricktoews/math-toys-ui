@@ -125,7 +125,7 @@ function Calendar(props) {
     setModalShow(true);
   }
 
-  return (<div>
+  return (<div className="calendar-page">
     <div className="sticky-page-title">
       <h1>12-Digit Calendar</h1>
     </div>
@@ -133,7 +133,7 @@ function Calendar(props) {
       {years.map((year, key) => {
         const isCurrentYear = year === currentYear;
         return <React.Fragment key={key}>
-          {year % 100 === 0 && <div className="century-divider"></div>}
+          {year > 1600 && year % 100 === 0 && <div className="century-divider"></div>}
           <div ref={isCurrentYear ? currentYearRef : null}>
             <Year12Digit year={year} onClick={handleClick} isCurrentYear={isCurrentYear} />
           </div>
