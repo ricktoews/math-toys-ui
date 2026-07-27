@@ -267,6 +267,41 @@ ul.pythag-triple-title {
 
 .pythag-square-wrapper {
   position: relative;
+  --pythag-cell-pale: #cedbd8;
+  --pythag-cell-highlight: #91aaa6;
+}
+
+.pythag-square-wrapper .a-square,
+.pythag-square-wrapper .b-square,
+.pythag-square-wrapper .c-square {
+  background-color: var(--pythag-cell-pale);
+  transition: background-color 0.6s ease;
+}
+
+.pythag-square-wrapper.highlight-a .a-square {
+  background-color: var(--pythag-cell-highlight);
+}
+
+.pythag-square-wrapper.highlight-b .b-square {
+  background-color: var(--pythag-cell-highlight);
+}
+
+.pythag-square-wrapper.highlight-c {
+  .a-square,
+  .b-square,
+  .c-square {
+    background-color: var(--pythag-cell-highlight);
+  }
+}
+
+.pythag-square-wrapper.highlight-c.c-decomposing {
+  .a-square {
+    background-color: #9db2ae;
+  }
+
+  .b-square {
+    background-color: #86a29e;
+  }
 }
 
 .pythag-square-cols {
@@ -297,7 +332,7 @@ ul.pythag-triple-title {
 }
 
 .b-square {
-  background-color: var(--palette-grey-2);
+  background-color: var(--pythag-cell-pale, #cedbd8);
 }
 
 .a-row-wrapper {
@@ -305,7 +340,7 @@ ul.pythag-triple-title {
 }
 
 .a-square {
-  background-color: var(--palette-grey-3);
+  background-color: var(--pythag-cell-pale, #cedbd8);
 }
 
 .a-label {
@@ -340,19 +375,19 @@ ul.pythag-triple-title {
 }
 
 .c-square {
-  background-color: var(--palette-grey-1);
+  background-color: var(--pythag-cell-pale, #cedbd8);
 }
 
 .a-corner-square {
-  background-color: var(--palette-3);
+  background-color: var(--pythag-cell-pale, #cedbd8);
 }
 
 .a-side-square {
-  background-color: var(--palette-4);
+  background-color: var(--pythag-cell-pale, #cedbd8);
 }
 
 .a-top-square {
-  background-color: var(--palette-4);
+  background-color: var(--pythag-cell-pale, #cedbd8);
 }
 
 .no-show {
@@ -586,8 +621,15 @@ h4 {
   transform: none;
 }
 
+.pythag-square-stage {
+  position: relative;
+  width: fit-content;
+  margin-inline: auto;
+}
+
 .pythag-arrangement-control {
-  margin-bottom: 0.75rem;
+  margin-top: 0.75rem;
+  text-align: center;
 }
 
 .pythag-arrangement-heading {
@@ -624,10 +666,18 @@ h4 {
 }
 
 .pythag-arrangement-caption {
-  min-height: 1.2rem;
-  margin-top: 0.35rem;
+  position: absolute;
+  z-index: 3;
+  right: 0.45rem;
+  bottom: 0.45rem;
+  max-width: calc(100% - 0.9rem);
+  padding: 0.25rem 0.4rem;
+  border-radius: 0.35rem;
+  background: rgba(247, 249, 244, 0.9);
   color: var(--palette-grey-2);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
+  line-height: 1.25;
+  pointer-events: none;
 }
 
 

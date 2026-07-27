@@ -1,67 +1,18 @@
 import { useEffect, useState, useRef } from 'react';
 
-const makePythagLabel = (label, value, triple, format = 'square') => {
-  let labelJSX = (
-    <span className="pythag-side">
-      <span className="pythag-label">
-        {label}
-        <span className="exponent">2</span>
-      </span>
-      = {value}x{value} = {value * value}
-    </span>
-  );
-
-  if (label === 'a' && format === 'wrap') {
-    let [a, b, c] = triple;
-    let corner = c - b;
-    labelJSX = (
-      <span className="pythag-side">
-        <span className="pythag-label">
-          {label}
-          <span className="exponent">2</span>
-        </span>
-        ={' '}
-        <span data-animate="a-corner-label">
-          {corner}
-          <span className="exponent">2</span>
-        </span>{' '}
-        +{' '}
-        <span data-animate="a-side-label">
-          2({b}×{corner})
-        </span>{' '}
-        = {a * a}
-      </span>
-    );
-  }
-  return labelJSX;
-};
-
-const highlightAParts = (area, state) => {
-  let label = document.querySelector(`[data-animate="a-${area}-label"]`);
-  if (!label) return;
-
-  if (state) {
-    label.classList.add(`a-${area}-label`);
-  } else {
-    label.classList.remove(`a-${area}-label`);
-  }
-};
-
 
 function PythagSquare(props) {
   const [mode, setMode] = useState('wrap');
   const [cArea, setCArea] = useState(200);
   const [triple, setTriple] = useState(props.triple);
   const [unified, setUnified] = useState(false);
+  const [cDecomposing, setCDecomposing] = useState(
+    props.highlightedArea === 'c'
+  );
   const unifyTimeoutRef = useRef(null);
+  const cDecompositionTimeoutRef = useRef(null);
 
   const [a, b, c] = triple;
-
-  const [aLabel, setALabel] = useState(
-    makePythagLabel('a', a, triple, 'wrap')
-  );
-  const [bLabel, setBLabel] = useState(makePythagLabel('b', b, triple));
-  const [cLabel, setCLabel] = useState(makePythagLabel('c', c, triple));
 
   const cWrapRef = useRef(null);
 
@@ -75,15 +26,38 @@ function PythagSquare(props) {
   }, [props.illus]);
 
   useEffect(() => {
-    setTriple(props.triple);
-  }, [props.triple[2]]); // only when c changes
+    if (props.highlightedArea !== 'a') {
+      setMode('wrap');
+    }
+  }, [props.highlightedArea]);
 
   useEffect(() => {
-    highlightAParts('corner', mode === 'wrap');
-    highlightAParts('side', mode === 'wrap');
-    highlightAParts('top', mode === 'wrap');
-  }, [mode]);
+    if (cDecompositionTimeoutRef.current) {
+      clearTimeout(cDecompositionTimeoutRef.current);
+      cDecompositionTimeoutRef.current = null;
+    }
 
+    if (props.highlightedArea === 'c') {
+      setCDecomposing(true);
+      cDecompositionTimeoutRef.current = setTimeout(() => {
+        setCDecomposing(false);
+        cDecompositionTimeoutRef.current = null;
+      }, 1000);
+    } else {
+      setCDecomposing(false);
+    }
+
+    return () => {
+      if (cDecompositionTimeoutRef.current) {
+        clearTimeout(cDecompositionTimeoutRef.current);
+        cDecompositionTimeoutRef.current = null;
+      }
+    };
+  }, [props.highlightedArea]);
+
+  useEffect(() => {
+    setTriple(props.triple);
+  }, [props.triple[2]]); // only when c changes
 
   // Measure actual spacing between neighboring a-squares
   useEffect(() => {
@@ -172,11 +146,6 @@ function PythagSquare(props) {
 
 
   const setArrangement = (nextMode) => {
-    setALabel(
-      nextMode === 'wrap'
-        ? makePythagLabel('a', a, triple, 'wrap')
-        : makePythagLabel('a', a, triple)
-    );
     setMode(nextMode);
   };
 
@@ -318,7 +287,7 @@ function drawASquare(triple) {
 
 
   function drawBSquare(triple) {
-    const [a, b, c] = triple;
+    const [, b, c] = triple;
     const side = Math.floor(cArea / c) + 'px';
     const sqStyle = { width: side, height: side };
 
@@ -371,8 +340,11 @@ function drawASquare(triple) {
     }
 
     return (
-      <div className="pythag-square-wrapper">
-        <div className="a-label">{aLabel}</div>
+    <div
+      className={`pythag-square-wrapper ${
+        props.highlightedArea ? `has-highlight highlight-${props.highlightedArea}` : ''
+      } ${cDecomposing ? 'c-decomposing' : ''}`}
+    >
         <div className="pythag-square-cols">
           <div className="pythag-square-col">
             <div ref={cWrapRef} className="c-wrapper">
@@ -385,11 +357,7 @@ function drawASquare(triple) {
               ))}
             </div>
           </div>
-          <div className="pythag-square-col">
-            <div className="b-label">{bLabel}</div>
-          </div>
         </div>
-        <div className="c-label">{cLabel}</div>
       </div>
     );
   }
@@ -399,33 +367,39 @@ function drawASquare(triple) {
 
   return (
     <div>
-      <div className="pythag-arrangement-control">
-        <div className="pythag-arrangement-heading">Arrangement</div>
-        <div className="pythag-arrangement-options" role="group" aria-label="Arrange the a squared area">
-          <button
-            type="button"
-            className={mode === 'wrap' ? 'active' : ''}
-            aria-pressed={mode === 'wrap'}
-            onClick={() => setArrangement('wrap')}
-          >
-            Around b²
-          </button>
-          <button
-            type="button"
-            className={mode === 'square' ? 'active' : ''}
-            aria-pressed={mode === 'square'}
-            onClick={() => setArrangement('square')}
-          >
-            As a² square
-          </button>
-        </div>
-        <div className="pythag-arrangement-caption" aria-live="polite">
-          {mode === 'wrap'
-            ? `${a * a} cells shown as a ${corner}² corner and two ${b}×${corner} strips.`
-            : `The same ${a * a} cells rearranged into a ${a}×${a} square.`}
-        </div>
+      <div className="pythag-square-stage">
+        {cSquare}
+        {props.highlightedArea === 'a' && (
+          <div className="pythag-arrangement-caption" aria-live="polite">
+            {mode === 'wrap'
+              ? `${a * a} cells shown as a ${corner}² corner and two ${b}×${corner} strips.`
+              : `The same ${a * a} cells rearranged into a ${a}×${a} square.`}
+          </div>
+        )}
       </div>
-      {cSquare}
+      {props.highlightedArea === 'a' && (
+        <div className="pythag-arrangement-control">
+          <div className="pythag-arrangement-heading">Arrangement of a²</div>
+          <div className="pythag-arrangement-options" role="group" aria-label="Arrange the a squared area">
+            <button
+              type="button"
+              className={mode === 'wrap' ? 'active' : ''}
+              aria-pressed={mode === 'wrap'}
+              onClick={() => setArrangement('wrap')}
+            >
+              Around b²
+            </button>
+            <button
+              type="button"
+              className={mode === 'square' ? 'active' : ''}
+              aria-pressed={mode === 'square'}
+              onClick={() => setArrangement('square')}
+            >
+              As a² square
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

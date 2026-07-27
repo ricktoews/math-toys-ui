@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import "../css/PythagoreanTriplesLab.scss";
 import PythagSquare from "./PythagSquare";
 
@@ -93,11 +93,12 @@ function TriplesList({ triples, onSelectTriple }) {
                                 <td>{t.a}² + {t.b}² = {t.c}²</td>
                                 <td className="pt-gcd-cell">
                                     <span className="pt-gcd-content">
-                                        <span>{t.gcd}</span>
-                                        {t.primitive && (
+                                        {t.primitive ? (
                                             <span className="pt-primitive-badge">
                                                 Primitive
                                             </span>
+                                        ) : (
+                                            <span>{t.gcd}</span>
                                         )}
                                     </span>
                                 </td>
@@ -112,12 +113,18 @@ function TriplesList({ triples, onSelectTriple }) {
 }
 
 function TripleModal({ triple, onClose }) {
+    const [highlightedArea, setHighlightedArea] = useState("c");
+
+    useEffect(() => {
+        setHighlightedArea("c");
+    }, [triple]);
+
     if (!triple) return null;
 
     const { a, b, c } = triple;
 
     return (
-        <div className="pt-modal-backdrop" onClick={onClose}>
+        <div className="pt-modal-backdrop pt-triple-modal-backdrop" onClick={onClose}>
             <div
                 className="pt-modal pt-triple-modal"
                 onClick={(e) => {
@@ -139,13 +146,52 @@ function TripleModal({ triple, onClose }) {
                 </header>
 
                 <div className="pt-modal-body">
-                    <p>
-                        {a}² = {a * a}, {b}² = {b * b}, {c}² = {c * c}
-                    </p>
+                    <div
+                        className="pt-square-summary-controls"
+                        role="group"
+                        aria-label="Highlight a square region"
+                    >
+                        {[
+                            { area: "c", value: c },
+                            { operator: "=" },
+                            { area: "a", value: a },
+                            { operator: "+" },
+                            { area: "b", value: b },
+                        ].map(({ area, value, operator }, index) =>
+                            operator ? (
+                                <span
+                                    className="pt-square-summary-operator"
+                                    aria-hidden="true"
+                                    key={`${operator}-${index}`}
+                                >
+                                    {operator}
+                                </span>
+                            ) : (
+                            <button
+                                key={area}
+                                type="button"
+                                className={highlightedArea === area ? "active" : ""}
+                                aria-pressed={highlightedArea === area}
+                                onClick={() => {
+                                    setHighlightedArea((current) =>
+                                        current === area ? null : area
+                                    );
+                                }}
+                            >
+                                <i>{area}</i>² = {value * value}
+                            </button>
+                            )
+                        )}
+                    </div>
 
                     {/* Your grid visualizer goes here */}
                     <div className="pt-modal-grid-wrapper">
-                        {c <= 50 && <PythagSquare triple={[a, b, c]} />}
+                        {c <= 50 && (
+                            <PythagSquare
+                                triple={[a, b, c]}
+                                highlightedArea={highlightedArea}
+                            />
+                        )}
                     </div>
                 </div>
 

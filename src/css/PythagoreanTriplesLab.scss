@@ -387,6 +387,12 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   z-index: 999;
 }
 
+.pt-triple-modal-backdrop {
+  align-items: flex-start;
+  box-sizing: border-box;
+  padding: clamp(1rem, 18vh, 13.5rem) 0 1rem;
+}
+
 .pt-modal {
   background: #ffffff;
   border-radius: 12px;
@@ -503,6 +509,45 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   padding: 0.1rem 0.25rem;
   border-radius: 3px;
   font-size: 0.85em;
+}
+
+.pt-square-summary-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 0.75rem;
+}
+
+.pt-square-summary-controls button {
+  flex: 1 1 0;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid rgba(121, 148, 150, 0.45);
+  border-radius: 999px;
+  background: #f3f6ef;
+  color: $pt-text-main;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.pt-square-summary-controls button:hover {
+  border-color: #799496;
+  background: rgba(172, 193, 150, 0.3);
+}
+
+.pt-square-summary-controls button.active {
+  border-color: #91aaa6;
+  background: #91aaa6;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(73, 71, 91, 0.18);
+}
+
+.pt-square-summary-operator {
+  flex: 0 0 auto;
+  color: $pt-text-subtle;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .pt-modal-placeholder {
@@ -657,6 +702,10 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
 
 .pt-modal-grid-wrapper {
   margin-top: 0.8rem;
+}
+
+.pt-modal-grid-wrapper .pythag-square-cols {
+  justify-content: center;
 }
 
 .pt-summary-sep {
