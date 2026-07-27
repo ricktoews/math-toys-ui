@@ -416,13 +416,17 @@ ul.pythag-triple-title {
 
   .modal-header {
     position: relative;
+    z-index: 1;
     justify-content: center;
     min-height: 48px;
     padding: 8px 44px;
     border-bottom: 0;
+    background: #f3f6ef;
+    box-shadow: 0 3px 8px rgba(73, 71, 91, 0.12);
   }
 
   .modal-title {
+    color: #405431;
     font-size: 1.25rem;
     font-weight: 600;
     line-height: 1.4;
@@ -435,6 +439,16 @@ ul.pythag-triple-title {
     margin: 0;
     padding: 8px;
     transform: translateY(-50%);
+    border-radius: 50%;
+    background-color: rgba(172, 193, 150, 0.28);
+    opacity: 0.65;
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+
+    &:hover,
+    &:focus {
+      background-color: rgba(172, 193, 150, 0.55);
+      opacity: 0.9;
+    }
   }
 
   .modal-body {
