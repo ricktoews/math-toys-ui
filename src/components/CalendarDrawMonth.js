@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 const CSSRoot = document.querySelector(':root');
@@ -21,6 +21,7 @@ const MonthWrapper = styled.div`
 	display: inline-block;
 	font-size: .5em;
 	padding: 3px;
+	cursor: pointer;
 `;
 
 const MonthDigit = styled.div`
@@ -35,6 +36,13 @@ const MonthDigit = styled.div`
 	font-style: italic;
 	font-size:7em;
 	color: ${getCSSVar('--palette-4')};
+	transition: color 0.15s ease, text-shadow 0.15s ease, transform 0.15s ease;
+
+	&.show-leading-blank {
+		color: ${getCSSVar('--palette-3')};
+		text-shadow: 0 0 8px rgba(121, 148, 150, 0.28);
+		transform: scale(1.08);
+	}
 `;
 
 const MonthRow = styled.div`
@@ -69,14 +77,37 @@ const DateCell = styled.div`
 		width: 5px;
 		border-radius: 50%;
 	}
+
+	.blank.show-leading-blank {
+		width: 10px;
+		height: 10px;
+		margin: 0;
+		border-radius: 2px;
+		background: ${getCSSVar('--palette-4')};
+		opacity: 0.65;
+	}
 `;
 
 function DrawMonth(props) {
 	const [ monthData, setMonthData ] = useState(props.monthData);
+	const [ showLeadingBlanks, setShowLeadingBlanks ] = useState(false);
+	const blankTimer = useRef(null);
 
 	useEffect(() => {
 		setMonthData(props.monthData);
 	}, [props.monthData]);
+
+	useEffect(() => {
+		return () => clearTimeout(blankTimer.current);
+	}, []);
+
+	const flashLeadingBlanks = () => {
+		clearTimeout(blankTimer.current);
+		setShowLeadingBlanks(true);
+		blankTimer.current = setTimeout(() => {
+			setShowLeadingBlanks(false);
+		}, 700);
+	}
 
 	const generateHeader = () => {
 		return (<MonthHeader>
@@ -86,6 +117,9 @@ function DrawMonth(props) {
 
 	const drawDate = date => {
 		var dateClass = date.dt === '' ? `blank` : '';
+		if (date.dt === '' && showLeadingBlanks) {
+			dateClass += ' show-leading-blank';
+		}
 		return <DateCell key={date.ndx}>
 		         <div className={dateClass}>{date.dt}</div>
 		       </DateCell>
@@ -125,12 +159,15 @@ function DrawMonth(props) {
 		return html;
 	}
 
-	return <MonthWrapper>
-	         <MonthDigit>{monthData.blanks}</MonthDigit>
+	return <MonthWrapper
+	         onClick={flashLeadingBlanks}
+	       >
+	         <MonthDigit className={showLeadingBlanks ? 'show-leading-blank' : ''}>
+	           {monthData.blanks}
+	         </MonthDigit>
 	         {generateHeader()}
 	         {generateCalendar()}
 	       </MonthWrapper>;
 }
 
 export default DrawMonth;
-
