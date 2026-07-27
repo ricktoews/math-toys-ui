@@ -27,10 +27,14 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .pt-page-title {
-  font-size: 1.6rem;
+  margin: 0 auto 1rem;
+  padding-inline: 0.5rem;
+  font-size: clamp(1.15rem, 5.5vw, 1.8rem);
+  line-height: 1.1;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 // ---- main layout ----
@@ -67,8 +71,48 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
 
 /* When expanded, we reuse .pt-corner-selector from before */
 
-/* Collapsed pill */
-.pt-corner-toggle {
+.pt-corner-collapsed {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.pt-corner-back {
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid $pt-border;
+  border-radius: 50%;
+  background: #fff;
+  color: darken($pt-accent, 8%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: background-color 0.12s ease, border-color 0.12s ease,
+    transform 0.08s ease;
+}
+
+.pt-corner-back-icon {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pt-corner-back:hover {
+  border-color: $pt-accent;
+  background: rgba($pt-accent, 0.08);
+  transform: translateX(-1px);
+}
+
+.pt-corner-summary {
   width: fit-content;
   max-width: 100%;
   padding: 0.35rem 0.8rem;
@@ -79,16 +123,6 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   align-items: baseline;
   gap: 0.4rem;
   font-size: 0.85rem;
-  cursor: pointer;
-}
-
-.pt-corner-toggle:hover {
-  background: #f0f0f0;
-}
-
-.pt-corner-toggle-icon {
-  font-size: 0.75rem;
-  color: $pt-text-subtle;
 }
 
 /* Optional: align "Done" button in the expanded view */
@@ -110,7 +144,6 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  margin-left: 0.8rem;
 }
 
 .pt-inline-label {
@@ -255,12 +288,29 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
 .pt-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   font-size: 0.9rem;
+}
+
+.pt-table th:nth-child(1),
+.pt-table td:nth-child(1) {
+  width: 30%;
+  white-space: nowrap;
+}
+
+.pt-table th:nth-child(2),
+.pt-table td:nth-child(2) {
+  width: 44%;
+}
+
+.pt-table th:nth-child(3),
+.pt-table td:nth-child(3) {
+  width: 26%;
 }
 
 .pt-table th,
 .pt-table td {
-  padding: 0.35rem 0.2rem;
+  padding: 0.48rem 0.3rem;
   text-align: left;
 }
 
@@ -282,10 +332,15 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   background: rgba($pt-accent, 0.06);
 }
 
-.pt-table td:last-child,
-.pt-table th:last-child {
-  text-align: right;
-  padding-right: 0.75rem; // optional, just looks nicer
+.pt-result-row {
+  cursor: pointer;
+  transition: background-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.pt-result-row:focus {
+  outline: none;
+  background: rgba($pt-accent, 0.09);
+  box-shadow: inset 3px 0 0 $pt-accent;
 }
 
 .pt-primitive-cell {
@@ -383,6 +438,46 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   }
 }
 
+.pt-triple-modal .pt-modal-header {
+  min-height: 48px;
+  padding: 8px 44px;
+  border-bottom: 0;
+  background: #f3f6ef;
+  color: #405431;
+  box-shadow: 0 3px 8px rgba(73, 71, 91, 0.12);
+}
+
+.pt-triple-modal .pt-modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.pt-triple-modal .pt-modal-close-btn {
+  top: 50%;
+  right: 12px;
+  margin: 0;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: rgba(172, 193, 150, 0.28);
+  color: #405431;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.65;
+  transform: translateY(-50%);
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+
+  &:hover,
+  &:focus {
+    background: rgba(172, 193, 150, 0.55);
+    color: #405431;
+    opacity: 0.9;
+  }
+}
+
 
 .pt-modal-body {
   padding: 0.8rem 1rem;
@@ -428,10 +523,40 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .pt-prime-builder {
-  margin-top: 0.9rem;
-  padding-top: 0.7rem;
-  border-top: 1px solid $pt-border-soft;
+  margin-top: 0.65rem;
+  padding: 0.7rem;
+  border: 1px solid $pt-border-soft;
+  border-radius: 8px;
+  background: #fff;
   font-size: 0.85rem;
+}
+
+.pt-advanced-toggle {
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.55rem 0;
+  border: 0;
+  border-top: 1px solid $pt-border-soft;
+  background: transparent;
+  color: $pt-text-muted;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.pt-advanced-toggle:hover {
+  color: $pt-text-main;
+}
+
+.pt-advanced-tools {
+  margin-top: 0.65rem;
+  padding: 0.7rem;
+  border: 1px solid $pt-border-soft;
+  border-radius: 8px;
+  background: #fff;
 }
 
 .pt-prime-builder-title {
@@ -606,30 +731,26 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .pt-table .pt-gcd-cell {
-  text-align: center;
-  width: 4rem;
+  text-align: right;
 }
 
-.pt-star-icon {
-  width: 1.7rem;   // adjust size to taste
-  height: 1.7rem;
+.pt-gcd-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.3rem;
 }
 
-.pt-star-shape {
-  fill: #d4a017;       // gold
-  stroke: #8f6a00;     // darker outline
-  stroke-width: 3;
+.pt-primitive-badge {
+  padding: 0.12rem 0.35rem;
+  border: 1px solid rgba(121, 148, 150, 0.55);
+  border-radius: 999px;
+  background: rgba(172, 193, 150, 0.28);
+  color: #405431;
+  font-size: 0.62rem;
+  font-weight: 600;
+  line-height: 1.2;
 }
-
-.pt-star-text {
-  fill: #fff;
-  font-size: 42px;
-  font-weight: 700;
-  font-family: "Inter", sans-serif;
-  dominant-baseline: middle;
-}
-
-
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
@@ -650,5 +771,22 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
     flex-direction: column;
     align-items: flex-start;
   }
-}
 
+  .pt-table {
+    font-size: 0.82rem;
+  }
+
+  .pt-table th {
+    font-size: 0.64rem;
+    letter-spacing: 0.05em;
+  }
+
+  .pt-table th,
+  .pt-table td {
+    padding-inline: 0.2rem;
+  }
+
+  .pt-primitive-badge {
+    font-size: 0.56rem;
+  }
+}

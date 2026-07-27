@@ -344,38 +344,15 @@ ul.pythag-triple-title {
 }
 
 .a-corner-square {
-  background-color: var(--palette-5);
-}
-
-.a-corner-label,
-.a-side-label,
-.a-top-label {
-  display: inline-block;
-  border-radius: 4px;
-  padding: 2px;
-}
-
-.a-corner-label {
-  background-color: $palette-5;
-  color: set-text-color($palette-5);
+  background-color: var(--palette-3);
 }
 
 .a-side-square {
-  background-color: var(--palette-3);
-}
-
-.a-side-label {
-  background-color: var(--palette-3);
-  color: set-text-color($palette-3);
+  background-color: var(--palette-4);
 }
 
 .a-top-square {
-  background-color: $palette-4;
-}
-
-.a-top-label {
-  background-color: $palette-4;
-  color: set-text-color($palette-4);
+  background-color: var(--palette-4);
 }
 
 .no-show {
@@ -587,10 +564,6 @@ h4 {
 }
 /* existing .a-square, .b-square, .c-square styles stay as-is */
 
-.a-wrapper {
-  cursor: pointer;
-}
-
 /* all movable a-squares animate their transform */
 .a-square.movable {
   position: relative;
@@ -611,6 +584,50 @@ h4 {
 /* optional: in wrap mode, ensure no transform is applied */
 .a-wrapper.wrap-mode .a-square.movable {
   transform: none;
+}
+
+.pythag-arrangement-control {
+  margin-bottom: 0.75rem;
+}
+
+.pythag-arrangement-heading {
+  margin-bottom: 0.3rem;
+  color: var(--palette-grey-2);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pythag-arrangement-options {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid rgba(121, 148, 150, 0.45);
+  border-radius: 999px;
+  background: #f3f6ef;
+}
+
+.pythag-arrangement-options button {
+  padding: 0.35rem 0.7rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--palette-2);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.pythag-arrangement-options button.active {
+  background: var(--palette-3);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(73, 71, 91, 0.16);
+}
+
+.pythag-arrangement-caption {
+  min-height: 1.2rem;
+  margin-top: 0.35rem;
+  color: var(--palette-grey-2);
+  font-size: 0.72rem;
 }
 
 

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import "../css/PythagoreanTriplesLab.scss";
 import PythagSquare from "./PythagSquare";
 
-const PRESET_CORNERS = [1, 2, 3, 4, 5];
+const PRESET_CORNERS = [1, 2, 3, 4, 5, 8, 9];
 const DEFAULT_MAX_C = 5000;
 const MAX_RESULTS = 50;
 
@@ -17,37 +17,6 @@ function gcd(a, b) {
 
 function gcd3(a, b, c) {
     return gcd(gcd(a, b), c);
-}
-
-function factorize(n) {
-    const factors = [];
-    let num = Math.abs(n);
-    let p = 2;
-
-    while (p * p <= num) {
-        let count = 0;
-        while (num % p === 0) {
-            num /= p;
-            count++;
-        }
-        if (count > 0) {
-            factors.push({ prime: p, exp: count });
-        }
-        p = p === 2 ? 3 : p + 2; // 2,3,5,7,...
-    }
-
-    if (num > 1) {
-        factors.push({ prime: num, exp: 1 });
-    }
-
-    return factors;
-}
-
-function factorsToString(factors) {
-    if (factors.length === 0) return "1";
-    return factors
-        .map(({ prime, exp }) => (exp === 1 ? `${prime}` : `${prime}^${exp}`))
-        .join(" · ");
 }
 
 function generateTriples(k, maxC, maxResults) {
@@ -102,51 +71,35 @@ function TriplesList({ triples, onSelectTriple }) {
                         <tr>
                             <th>Triple</th>
                             <th>Equation</th>
-                            <th>gcd(a, b, c)</th>
-                            <th></th>
+                            <th>GCD / Type</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         {triples.map((t, idx) => (
-                            <tr key={`${t.a}-${t.b}-${t.c}-${idx}`}>
+                            <tr
+                                key={`${t.a}-${t.b}-${t.c}-${idx}`}
+                                className="pt-result-row"
+                                tabIndex="0"
+                                onClick={() => onSelectTriple(t)}
+                                onKeyDown={(event) => {
+                                    if (event.key === "Enter" || event.key === " ") {
+                                        event.preventDefault();
+                                        onSelectTriple(t);
+                                    }
+                                }}
+                            >
                                 <td>{t.a}, {t.b}, {t.c}</td>
                                 <td>{t.a}² + {t.b}² = {t.c}²</td>
                                 <td className="pt-gcd-cell">
-                                    {t.gcd === 1 ? (
-                                        <span className="pt-gcd-star-svg" title="Primitive triple">
-                                            <svg
-                                                viewBox="0 0 100 100"
-                                                className="pt-star-icon"
-                                                aria-hidden="true"
-                                            >
-                                                <polygon
-                                                    points="50,8 61,38 93,38 67,58 78,90 50,72 22,90 33,58 7,38 39,38"
-                                                    className="pt-star-shape"
-                                                />
-                                                <text
-                                                    x="50"
-                                                    y="57"     // ← OPTICAL CENTER
-                                                    textAnchor="middle"
-                                                    className="pt-star-text"
-                                                >
-                                                    1
-                                                </text>
-                                            </svg>
-                                        </span>
-                                    ) : (
-                                        t.gcd
-                                    )}
-                                </td>
-
-
-                                <td>
-                                    <button
-                                        className="pt-btn pt-btn-secondary"
-                                        onClick={() => onSelectTriple(t)}
-                                    >
-                                        View
-                                    </button>
+                                    <span className="pt-gcd-content">
+                                        <span>{t.gcd}</span>
+                                        {t.primitive && (
+                                            <span className="pt-primitive-badge">
+                                                Primitive
+                                            </span>
+                                        )}
+                                    </span>
                                 </td>
                             </tr>
                         ))}
@@ -161,22 +114,19 @@ function TriplesList({ triples, onSelectTriple }) {
 function TripleModal({ triple, onClose }) {
     if (!triple) return null;
 
-    const { a, b, c, primitive, gcd: g } = triple;
-    const commonFactorStr = primitive
-        ? null
-        : factorsToString(factorize(g)); // e.g. "2 · 3²"
+    const { a, b, c } = triple;
 
     return (
         <div className="pt-modal-backdrop" onClick={onClose}>
             <div
-                className="pt-modal"
+                className="pt-modal pt-triple-modal"
                 onClick={(e) => {
                     e.stopPropagation();
                 }}
             >
                 <header className="pt-modal-header">
                     <div className="pt-modal-title">
-                        A = {a}, B = {b}, C = {c}
+                        {a}, {b}, {c}
                     </div>
 
                     <button
@@ -193,31 +143,12 @@ function TripleModal({ triple, onClose }) {
                         {a}² = {a * a}, {b}² = {b * b}, {c}² = {c * c}
                     </p>
 
-                    {/* NEW: primitive / common-factor info */}
-                    <p>
-                        {primitive ? (
-                            <>
-                                <strong>Primitive</strong>
-                            </>
-                        ) : (
-                            <>
-                                (gcd = {g}
-                                {commonFactorStr && <> = {commonFactorStr}</>})
-                            </>
-                        )}
-                    </p>
-
                     {/* Your grid visualizer goes here */}
                     <div className="pt-modal-grid-wrapper">
                         {c <= 50 && <PythagSquare triple={[a, b, c]} />}
                     </div>
                 </div>
 
-                <footer className="pt-modal-footer">
-                    <button className="pt-btn" onClick={onClose}>
-                        Close
-                    </button>
-                </footer>
             </div>
         </div>
     );
@@ -467,6 +398,7 @@ export default function PythagoreanTriplesLab() {
     const [showCornerInfo, setShowCornerInfo] = useState(false);
 
     const [cornerCollapsed, setCornerCollapsed] = useState(false);
+    const [primeBuilderOpen, setPrimeBuilderOpen] = useState(false);
 
     const triples = useMemo(
         () => generateTriples(corner, DEFAULT_MAX_C, MAX_RESULTS),
@@ -474,8 +406,6 @@ export default function PythagoreanTriplesLab() {
     );
 
     // NEW: summary info for the collapsed pill
-    const factors = factorize(corner);
-    const factorStr = factorsToString(factors);
     const primitiveCount = triples.filter((t) => t.primitive).length;
     const primitivesText = primitiveCount > 0 ? "Yes" : "None";
 
@@ -490,6 +420,7 @@ export default function PythagoreanTriplesLab() {
         const val = parseInt(customInput, 10);
         if (!Number.isNaN(val) && val !== 0) {
             setCorner(val);
+            setPrimeBuilderOpen(false);
             setCornerCollapsed(true);
         }
     };
@@ -499,7 +430,7 @@ export default function PythagoreanTriplesLab() {
     return (
         <div className="pt-page">
 
-            <h1>Pythagorean Triples Lab</h1>
+            <h1 className="pt-page-title">Pythagorean Triples Lab</h1>
 
             <main className="pt-main">
                 {/* Corner selector */}
@@ -507,25 +438,32 @@ export default function PythagoreanTriplesLab() {
 
                 <section className="pt-corner-container">
                     {cornerCollapsed ? (
-                        // COLLAPSED PILL (unchanged)
-                        <button
-                            type="button"
-                            className="pt-corner-toggle"
-                            onClick={() => setCornerCollapsed(false)}
-                        >
-                            <span className="pt-summary-label">Corner (c − b)</span>
-                            <span className="pt-summary-value">{corner}</span>
+                        <div className="pt-corner-collapsed">
+                            <button
+                                type="button"
+                                className="pt-corner-back"
+                                onClick={() => setCornerCollapsed(false)}
+                                aria-label="Choose another corner"
+                            >
+                                <svg
+                                    className="pt-corner-back-icon"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M19 12H5" />
+                                    <path d="M11 18l-6-6 6-6" />
+                                </svg>
+                            </button>
 
-                            <span className="pt-summary-sep">·</span>
-                            <span className="pt-summary-label">Factors</span>
-                            <span className="pt-summary-value">{factorStr}</span>
+                            <div className="pt-corner-summary">
+                                <span className="pt-summary-label">Corner (c − b)</span>
+                                <span className="pt-summary-value">{corner}</span>
 
-                            <span className="pt-summary-sep">·</span>
-                            <span className="pt-summary-label">Primitives</span>
-                            <span className="pt-summary-value">{primitivesText}</span>
-
-                            <span className="pt-corner-toggle-icon">▾</span>
-                        </button>
+                                <span className="pt-summary-sep">·</span>
+                                <span className="pt-summary-label">Primitives</span>
+                                <span className="pt-summary-value">{primitivesText}</span>
+                            </div>
+                        </div>
                     ) : (
                         // EXPANDED TOOLS
                         <div className="pt-corner-selector">
@@ -556,31 +494,46 @@ export default function PythagoreanTriplesLab() {
                                     </button>
                                 ))}
 
-                                {/* Inline corner input + Go */}
-                                <form
-                                    className="pt-inline-custom"
-                                    onSubmit={handleCustomSubmit}
-                                >
-                                    <span className="pt-inline-label">Corner:</span>
-                                    <input
-                                        className="pt-input"
-                                        type="number"
-                                        value={customInput}
-                                        onChange={(e) => setCustomInput(e.target.value)}
-                                    />
-                                    <button className="pt-btn" type="submit">
-                                        Go
-                                    </button>
-                                </form>
                             </div>
 
-                            <PrimeCornerBuilder
-                                onApply={(value) => {
-                                    setCorner(value);
-                                    setCustomInput(String(value));
-                                    setCornerCollapsed(true);
-                                }}
-                            />
+                            <button
+                                type="button"
+                                className="pt-advanced-toggle"
+                                aria-expanded={primeBuilderOpen}
+                                onClick={() => setPrimeBuilderOpen((open) => !open)}
+                            >
+                                <span>Advanced</span>
+                                <span aria-hidden="true">{primeBuilderOpen ? "▴" : "▾"}</span>
+                            </button>
+
+                            {primeBuilderOpen && (
+                                <div className="pt-advanced-tools">
+                                    <form
+                                        className="pt-inline-custom"
+                                        onSubmit={handleCustomSubmit}
+                                    >
+                                        <span className="pt-inline-label">Custom corner</span>
+                                        <input
+                                            className="pt-input"
+                                            type="number"
+                                            value={customInput}
+                                            onChange={(e) => setCustomInput(e.target.value)}
+                                        />
+                                        <button className="pt-btn" type="submit">
+                                            Go
+                                        </button>
+                                    </form>
+
+                                    <PrimeCornerBuilder
+                                        onApply={(value) => {
+                                            setCorner(value);
+                                            setCustomInput(String(value));
+                                            setPrimeBuilderOpen(false);
+                                            setCornerCollapsed(true);
+                                        }}
+                                    />
+                                </div>
+                            )}
                         </div>
                     )}
                 </section>

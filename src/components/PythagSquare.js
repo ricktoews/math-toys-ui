@@ -27,11 +27,7 @@ const makePythagLabel = (label, value, triple, format = 'square') => {
         </span>{' '}
         +{' '}
         <span data-animate="a-side-label">
-          {b}x{corner}
-        </span>{' '}
-        +{' '}
-        <span data-animate="a-top-label">
-          {b}x{corner}
+          2({b}×{corner})
         </span>{' '}
         = {a * a}
       </span>
@@ -175,13 +171,13 @@ function PythagSquare(props) {
   }, [mode]);
 
 
-  const handleAClicked = () => {
-    if (mode === 'square') {
-      setALabel(makePythagLabel('a', a, triple, 'wrap'));
-    } else {
-      setALabel(makePythagLabel('a', a, triple));
-    }
-    setMode(mode === 'square' ? 'wrap' : 'square');
+  const setArrangement = (nextMode) => {
+    setALabel(
+      nextMode === 'wrap'
+        ? makePythagLabel('a', a, triple, 'wrap')
+        : makePythagLabel('a', a, triple)
+    );
+    setMode(nextMode);
   };
 
 function drawASquare(triple) {
@@ -307,7 +303,6 @@ function drawASquare(triple) {
 
   return (
     <div
-      onClick={handleAClicked}
       className={`a-wrapper ${
         mode === 'square' ? 'square-mode' : 'wrap-mode'
       }`}
@@ -400,7 +395,39 @@ function drawASquare(triple) {
   }
 
   const cSquare = drawCSquare(triple);
-  return <div>{cSquare}</div>;
+  const corner = c - b;
+
+  return (
+    <div>
+      <div className="pythag-arrangement-control">
+        <div className="pythag-arrangement-heading">Arrangement</div>
+        <div className="pythag-arrangement-options" role="group" aria-label="Arrange the a squared area">
+          <button
+            type="button"
+            className={mode === 'wrap' ? 'active' : ''}
+            aria-pressed={mode === 'wrap'}
+            onClick={() => setArrangement('wrap')}
+          >
+            Around b²
+          </button>
+          <button
+            type="button"
+            className={mode === 'square' ? 'active' : ''}
+            aria-pressed={mode === 'square'}
+            onClick={() => setArrangement('square')}
+          >
+            As a² square
+          </button>
+        </div>
+        <div className="pythag-arrangement-caption" aria-live="polite">
+          {mode === 'wrap'
+            ? `${a * a} cells shown as a ${corner}² corner and two ${b}×${corner} strips.`
+            : `The same ${a * a} cells rearranged into a ${a}×${a} square.`}
+        </div>
+      </div>
+      {cSquare}
+    </div>
+  );
 }
 
 export default PythagSquare;
