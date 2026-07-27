@@ -89,7 +89,7 @@ function TriplesList({ triples, onSelectTriple }) {
                                     }
                                 }}
                             >
-                                <td>{t.a}, {t.b}, {t.c}</td>
+                                <td>({t.a}, {t.b}, {t.c})</td>
                                 <td>{t.a}² + {t.b}² = {t.c}²</td>
                                 <td className="pt-gcd-cell">
                                     <span className="pt-gcd-content">
@@ -133,7 +133,7 @@ function TripleModal({ triple, onClose }) {
             >
                 <header className="pt-modal-header">
                     <div className="pt-modal-title">
-                        {a}, {b}, {c}
+                        ({a}, {b}, {c})
                     </div>
 
                     <button
