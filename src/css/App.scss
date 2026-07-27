@@ -389,7 +389,6 @@ ul.pythag-triple-title {
 }
 
 .year-12-digit-wrapper {
-  margin-right: 10px;
   margin-bottom: 10px;
   padding: 3px;
   cursor: pointer;
@@ -400,13 +399,23 @@ ul.pythag-triple-title {
 }
 
 .century-divider {
-  flex-basis: 100%;
+  grid-column: 1 / -1;
   height: 0;
 }
 
 .calendar-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+
+  >div:not(.century-divider) {
+    justify-self: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .calendar-grid {
+    grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+  }
 }
 
 .calendar-year-modal {

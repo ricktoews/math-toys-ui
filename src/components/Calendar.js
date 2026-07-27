@@ -132,18 +132,12 @@ function Calendar(props) {
     <div className="calendar-grid">
       {years.map((year, key) => {
         const isCurrentYear = year === currentYear;
-        const yearBlockClass = year % 100 === 0 ? 'century-divider' : '';
-
-        if (year === currentYear) {
-          return <React.Fragment key={key}><div className={yearBlockClass}></div><div ref={currentYearRef}>
-            <Year12Digit key={year} year={year} onClick={handleClick} isCurrentYear={isCurrentYear} />
-          </div></React.Fragment>
-        } else {
-          return <React.Fragment key={key}><div className={yearBlockClass}></div><div>
-            <Year12Digit key={year} year={year} onClick={handleClick} isCurrentYear={isCurrentYear} />
-          </div></React.Fragment>
-        }
-
+        return <React.Fragment key={key}>
+          {year % 100 === 0 && <div className="century-divider"></div>}
+          <div ref={isCurrentYear ? currentYearRef : null}>
+            <Year12Digit year={year} onClick={handleClick} isCurrentYear={isCurrentYear} />
+          </div>
+        </React.Fragment>
       })}
     </div>
     <MyVerticallyCenteredModal

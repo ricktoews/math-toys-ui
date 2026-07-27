@@ -86,6 +86,7 @@ const DateCell = styled.div`
 		background: ${getCSSVar('--palette-4')};
 		opacity: 0.65;
 	}
+
 `;
 
 function DrawMonth(props) {
