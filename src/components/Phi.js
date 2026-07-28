@@ -1,4 +1,4 @@
-import { Table, Modal, Button } from 'react-bootstrap';
+import { Table, Modal } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { MathJax } from 'better-react-mathjax';
 import { getPhi } from '../api/math-toys-api';
@@ -40,6 +40,7 @@ function InfoModal(props) {
     <Modal
       {...props}
       size="lg"
+      dialogClassName="phi-info-modal"
       aria-labelledby="phi-info-title"
       centered
     >
@@ -48,17 +49,40 @@ function InfoModal(props) {
           About Powers of Phi
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        <p>Phi is (√5 + 1) / 2, which is approximately 1.618. It's associated with the Fibonacci series, in that the ratio of a given element in that series to the previous element approximates phi.</p>
-        <p>For example, the first several Fibonacci numbers are 1, 1, 2, 3, 5, 8, 13, 21... The ratio of 8/5 is 1.6, 13/8 is 1.625, 21/13 is approximately 1.615, etc. This approximation increases in accuracy as one progresses through the series.</p>
-        <p>Each power of phi can be expressed in the form (a√5 + b) / 2. Notice the values of a and b for progressive powers of phi. For a, the values are the Fibonacci numbers.</p>
-        <p>Notice also that as the powers increase, the values for a√5 and b converge, with a√5 alternating less than and greater than b.</p>
+      <Modal.Body className="phi-info-body">
+        <div className="phi-info-formula">
+          <MathJax inline>
+            {'\\(\\varphi = \\frac{\\sqrt{5}+1}{2} \\approx 1.618\\)'}
+          </MathJax>
+        </div>
+
+        <section>
+          <h3>Fibonacci connection</h3>
+          <p>
+            Ratios of consecutive Fibonacci numbers approach φ. For example,
+            8/5 = 1.6, 13/8 = 1.625, and 21/13 ≈ 1.615.
+          </p>
+        </section>
+
+        <section>
+          <h3>Powers of φ</h3>
+          <p>
+            Each power can be written in the form{' '}
+            <MathJax inline>{'\\(\\frac{a\\sqrt{5}+b}{2}\\)'}</MathJax>. The values of{' '}
+            <InlineMath expression="a" /> are Fibonacci numbers.
+          </p>
+        </section>
+
+        <section>
+          <h3>Convergence</h3>
+          <p>
+            As the powers increase, <InlineMath expression="a√5" /> and{' '}
+            <InlineMath expression="b" />{' '}
+            converge, with <InlineMath expression="a√5" /> alternating between
+            less than and greater than <InlineMath expression="b" />.
+          </p>
+        </section>
       </Modal.Body>
-      <Modal.Footer>
-        <Button className="app-btn" onClick={props.onHide}>
-          Close
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 }

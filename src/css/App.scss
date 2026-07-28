@@ -266,13 +266,15 @@ header {
   width: 21%;
 }
 
-.phi-power-modal .modal-content {
+.phi-power-modal .modal-content,
+.phi-info-modal .modal-content {
   overflow: hidden;
   border: 1px solid rgba(121, 148, 150, 0.45);
   border-radius: 12px;
 }
 
-.phi-power-modal .modal-header {
+.phi-power-modal .modal-header,
+.phi-info-modal .modal-header {
   position: relative;
   min-height: 64px;
   justify-content: center;
@@ -283,7 +285,8 @@ header {
   box-shadow: 0 3px 8px rgba(73, 71, 91, 0.12);
 }
 
-.phi-power-modal .modal-title {
+.phi-power-modal .modal-title,
+.phi-info-modal .modal-title {
   font-size: 1.4rem;
   font-weight: 600;
   line-height: 1.4;
@@ -294,7 +297,8 @@ header {
   font-size: 0.62em;
 }
 
-.phi-power-modal .btn-close {
+.phi-power-modal .btn-close,
+.phi-info-modal .btn-close {
   position: absolute;
   top: 50%;
   right: 12px;
@@ -313,9 +317,44 @@ header {
 }
 
 .phi-power-modal .btn-close:hover,
-.phi-power-modal .btn-close:focus {
+.phi-power-modal .btn-close:focus,
+.phi-info-modal .btn-close:hover,
+.phi-info-modal .btn-close:focus {
   background-color: rgba(172, 193, 150, 0.55);
   opacity: 0.9;
+}
+
+.phi-info-body {
+  padding: 1rem 1.1rem 1.15rem;
+}
+
+.phi-info-formula {
+  margin-bottom: 1rem;
+  padding: 0.7rem;
+  border-radius: 8px;
+  background: #f7f9f4;
+  color: #405431;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.phi-info-body section + section {
+  margin-top: 1rem;
+}
+
+.phi-info-body h3 {
+  margin: 0 0 0.3rem;
+  color: #40545a;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.phi-info-body p {
+  margin: 0;
+  color: #34343b;
+  line-height: 1.55;
 }
 
 .phi-fraction-setup {
