@@ -126,8 +126,8 @@ function Calendar(props) {
   }
 
   return (<div className="calendar-page">
-    <div className="sticky-page-title">
-      <h1>12-Digit Calendar</h1>
+    <div className="math-toy-page-header">
+      <h1 className="math-toy-page-title">12-Digit Calendar</h1>
     </div>
     <div className="calendar-grid">
       {years.map((year, key) => {

@@ -476,7 +476,9 @@ export default function PythagoreanTriplesLab() {
     return (
         <div className="pt-page">
 
-            <h1 className="pt-page-title">Pythagorean Triples Lab</h1>
+            <div className="math-toy-page-header">
+                <h1 className="math-toy-page-title pt-page-title">Pythagorean Triples Lab</h1>
+            </div>
 
             <main className="pt-main">
                 {/* Corner selector */}

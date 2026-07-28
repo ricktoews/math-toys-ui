@@ -195,27 +195,28 @@ function Phi(props) {
   }
 
   return (<div className="phi-page">
-    <h1>
-      Powers of Phi
-      <button
-        type="button"
-        className="info-button"
-        onClick={() => setInfoShow(true)}
-        aria-label="Info about Powers of Phi"
-        style={{ marginLeft: '1rem', fontSize: '1rem', cursor: 'pointer', background: 'none', border: 'none' }}
-      >
-        ⓘ Info
-      </button>
-    </h1>
+    <div className="math-toy-page-header">
+      <h1 className="math-toy-page-title">
+        Powers of Phi
+        <button
+          type="button"
+          className="math-toy-page-action"
+          onClick={() => setInfoShow(true)}
+          aria-label="Info about Powers of Phi"
+        >
+          ⓘ Info
+        </button>
+      </h1>
+    </div>
     <div className="phi-table-wrapper">
-      <Table striped hover className="table phi-table">
+      <Table className="phi-table">
         <thead className="sticky-table">
           <tr>
-            <th>n</th>
-            <th>Fraction of Phi<sup>n</sup></th>
-            <th>Phi<sup>n</sup></th>
-            <th>a√5</th>
-            <th>a√5 - b</th>
+            <th><span className="phi-table-math"><InlineMath expression="n" /></span></th>
+            <th>Exact form</th>
+            <th><span className="phi-table-math"><InlineMath expression={'\\phi^n'} /></span></th>
+            <th><span className="phi-table-math"><InlineMath expression="a√5" /></span></th>
+            <th><span className="phi-table-math"><InlineMath expression="a√5 - b" /></span></th>
           </tr>
         </thead>
         <tbody>
@@ -229,7 +230,19 @@ function Phi(props) {
             const aRoot5 = Fibonacci * Math.sqrt(5);
             const phiNValue = (aRoot5 + Lucas) / 2;
 
-            return (<tr onClick={handleRowClick} key={key} data-power={key + 1}>
+            return (<tr
+              className="phi-result-row"
+              onClick={handleRowClick}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  handleRowClick(event);
+                }
+              }}
+              tabIndex="0"
+              key={key}
+              data-power={key + 1}
+            >
               <td>{power}</td>
               <td className="phi-fraction-cell"><MathJax>{`\\(\\frac{${Fibonacci}\\sqrt{5} + ${Lucas}}{2}\\)`}</MathJax></td>
               <td>{Math.floor(phiNValue * 10000) / 10000}</td>
