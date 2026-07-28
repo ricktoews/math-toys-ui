@@ -232,12 +232,211 @@ header {
 }
 
 /* Phi Stuff */
+.phi-page {
+  min-width: 0;
+}
+
+.phi-table-wrapper {
+  width: 100%;
+  min-width: 0;
+}
+
+.phi-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.phi-table th:nth-child(1) {
+  width: 7%;
+}
+
+.phi-table th:nth-child(2) {
+  width: 30%;
+}
+
+.phi-table th:nth-child(3) {
+  width: 22%;
+}
+
+.phi-table th:nth-child(4) {
+  width: 20%;
+}
+
+.phi-table th:nth-child(5) {
+  width: 21%;
+}
+
+.phi-power-modal .modal-content {
+  overflow: hidden;
+  border: 1px solid rgba(121, 148, 150, 0.45);
+  border-radius: 12px;
+}
+
+.phi-power-modal .modal-header {
+  position: relative;
+  min-height: 64px;
+  justify-content: center;
+  padding: 8px 44px;
+  border-bottom: 0;
+  background: #f3f6ef;
+  color: #405431;
+  box-shadow: 0 3px 8px rgba(73, 71, 91, 0.12);
+}
+
+.phi-power-modal .modal-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.phi-power-modal .modal-title sup {
+  font-size: 0.62em;
+}
+
+.phi-power-modal .btn-close {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  box-sizing: border-box;
+  width: 2rem;
+  height: 2rem;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  background-color: rgba(172, 193, 150, 0.28);
+  background-size: 0.75rem;
+  color: #405431;
+  opacity: 0.65;
+  transform: translateY(-50%);
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.phi-power-modal .btn-close:hover,
+.phi-power-modal .btn-close:focus {
+  background-color: rgba(172, 193, 150, 0.55);
+  opacity: 0.9;
+}
+
+.phi-fraction-setup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  font-size: 0.85rem;
+}
+
+.phi-fraction-setup p {
+  margin-bottom: 0;
+}
+
+.phi-calculation-box {
+  --phi-calculation-padding: 1rem;
+  margin-top: 1rem;
+  padding: 0 var(--phi-calculation-padding) 0.9rem;
+  border: 1px solid rgba(121, 148, 150, 0.38);
+  border-radius: 10px;
+  background: #f7f9f4;
+  overflow: hidden;
+}
+
+.phi-calculation-box p:last-child {
+  margin-bottom: 0;
+}
+
+.phi-step-heading {
+  margin: 0.75rem calc(var(--phi-calculation-padding) * -1) 0.45rem;
+  padding: 0.35rem var(--phi-calculation-padding);
+  background: rgba(145, 170, 166, 0.2);
+  color: #40545a;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.phi-step-heading:first-child {
+  margin-top: 0;
+}
+
+.phi-step-expression {
+  margin-bottom: 0.65rem;
+  font-family: "Cambria Math", Cambria, Georgia, "Times New Roman", serif;
+}
+
+.phi-math-operator {
+  color: var(--palette-2);
+}
+
+.phi-pattern-note {
+  padding: 0.55rem 0.65rem;
+  border-left: 3px solid #91aaa6;
+  background: rgba(145, 170, 166, 0.12);
+  color: var(--palette-grey-2);
+  font-size: 0.9em;
+  line-height: 1.45;
+}
+
 .fibonacci {
   color: var(--palette-2);
 }
 
 .lucas {
   color: var(--palette-3);
+}
+
+@media (max-width: 575.98px) {
+  .phi-page h1 {
+    margin-bottom: 1rem;
+    font-size: clamp(1.45rem, 7vw, 1.8rem);
+    letter-spacing: 0.14em;
+    white-space: nowrap;
+  }
+
+  .phi-page h1 .info-button {
+    margin-left: 0.35rem !important;
+    font-size: 0.72rem !important;
+    letter-spacing: normal;
+  }
+
+  .phi-table th,
+  .phi-table td {
+    padding: 0.38rem 0.18rem;
+    font-size: clamp(0.64rem, 2.9vw, 0.78rem);
+    line-height: 1.15;
+    vertical-align: middle;
+  }
+
+  .phi-table th {
+    white-space: normal;
+  }
+
+  .phi-table th:nth-child(1) {
+    width: 8%;
+  }
+
+  .phi-table th:nth-child(2) {
+    width: 31%;
+  }
+
+  .phi-table th:nth-child(3) {
+    width: 22%;
+  }
+
+  .phi-table th:nth-child(4) {
+    width: 19%;
+  }
+
+  .phi-table th:nth-child(5) {
+    width: 20%;
+  }
+
+  .phi-fraction-cell {
+    font-size: clamp(0.58rem, 2.55vw, 0.72rem) !important;
+  }
+
+  .phi-calculation-box {
+    --phi-calculation-padding: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
 }
 
 ul.pythag-triple-title {

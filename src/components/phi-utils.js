@@ -63,7 +63,6 @@ function getSqrt5Power(power) {
     sqrt5Power = radicalSymbol5;
   }
   let powerOf5 = 5**(power / 2);
-  //sqrt5Power = powerOf5 > 1 ? powerOf5 + sqrt5Power : sqrt5Power;
   sqrt5Power = powerOf5 + sqrt5Power;
   return sqrt5Power;
 }

@@ -4,13 +4,36 @@ import { MathJax } from 'better-react-mathjax';
 import { getPhi } from '../api/math-toys-api';
 import { getPascalRow, constructXYPower, constructPhiPower, reducedTerms, combineTerms, isolateFibonacciTerms } from './phi-utils';
 
-const convertToSuperscript = (str) => {
-  if (!str) return;
-  let converted = str && str.replace(/\^(\d+)/g, '<sup>$1</sup>');
-  return converted;
-}
+const simplifyDisplayedExpression = (str = '') => str
+  .replace(/\*1(?=√5|\s|<|$)/g, '')
+  .replace(/(^|[>\s+])1√5/g, '$1√5');
+const toMathJax = (str = '') => simplifyDisplayedExpression(str)
+  .replace(/<[^>]*>/g, '')
+  .replace(/√5/g, '\\sqrt{5}')
+  .replace(/\^(\d+)/g, '^{$1}')
+  .replace(/\*/g, '\\times ');
 const radicalSymbol = '√';
 const radicalSymbol5 = radicalSymbol + '5';
+
+function InlineMath({ expression }) {
+  return (
+    <MathJax inline dynamic>
+      {`\\(${toMathJax(expression)}\\)`}
+    </MathJax>
+  );
+}
+
+function MathTermList({ terms = [] }) {
+  return terms.map((term, index) => {
+    const termClass = term.includes('class="fibonacci"') ? 'fibonacci' : 'lucas';
+    return (
+      <span className={termClass} key={`${term}-${index}`}>
+        {index > 0 && <span className="phi-math-operator"> + </span>}
+        <InlineMath expression={term} />
+      </span>
+    );
+  });
+}
 
 function InfoModal(props) {
   return (
@@ -42,36 +65,62 @@ function InfoModal(props) {
 
 function MyVerticallyCenteredModal(props) {
   const { data } = props;
-  const { power, pascalRow, xyPower, termsExponents = [], terms = [], fibonacciTerms, reducedFibonacci } = data;
-  const xyPowerSuperscript = convertToSuperscript(xyPower);
-  const termsExponentsSuperscript = convertToSuperscript(termsExponents.join(' + '));
+  const { power, pascalRow, xyPower, termsExponents = [], oddPowerTerms = [], fibonacciTerms = [], reducedFibonacci } = data;
   const fibonacciSum = eval(reducedFibonacci);
 
   return (
     <Modal
       {...props}
       size="lg"
+      dialogClassName="phi-power-modal"
       aria-labelledby="contained-modal-title-vcenter"
       centered
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Phi to the power of {power} = <MathJax inline>{`\\(\\left(\\frac{\\sqrt{5} + 1}{2}\\right)^${power}\\)`}</MathJax>
+          <MathJax inline>
+            {`\\(\\varphi^{${power}} = \\left(\\frac{\\sqrt{5} + 1}{2}\\right)^{${power}}\\)`}
+          </MathJax>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>Numerator: ({radicalSymbol5} + 1)<sup>{power}</sup>.</p>
-        <p>Denominator: 2<sup>{power}</sup> = {2 ** power}. Numerator will be divided by {2 ** (power - 1)} to yield a result with denominator 2.</p>
-        <p>Calculate numerator as (x + y)<sup>{power}</sup> = <span dangerouslySetInnerHTML={{ __html: xyPowerSuperscript }} />,<br />
-          where x = {radicalSymbol5}, y = 1.</p>
-        <p>So: <span dangerouslySetInnerHTML={{ __html: termsExponentsSuperscript }} /></p>
-        <p>Compute {radicalSymbol5}<sup>n</sup>: <span dangerouslySetInnerHTML={{ __html: terms.join(' + ') }} /></p>
-        <p>Fibonacci terms (<i>n</i>{radicalSymbol5}): <span dangerouslySetInnerHTML={{ __html: fibonacciTerms }} /> = {fibonacciSum}</p>
-        <p>So the {power}th Fibonacci number is {fibonacciSum} / {2 ** (power - 1)} = {fibonacciSum / 2 ** (power - 1)}.</p>
+        <div className="phi-fraction-setup">
+          <p>Numerator: <InlineMath expression={`(√5 + 1)^${power}`} /></p>
+          <p>Denominator: 2<sup>{power}</sup> = {2 ** power}</p>
+        </div>
+        <div className="phi-calculation-box">
+          <div className="phi-step-heading">
+            Binomial expansion of (x + y)<sup>{power}</sup>
+          </div>
+          <p className="phi-step-expression"><InlineMath expression={xyPower} /></p>
+
+          <div className="phi-step-heading">Substitute <InlineMath expression="x = √5, y = 1" /></div>
+          <p className="phi-step-expression"><MathTermList terms={termsExponents} /></p>
+
+          <p className="phi-pattern-note">
+            Odd powers of x retain a factor of <InlineMath expression="√5" />.
+            The sum of their coefficients, after division by{' '}
+            <InlineMath expression="2^{n-1}" />, is the Fibonacci number{' '}
+            <InlineMath expression="F_n" />.
+          </p>
+
+          <div className="phi-step-heading">Odd-x terms</div>
+          <p className="phi-step-expression"><MathTermList terms={oddPowerTerms} /></p>
+
+          <div className="phi-step-heading">Reduced powers of <InlineMath expression="√5" /></div>
+          <p className="phi-step-expression"><MathTermList terms={fibonacciTerms} /></p>
+
+          <div className="phi-step-heading">Sum of Coefficients</div>
+          <p className="phi-step-expression"><InlineMath expression={`${reducedFibonacci} = ${fibonacciSum}`} /></p>
+
+          <div className="phi-step-heading">
+            Fibonacci Number <InlineMath expression={`F_{${power}}`} />
+          </div>
+          <p className="phi-step-expression">
+            <InlineMath expression={`${fibonacciSum} / 2^{${power}-1} = ${fibonacciSum / 2 ** (power - 1)}`} />
+          </p>
+        </div>
       </Modal.Body>
-      <Modal.Footer>
-        <Button className="app-btn" onClick={props.onHide}>Close</Button>
-      </Modal.Footer>
     </Modal>
   );
 }
@@ -105,10 +154,12 @@ function Phi(props) {
     popupData.xyPower = xyPower;
     const termsExponents = constructPhiPower(power);
     popupData.termsExponents = termsExponents;
+    popupData.oddPowerTerms = termsExponents
+      .filter(term => term.includes('class="fibonacci"'));
     const terms = constructPhiPower(power, false);
     popupData.terms = terms;
-    const fibonacciTerms = isolateFibonacciTerms(terms).sum;
-    popupData.fibonacciTerms = fibonacciTerms;
+    const fibonacciParts = isolateFibonacciTerms(terms);
+    popupData.fibonacciTerms = fibonacciParts.fibTerms;
     const reduced = reducedTerms(terms);
     popupData.reduced = reduced;
     const reducedFibonacci = isolateFibonacciTerms(reduced).sum
@@ -119,7 +170,7 @@ function Phi(props) {
     setModalShow(true);
   }
 
-  return (<div>
+  return (<div className="phi-page">
     <h1>
       Powers of Phi
       <button
@@ -132,36 +183,39 @@ function Phi(props) {
         ⓘ Info
       </button>
     </h1>
-    <Table striped hover className="table">
-      <thead className="sticky-table">
-        <tr>
-          <th>n</th>
-          <th>Fraction of Phi<sup>n</sup></th>
-          <th>Phi<sup>n</sup></th>
-          <th>a√5</th>
-          <th>a√5 - b</th>
-        </tr>
-      </thead>
-      <tbody>
+    <div className="phi-table-wrapper">
+      <Table striped hover className="table phi-table">
+        <thead className="sticky-table">
+          <tr>
+            <th>n</th>
+            <th>Fraction of Phi<sup>n</sup></th>
+            <th>Phi<sup>n</sup></th>
+            <th>a√5</th>
+            <th>a√5 - b</th>
+          </tr>
+        </thead>
+        <tbody>
 
-        {phiData.map((item, key) => {
-          //let f_l = item['[F, F*SQRT_5, L, L/SQRT_5]'];
-          let f_l = item['[a, b]'];
-          const power = key + 1;
-          const Fibonacci = f_l[0];
-          const Lucas = f_l[1];
-          const phiNValue = (Fibonacci * Math.sqrt(5) + Lucas) / 2;
+          {phiData.map((item, key) => {
+            //let f_l = item['[F, F*SQRT_5, L, L/SQRT_5]'];
+            let f_l = item['[a, b]'];
+            const power = key + 1;
+            const Fibonacci = f_l[0];
+            const Lucas = f_l[1];
+            const aRoot5 = Fibonacci * Math.sqrt(5);
+            const phiNValue = (aRoot5 + Lucas) / 2;
 
-          return (<tr onClick={handleRowClick} key={key} data-power={key + 1}>
-            <td>{power}</td>
-            <td><MathJax>{`\\(\\frac{${Fibonacci}\\sqrt{5} + ${Lucas}}{2}\\)`}</MathJax></td>
-            <td>{Math.floor(phiNValue * 10000) / 10000}</td>
-            <td>{item['phi^n'].toFixed(power > 20 ? 1 : 4)}</td>
-            <td>{(item['phi^n'] - Lucas).toFixed(4)}</td>
-          </tr>)
-        })}
-      </tbody>
-    </Table>
+            return (<tr onClick={handleRowClick} key={key} data-power={key + 1}>
+              <td>{power}</td>
+              <td className="phi-fraction-cell"><MathJax>{`\\(\\frac{${Fibonacci}\\sqrt{5} + ${Lucas}}{2}\\)`}</MathJax></td>
+              <td>{Math.floor(phiNValue * 10000) / 10000}</td>
+              <td>{aRoot5.toFixed(power > 20 ? 1 : 4)}</td>
+              <td>{(aRoot5 - Lucas).toFixed(4)}</td>
+            </tr>)
+          })}
+        </tbody>
+      </Table>
+    </div>
     <MyVerticallyCenteredModal
       show={modalShow}
       onHide={() => setModalShow(false)}
