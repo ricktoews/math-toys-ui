@@ -198,11 +198,6 @@ $fib-highlight: #a7f3d0;
     color: $fib-text-main;
     background: #fff;
 
-    &.intermediate {
-      color: $fib-text-subtle;
-      background: #f6f6f6;
-    }
-
     &.center {
       border: 2px solid darken($fib-accent, 10%);
       background: rgba($fib-accent, 0.16);
@@ -216,6 +211,24 @@ $fib-highlight: #a7f3d0;
       box-shadow: inset 0 0 0 1px rgba($fib-highlight, 0.75);
       font-weight: 600;
     }
+  }
+
+  .fib-relationship-gap {
+    width: 4.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: $fib-text-subtle;
+    font-size: 0.6rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .fib-relationship-dots {
+    color: $fib-text-muted;
+    font-size: 1.15rem;
+    letter-spacing: 0.12em;
+    line-height: 0.8;
   }
 
   .fib-relationship-index {
@@ -281,9 +294,9 @@ $fib-highlight: #a7f3d0;
     position: absolute;
     top: 2px;
     left: 4px;
-    font-size: 0.65rem;
-    color: $fib-text-subtle;
-    font-weight: 500;
+    font-size: 0.7rem;
+    color: $fib-text-muted;
+    font-weight: 600;
   }
 
   .fib-circle {
