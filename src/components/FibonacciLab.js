@@ -322,17 +322,27 @@ const FibonacciLab = () => {
                 className={`fib-square ${isHighlighted ? 'highlight' : ''} ${isDistance ? 'highlight-distance' : ''}`}
               >
                 <div className="fib-index">F<sub>{index}</sub></div>
-                <div
+                <button
+                  type="button"
                   className={`fib-circle ${isSelected ? 'on' : ''}`}
                   style={{
                     backgroundColor: isSelected ? colors[index] : '#f5f5f5'
                   }}
                   onClick={() => handleClick(index)}
-                  onMouseOver={() => handleMouseOver(index)}
-                  onMouseOut={handleMouseOut}
+                  onPointerEnter={(event) => {
+                    if (event.pointerType === 'mouse') {
+                      handleMouseOver(index);
+                    }
+                  }}
+                  onPointerLeave={(event) => {
+                    if (event.pointerType === 'mouse') {
+                      handleMouseOut();
+                    }
+                  }}
+                  aria-label={`Fibonacci number F ${index} equals ${num}${isSelected ? ', selected as center' : ''}`}
                 >
                   {num}
-                </div>
+                </button>
                 
                 {isDistance && (
                   <div className="square-display">

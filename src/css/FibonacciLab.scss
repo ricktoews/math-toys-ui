@@ -300,6 +300,7 @@ $fib-highlight: #a7f3d0;
   }
 
   .fib-circle {
+    padding: 0;
     width: 32px;
     height: 32px;
     border-radius: 999px;
@@ -313,11 +314,16 @@ $fib-highlight: #a7f3d0;
     border: 1px solid $fib-border;
     transition: background-color 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
     color: $fib-text-main;
+    font-family: inherit;
     font-weight: 500;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 
-    &:hover {
-      transform: scale(1.05);
-      border-color: $fib-accent;
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: scale(1.05);
+        border-color: $fib-accent;
+      }
     }
 
     &.on {
