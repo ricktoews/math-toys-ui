@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Table, Modal, Button } from 'react-bootstrap';
 import '../css/Denom.scss';
 import NumeratorList from './NumeratorList';
-import NumeratorDescription from './NumeratorDescription';
 import { getDenomByExpansion, getExpansions, postExpansions } from '../api/math-toys-api';
 import { getDenominatorFactors, parsedPeriod, getPeriodJSX } from './denom-helper';
+
+const SHOW_PERIOD_CATALOG = false;
 
 function formatDenominatorFactors(factors) {
   if (!factors || factors.length === 0) return null;
@@ -94,44 +95,6 @@ function InfoModal(props) {
   );
 }
 
-function MyVerticallyCenteredModal(props) {
-  const { numeratordata } = props;
-  const { numerator, denom, period, digits, denomIsPrime, position, beginRepeat } =
-    numeratordata;
-  const periodData = parsedPeriod(period, beginRepeat);
-  const periodJSX = getPeriodJSX(periodData);
-  const power10 = period.length;
-  const is10PrimitiveRoot = power10 < denom - 1 ? 'No' : 'Yes';
-
-  return (
-    <Modal
-      {...props}
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          <div className="digits">Digits&nbsp;in&nbsp;Expansion&nbsp;{digits}</div>
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <NumeratorDescription
-          {...numeratordata}
-          power10={power10}
-          periodJSX={periodJSX}
-          digits={digits}
-        />
-      </Modal.Body>
-      <Modal.Footer>
-        <Button className="app-btn" onClick={props.onHide}>
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  );
-}
-
 function ReciprocalModal({ show, onHide, prime, reciprocalDisplay }) {
   return (
     <Modal show={show} onHide={onHide} centered size="md">
@@ -156,13 +119,15 @@ function ReciprocalModal({ show, onHide, prime, reciprocalDisplay }) {
   );
 }
 
-function ExpansionRow({ expansion, expansionData, periodList, onClickNumerator, isExpanded, onToggle }) {
+function ExpansionRow({ expansion, expansionData, periodList, denom, isExpanded, onToggle }) {
+  const [selectedNumerator, setSelectedNumerator] = useState(null);
   const numeratorData = [];
-  const periodData = parsedPeriod(
-    expansion,
-    expansionData[expansion][0].beginRepeat
-  );
-  const periodJSX = getPeriodJSX(periodData);
+  const selectedData = selectedNumerator ? periodList[selectedNumerator] : null;
+  const familyBeginRepeat = expansionData[expansion][0].beginRepeat;
+  const familyPeriodJSX = getPeriodJSX(parsedPeriod(expansion, familyBeginRepeat));
+  const selectedPeriodJSX = selectedData
+    ? getPeriodJSX(parsedPeriod(selectedData.expansion, selectedData.beginRepeat))
+    : null;
 
   expansionData[expansion].forEach(item => {
     numeratorData[item.numerator] = {
@@ -172,36 +137,65 @@ function ExpansionRow({ expansion, expansionData, periodList, onClickNumerator, 
   });
 
   const numeratorCount = Object.keys(numeratorData).length;
+  const selectedPosition = selectedNumerator
+    ? numeratorData[selectedNumerator]?.position
+    : null;
+
+  const handleNumeratorSelect = (event) => {
+    event.stopPropagation();
+    const numerator = event.currentTarget.dataset.numerator;
+    setSelectedNumerator(previous => previous === numerator ? null : numerator);
+  };
 
   return (
-    <tr className={isExpanded ? "expansion-row-expanded" : "expansion-row-collapsed"}>
-      <td>
-        <div
-          className="expansion-row-header"
-          onClick={onToggle}
-        >
-          <div className="digits">{periodJSX}</div>
-          <div className="expansion-toggle-indicator">
+    <>
+      <tr
+        className={isExpanded ? "expansion-row-expanded" : "expansion-row-collapsed"}
+        onClick={onToggle}
+      >
+        <td className="expansion-digits">
+          <span className="digits">{familyPeriodJSX}</span>
+        </td>
+        <td className="expansion-numerators">
+          <span className="expansion-toggle-indicator">
             <span className="expansion-numerator-count">
               {numeratorCount} numerator{numeratorCount !== 1 ? 's' : ''}
             </span>
             <span className="expansion-toggle-icon">
               {isExpanded ? '▴' : '▾'}
             </span>
-          </div>
-        </div>
-
-        {isExpanded && (
-          <div className="expansion-row-content">
-            <NumeratorList
-              digits={expansion}
-              numeratorData={numeratorData}
-              onClick={onClickNumerator}
-            />
-          </div>
-        )}
-      </td>
-    </tr>
+          </span>
+        </td>
+      </tr>
+      {isExpanded && (
+        <tr className="expansion-detail-row">
+          <td colSpan="2">
+            <div className="expansion-row-content">
+              <NumeratorList
+                digits={expansion}
+                numeratorData={numeratorData}
+                selectedNumerator={selectedNumerator}
+                onClick={handleNumeratorSelect}
+                selectedPanel={selectedNumerator && (
+                  <div className="expansion-selected-fraction" aria-live="polite">
+                    <strong>{selectedNumerator}/{denom}</strong>
+                    <span>=</span>
+                    <span className="expansion-selected-decimal">
+                      0.{selectedPeriodJSX}
+                    </span>
+                    {selectedData.beginRepeat === 1 && selectedPosition > 1 && (
+                      <span className="expansion-rotation-label">
+                        Rotation {selectedPosition - 1}
+                      </span>
+                    )}
+                  </div>
+                )}
+              />
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
   );
 }
 
@@ -230,11 +224,9 @@ function getPrimesUpTo(max) {
 function Denom(props) {
   const [denom, setDenom] = useState();
   const [inputValue, setInputValue] = useState('');
-  const [modalShow, setModalShow] = useState(false);
   const [infoShow, setInfoShow] = useState(false);
   const [expansionKeys, setExpansionKeys] = useState([]);
   const [expansionData, setExpansionData] = useState([]);
-  const [numeratorData, setNumeratorData] = useState({});
   const [denomFactors, setDenomFactors] = useState([]);
   const [denomFactorsRaw, setDenomFactorsRaw] = useState([]);
   const [periodList, setPeriodList] = useState([]);
@@ -332,26 +324,6 @@ function Denom(props) {
     setRecipModalShow(true);
   };
 
-  const handleClickNumerator = e => {
-    const el = e.target;
-    const { digits, numerator, stringified } = el.dataset;
-    const data = JSON.parse(stringified);
-    const { position, beginRepeat } = data;
-    const { expansion } = periodList[numerator];
-    let numDataObj = {
-      numerator,
-      denom,
-      period: expansion,
-      digits,
-      denomIsPrime,
-      position,
-      beginRepeat,
-      denomFactors
-    };
-    setNumeratorData(numDataObj);
-    setModalShow(true);
-  };
-
   const handleSubmit = e => {
     e.preventDefault();
     const n = parseInt(inputValue, 10);
@@ -380,6 +352,28 @@ function Denom(props) {
 
   // Get the reciprocal expansion (numerator = 1)
   const reciprocalData = denom ? periodList[1] : null;
+  const reciprocalTerminates = reciprocalData?.beginRepeat === -1;
+  const repeatStart = reciprocalData && !reciprocalTerminates
+    ? Math.max((reciprocalData.beginRepeat ?? 1) - 1, 0)
+    : 0;
+  const reciprocalPeriodLength = reciprocalData && !reciprocalTerminates
+    ? reciprocalData.expansion.length - repeatStart
+    : 0;
+  const hasTerminatingFactor = denomFactorsRaw.some(factor => factor === 2 || factor === 5);
+  const hasRepeatingFactor = denomFactorsRaw.some(factor => factor !== 2 && factor !== 5);
+  let expansionType = '';
+  if (reciprocalTerminates) {
+    expansionType = 'Terminating';
+  } else if (denomIsPrime && reciprocalPeriodLength === denom - 1) {
+    expansionType = 'Full-reptend prime';
+  } else if (denomIsPrime) {
+    expansionType = 'Prime';
+  } else if (hasTerminatingFactor && hasRepeatingFactor) {
+    expansionType = 'Mixed repeating';
+  } else if (denom) {
+    expansionType = 'Repeating composite';
+  }
+
   let reciprocalDisplay = null;
   if (reciprocalData && reciprocalData.expansion) {
     const periodData = parsedPeriod(
@@ -448,50 +442,69 @@ function Denom(props) {
 
   return (
     <div className="denom-page">
-      <h1>Decimal Expansions</h1>
+      <div className="math-toy-page-header">
+        <h1 className="math-toy-page-title">Decimal Expansions</h1>
+      </div>
 
       <main className="denom-main">
         {/* Denominator selector */}
         <section className="denom-selector-container">
           {denomCollapsed ? (
             <>
-              {/* COLLAPSED PILL */}
-              <button
-                type="button"
-                className="denom-toggle"
-                onClick={() => setDenomCollapsed(false)}
-              >
-                <span className="denom-summary-label">Denominator:</span>
-                <span className="denom-summary-value">{denom}</span>
+              <div className="denom-result-summary">
+                <div className="denom-result-heading">
+                  <button
+                    type="button"
+                    className="denom-back"
+                    onClick={() => setDenomCollapsed(false)}
+                    aria-label="Choose another denominator"
+                  >
+                    <svg
+                      className="denom-back-icon"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path d="M19 12H5" />
+                      <path d="M11 18l-6-6 6-6" />
+                    </svg>
+                  </button>
 
-                {factorStr && (
-                  <>
-                    <span className="denom-summary-sep">·</span>
-                    <span className="denom-summary-label">Factors:</span>
-                    <span className="denom-summary-value">{factorStr}</span>
-                  </>
-                )}
-
-                {expansionCount > 0 && (
-                  <>
-                    <span className="denom-summary-sep">·</span>
-                    <span className="denom-summary-label">Expansions:</span>
-                    <span className="denom-summary-value">{expansionCount}</span>
-                  </>
-                )}
-
-                <span className="denom-toggle-icon">▾</span>
-              </button>
-
-              {/* RECIPROCAL DISPLAY BELOW PILL */}
-              {reciprocalDisplay && (
-                <div className="denom-reciprocal-info">
-                  <span className="denom-reciprocal-label">Reciprocal:</span>
-                  <span className="denom-reciprocal-value">
-                    0.{reciprocalDisplay}
-                  </span>
+                  <div className="denom-result-identity">
+                    <div className="denom-result-number">
+                      <strong>{denom}</strong>
+                      {factorStr && factorStr !== String(denom) && (
+                        <>
+                          <span className="denom-result-equals">=</span>
+                          <span>{denomFactors}</span>
+                        </>
+                      )}
+                    </div>
+                    <span className="denom-result-type">{expansionType}</span>
+                  </div>
                 </div>
-              )}
+
+                {reciprocalDisplay && (
+                  <div className="denom-reciprocal-info">
+                    <span className="denom-reciprocal-fraction">1/{denom}</span>
+                    <span className="denom-reciprocal-equals">=</span>
+                    <span className="denom-reciprocal-value">0.{reciprocalDisplay}</span>
+                  </div>
+                )}
+
+                <div className="denom-result-facts">
+                  {!reciprocalTerminates && reciprocalPeriodLength > 0 && (
+                    <span>Period {reciprocalPeriodLength}</span>
+                  )}
+                  <span>
+                    {expansionCount} expansion {expansionCount === 1 ? 'family' : 'families'}
+                  </span>
+                  {!reciprocalTerminates && !hasTerminatingFactor && (
+                    <span className="denom-order-fact">
+                      Smallest <i>n</i> with {denom} | (10<sup>n</sup> − 1): {reciprocalPeriodLength}
+                    </span>
+                  )}
+                </div>
+              </div>
             </>
           ) : (
             // EXPANDED TOOLS
@@ -570,11 +583,12 @@ function Denom(props) {
         {/* Main expansions table */}
         {expansionKeys.length > 0 && (
           <section className="denom-expansions">
-            <div className="denom-card">
-              <Table striped hover>
+            <div className="denom-expansions-table-wrapper">
+              <Table className="denom-expansions-table">
                 <thead>
                   <tr>
-                    <th>Decimal Expansions {denomFactors}</th>
+                    <th>Expansion families ({expansionCount})</th>
+                    <th>Numerators</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -584,7 +598,7 @@ function Denom(props) {
                       expansion={expansion}
                       expansionData={expansionData}
                       periodList={periodList}
-                      onClickNumerator={handleClickNumerator}
+                      denom={denom}
                       isExpanded={expandedRow === expansion}
                       onToggle={() => handleToggleRow(expansion)}
                     />
@@ -596,6 +610,7 @@ function Denom(props) {
         )}
 
         {/* Period-length catalog section */}
+        {SHOW_PERIOD_CATALOG && (
         <section className="denom-period-catalog">
           <div className="denom-card">
             <button
@@ -706,15 +721,8 @@ function Denom(props) {
             )}
           </div>
         </section>
+        )}
       </main>
-
-      {modalShow && (
-        <MyVerticallyCenteredModal
-          show={modalShow}
-          onHide={() => setModalShow(false)}
-          numeratordata={numeratorData}
-        />
-      )}
 
       <InfoModal show={infoShow} onHide={() => setInfoShow(false)} />
 
