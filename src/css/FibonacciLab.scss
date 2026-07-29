@@ -17,11 +17,7 @@ $fib-highlight: #a7f3d0;
   color: $fib-text-main;
   max-width: 960px;
   margin: 0 auto;
-  padding: 1rem;
-
-  h1 {
-    margin-bottom: 1.5rem;
-  }
+  padding: 0 1rem 1rem;
 
   h2 {
     font-size: 0.85rem;
@@ -41,6 +37,10 @@ $fib-highlight: #a7f3d0;
     color: $fib-text-main;
   }
 
+  .fib-instructions {
+    margin: 1.25rem 0 0;
+  }
+
   code {
     background: rgba($fib-accent, 0.1);
     padding: 0.1rem 0.25rem;
@@ -50,19 +50,183 @@ $fib-highlight: #a7f3d0;
   }
 
   .fib-equation-panel {
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 1.25rem;
     border-radius: 10px;
     background: $fib-card-bg;
     border: 1px solid $fib-border-soft;
     box-shadow: $fib-shadow-soft;
     margin-top: 1rem;
     margin-bottom: 1rem;
-    text-align: center;
     font-size: 0.95rem;
     color: $fib-text-main;
-    /* Provide a stable vertical space but allow content to flow normally */
-    min-height: 100px;
-    line-height: 1.2rem;
+    line-height: 1.35;
+  }
+
+  .fib-panel-prompt {
+    margin: 0;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $fib-text-muted;
+    text-align: center;
+  }
+
+  .fib-equation-step {
+    display: grid;
+    grid-template-columns: minmax(9rem, 1fr) minmax(13rem, 2fr);
+    gap: 1rem;
+    align-items: baseline;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid $fib-border-soft;
+  }
+
+  .fib-equation-label {
+    color: $fib-text-muted;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .fib-equation {
+    font-size: 1.05rem;
+  }
+
+  .fib-equation-separator {
+    display: inline-block;
+    margin: 0 0.65rem;
+    color: $fib-text-muted;
+  }
+
+  .fib-equation-result {
+    background: rgba($fib-highlight, 0.22);
+    margin: 0 -0.75rem;
+    padding: 0.65rem 0.75rem;
+    border-bottom: 0;
+    border-radius: 0.5rem;
+  }
+
+  .fib-equation-summary {
+    grid-column: 2;
+    margin-top: -0.15rem;
+    color: $fib-text-muted;
+    font-size: 0.82rem;
+  }
+
+  @media (max-width: 540px) {
+    padding-inline: 0;
+
+    .math-toy-page-header {
+      margin-bottom: 0.65rem;
+    }
+
+    .fib-instructions {
+      margin: 0 0 0.65rem;
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+
+    .fib-equation-panel {
+      margin: 0 0 0.65rem;
+      padding: 0.4rem 0.65rem;
+    }
+
+    .fib-panel-prompt {
+      min-height: 34px;
+      font-size: 0.82rem;
+    }
+
+    .fib-equation-step {
+      grid-template-columns: 1fr;
+      gap: 0.1rem;
+      padding: 0.3rem 0;
+    }
+
+    .fib-equation-label {
+      font-size: 0.62rem;
+    }
+
+    .fib-equation {
+      font-size: 0.9rem;
+      line-height: 1.3;
+    }
+
+    .fib-equation-result {
+      margin: 0 -0.3rem;
+      padding: 0.35rem 0.3rem;
+    }
+
+    .fib-equation-summary {
+      grid-column: 1;
+      margin-top: 0;
+      font-size: 0.7rem;
+    }
+
+    .fib-list-container {
+      margin-top: 0.65rem;
+    }
+  }
+
+  .fib-relationship-strip {
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 0.35rem 0.2rem 0.55rem;
+    scrollbar-width: thin;
+  }
+
+  .fib-relationship-track {
+    width: max-content;
+    min-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+  }
+
+  .fib-relationship-term {
+    flex: 0 0 auto;
+    width: 2.7rem;
+    min-height: 3.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    color: $fib-text-main;
+    background: #fff;
+
+    &.intermediate {
+      color: $fib-text-subtle;
+      background: #f6f6f6;
+    }
+
+    &.center {
+      border: 2px solid darken($fib-accent, 10%);
+      background: rgba($fib-accent, 0.16);
+      box-shadow: 0 3px 10px rgba($fib-accent, 0.22);
+      font-weight: 650;
+    }
+
+    &.endpoint {
+      border-color: darken($fib-highlight, 18%);
+      background: rgba($fib-highlight, 0.38);
+      box-shadow: inset 0 0 0 1px rgba($fib-highlight, 0.75);
+      font-weight: 600;
+    }
+  }
+
+  .fib-relationship-index {
+    color: inherit;
+    font-size: 0.62rem;
+    line-height: 1;
+  }
+
+  .fib-relationship-number {
+    font-size: 0.86rem;
+    line-height: 1.1;
   }
 
   .fib-list-container {
@@ -208,6 +372,28 @@ $fib-highlight: #a7f3d0;
 
     .denominator {
       padding: 0 0.2rem;
+    }
+  }
+
+  @media (max-width: 540px) {
+    .fib-list-container {
+      margin-top: 0.65rem;
+    }
+  }
+
+  @media (min-width: 360px) and (max-width: 540px) {
+    .fib-list-container {
+      padding-inline: 0.65rem;
+    }
+
+    .fib-list {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      column-gap: 0.35rem;
+    }
+
+    .fib-square {
+      min-width: 0;
     }
   }
 }

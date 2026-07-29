@@ -23,6 +23,7 @@ const FibonacciLab = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [colors, setColors] = useState({});
   const containerRef = useRef(null);
+  const relationshipStripRef = useRef(null);
 
   const getRandomPastelColor = () => {
     const r = Math.floor(Math.random() * 128 + 127);
@@ -106,6 +107,17 @@ const FibonacciLab = () => {
 
   const phiInfo = getPhiInfo();
   const productInfo = getProductInfo();
+  const centerSquare = selectedIndex === null
+    ? null
+    : fib[selectedIndex] * fib[selectedIndex];
+  const relationshipDistance = productInfo ? productInfo.x : null;
+
+  useEffect(() => {
+    const strip = relationshipStripRef.current;
+    if (!strip) return;
+
+    strip.scrollLeft = (strip.scrollWidth - strip.clientWidth) / 2;
+  }, [selectedIndex, relationshipDistance]);
 
   // Get position for SVG lines and product display
   const getElementPosition = (index) => {
@@ -182,24 +194,106 @@ const FibonacciLab = () => {
 
   return (
     <div className="fibonacci-lab-wrapper">
-      <h1>Fibonacci Lab</h1>
-      <p>
-        Click a Fibonacci number to "turn it on."
+      <div className="math-toy-page-header">
+        <h1 className="math-toy-page-title">Fibonacci Lab</h1>
+      </div>
+      <p className="fib-instructions">
+        Choose a center. Then point to another Fibonacci number to set the
+        index distance.
       </p>
 
+      <div className="fib-equation-panel" aria-live="polite">
+        {selectedIndex === null ? (
+          <p className="fib-panel-prompt">Choose a center below to begin.</p>
+        ) : (
+          <>
+            <div className="fib-equation-step">
+              <div className="fib-equation-label">Center</div>
+              <div className="fib-equation">
+                F<sub>{selectedIndex}</sub> = {fib[selectedIndex]}
+                <span className="fib-equation-separator" aria-hidden="true">·</span>
+                F<sub>{selectedIndex}</sub><sup>2</sup> = {centerSquare}
+              </div>
+            </div>
+
+            {productInfo ? (
+              <>
+                <div className="fib-equation-step">
+                  <div className="fib-equation-label">
+                    {productInfo.x} {productInfo.x === 1 ? 'place' : 'places'} from the center
+                  </div>
+                  <div className="fib-equation">
+                    F<sub>{productInfo.leftIndex}</sub> = {fib[productInfo.leftIndex]}
+                    <span className="fib-equation-separator" aria-hidden="true">and</span>
+                    F<sub>{productInfo.rightIndex}</sub> = {fib[productInfo.rightIndex]}
+                  </div>
+                </div>
+
+                <div className="fib-equation-step fib-equation-result">
+                  <div className="fib-equation-label">Compare</div>
+                  <div>
+                    <div className="fib-equation">
+                      {fib[productInfo.leftIndex]} × {fib[productInfo.rightIndex]} = {productInfo.product}
+                    </div>
+                    <div className="fib-equation">
+                      |{centerSquare} − {productInfo.product}| = {productInfo.fxSquare}
+                      <span className="fib-equation-separator" aria-hidden="true">=</span>
+                      F<sub>{productInfo.x}</sub><sup>2</sup>
+                    </div>
+                  </div>
+                  <div className="fib-equation-summary">
+                    Difference = square at distance {productInfo.x}
+                  </div>
+                </div>
+
+              </>
+            ) : (
+              <p className="fib-panel-prompt">
+                Now point to another Fibonacci number to set the distance.
+              </p>
+            )}
+          </>
+        )}
+      </div>
+
       {selectedIndex !== null && (
-        <div className="fib-equation-panel">
-          F<sub>{selectedIndex}</sub><sup>2</sup> = {fib[selectedIndex] * fib[selectedIndex]}
-          {productInfo && (
-            <>
-              {' • '}
-              F<sub>{productInfo.x}</sub><sup>2</sup> = {productInfo.fxSquare}
-              <br />
-              {fib[selectedIndex] * fib[selectedIndex]} {productInfo.sign} {productInfo.fxSquare} = {productInfo.product}
-              {' • '}
-              F<sub>{selectedIndex}-{productInfo.x}</sub> × F<sub>{selectedIndex}+{productInfo.x}</sub> = {fib[productInfo.leftIndex]} × {fib[productInfo.rightIndex]} = {productInfo.product}
-            </>
-          )}
+        <div
+          className="fib-relationship-strip"
+          ref={relationshipStripRef}
+          aria-label={
+            productInfo
+              ? `Fibonacci numbers from index ${productInfo.leftIndex} through ${productInfo.rightIndex}, centered on index ${selectedIndex}`
+              : `Center Fibonacci number, index ${selectedIndex}`
+          }
+        >
+          <div className="fib-relationship-track">
+            {(productInfo
+              ? Array.from(
+                  { length: productInfo.rightIndex - productInfo.leftIndex + 1 },
+                  (_, offset) => productInfo.leftIndex + offset
+                )
+              : [selectedIndex]
+            ).map((index) => {
+              const isCenter = index === selectedIndex;
+              const isEndpoint = productInfo &&
+                (index === productInfo.leftIndex || index === productInfo.rightIndex);
+
+              return (
+                <div
+                  className={[
+                    'fib-relationship-term',
+                    isCenter ? 'center' : '',
+                    isEndpoint ? 'endpoint' : '',
+                    !isCenter && !isEndpoint ? 'intermediate' : ''
+                  ].filter(Boolean).join(' ')}
+                  key={index}
+                >
+                  <span className="fib-relationship-index">F<sub>{index}</sub></span>
+                  <span className="fib-relationship-number">{fib[index]}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
