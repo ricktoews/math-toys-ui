@@ -21,6 +21,7 @@ const FibonacciLab = () => {
 
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [comparisonIndex, setComparisonIndex] = useState(null);
   const [colors, setColors] = useState({});
   const containerRef = useRef(null);
 
@@ -37,13 +38,16 @@ const FibonacciLab = () => {
       setSelectedIndex(null);
       setColors({});
       setHoveredIndex(null);
+      setComparisonIndex(null);
     } else if (selectedIndex === null) {
       // Select new - no card currently selected
       setSelectedIndex(index);
       setColors({ [index]: getRandomPastelColor() });
+      setComparisonIndex(null);
     } else {
-      // Different card clicked while another is selected - treat as mouseover
-      setHoveredIndex(index);
+      // Keep a tapped comparison active on touch devices after synthetic
+      // mouse-out events clear the temporary hover preview.
+      setComparisonIndex(index);
     }
   };
 
@@ -80,9 +84,10 @@ const FibonacciLab = () => {
 
   // Calculate product info for hovered number
   const getProductInfo = () => {
-    if (selectedIndex === null || hoveredIndex === null) return null;
+    const activeComparisonIndex = hoveredIndex ?? comparisonIndex;
+    if (selectedIndex === null || activeComparisonIndex === null) return null;
 
-    const x = Math.abs(hoveredIndex - selectedIndex);
+    const x = Math.abs(activeComparisonIndex - selectedIndex);
     const leftIndex = selectedIndex - x;
     const rightIndex = selectedIndex + x;
 
