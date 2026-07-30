@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import '../css/FibonacciLab.scss';
 
 const FibonacciLab = () => {
@@ -20,45 +20,16 @@ const FibonacciLab = () => {
   const sqrt5 = Math.sqrt(5);
 
   const [selectedIndex, setSelectedIndex] = useState(null);
-  const [hoveredIndex, setHoveredIndex] = useState(null);
   const [comparisonIndex, setComparisonIndex] = useState(null);
-  const [colors, setColors] = useState({});
-  const containerRef = useRef(null);
 
-  const getRandomPastelColor = () => {
-    const r = Math.floor(Math.random() * 128 + 127);
-    const g = Math.floor(Math.random() * 128 + 127);
-    const b = Math.floor(Math.random() * 128 + 127);
-    return `rgb(${r}, ${g}, ${b})`;
-  };
-
-  const handleClick = (index) => {
+  const handleCenterClick = (index) => {
     if (selectedIndex === index) {
-      // Toggle off - clicking the same card that's already selected
       setSelectedIndex(null);
-      setColors({});
-      setHoveredIndex(null);
       setComparisonIndex(null);
     } else if (selectedIndex === null) {
-      // Select new - no card currently selected
       setSelectedIndex(index);
-      setColors({ [index]: getRandomPastelColor() });
-      setComparisonIndex(null);
-    } else {
-      // Keep a tapped comparison active on touch devices after synthetic
-      // mouse-out events clear the temporary hover preview.
-      setComparisonIndex(index);
+      setComparisonIndex(index + 1);
     }
-  };
-
-  const handleMouseOver = (index) => {
-    if (selectedIndex !== null && selectedIndex !== index) {
-      setHoveredIndex(index);
-    }
-  };
-
-  const handleMouseOut = () => {
-    setHoveredIndex(null);
   };
 
   // Calculate phi info for selected number
@@ -82,27 +53,23 @@ const FibonacciLab = () => {
     };
   };
 
-  // Calculate product info for hovered number
+  // Calculate product info for the active symmetric distance.
   const getProductInfo = () => {
-    const activeComparisonIndex = hoveredIndex ?? comparisonIndex;
-    if (selectedIndex === null || activeComparisonIndex === null) return null;
+    if (selectedIndex === null || comparisonIndex === null) return null;
 
-    const x = Math.abs(activeComparisonIndex - selectedIndex);
+    const x = Math.abs(comparisonIndex - selectedIndex);
     const leftIndex = selectedIndex - x;
     const rightIndex = selectedIndex + x;
 
     if (leftIndex >= 0 && rightIndex < fib.length) {
       const product = fib[leftIndex] * fib[rightIndex];
       const fxSquare = fib[x] * fib[x];
-      const sign = (selectedIndex - x) % 2 === 0 ? '−' : '+';
-
       return {
         leftIndex,
         rightIndex,
         product,
         x,
-        fxSquare,
-        sign
+        fxSquare
       };
     }
 
@@ -114,78 +81,19 @@ const FibonacciLab = () => {
   const centerSquare = selectedIndex === null
     ? null
     : fib[selectedIndex] * fib[selectedIndex];
+  const maxDistance = selectedIndex === null
+    ? 0
+    : Math.min(selectedIndex, fib.length - 1 - selectedIndex);
 
-  // Get position for SVG lines and product display
-  const getElementPosition = (index) => {
-    if (!containerRef.current) return null;
-    const element = containerRef.current.children[index];
-    if (!element) return null;
-    
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const elementRect = element.getBoundingClientRect();
-    
-    return {
-      left: elementRect.left - containerRect.left,
-      top: elementRect.top - containerRect.top,
-      width: elementRect.width,
-      height: elementRect.height,
-      centerX: elementRect.left - containerRect.left + elementRect.width / 2
-    };
-  };
+  const adjustDistance = (change) => {
+    if (!productInfo) return;
 
-  const renderSVGLines = () => {
-    if (!productInfo) return null;
-
-    const leftPos = getElementPosition(productInfo.leftIndex);
-    const rightPos = getElementPosition(productInfo.rightIndex);
-    const centerPos = getElementPosition(selectedIndex);
-
-    if (!leftPos || !rightPos || !centerPos) return null;
-
-    const svgLeft = Math.min(leftPos.left, rightPos.left);
-    const svgWidth = Math.max(
-      leftPos.left + leftPos.width,
-      rightPos.left + rightPos.width
-    ) - svgLeft;
-
-    const lineColor = '#a7f3d0';
-    const leftX = leftPos.centerX - svgLeft;
-    const rightX = rightPos.centerX - svgLeft;
-    const centerX = centerPos.centerX - svgLeft;
-    const topY = 0;
-    const midY = 20;
-    const bottomY = 40;
-
-    return (
-      <svg
-        style={{
-          position: 'absolute',
-          top: `${leftPos.top + leftPos.height}px`,
-          left: `${svgLeft}px`,
-          width: `${svgWidth}px`,
-          height: '90px',
-          zIndex: 10,
-          pointerEvents: 'none'
-        }}
-        fill="none"
-      >
-        {/* Left vertical */}
-        <path d={`M${leftX},${topY} V${midY}`} stroke={lineColor} strokeWidth="2" />
-        
-        {/* Right vertical */}
-        <path d={`M${rightX},${topY} V${midY}`} stroke={lineColor} strokeWidth="2" />
-        
-        {/* Horizontal connector */}
-        <path d={`M${leftX},${midY} H${rightX}`} stroke={lineColor} strokeWidth="2" />
-        
-        {/* Center vertical */}
-        <path d={`M${centerX},${midY} V${bottomY}`} stroke={lineColor} strokeWidth="2" />
-      </svg>
+    const nextDistance = Math.min(
+      maxDistance,
+      Math.max(1, productInfo.x + change)
     );
-  };
 
-  const renderProductDisplay = () => {
-    return null;
+    setComparisonIndex(selectedIndex + nextDistance);
   };
 
   return (
@@ -194,14 +102,13 @@ const FibonacciLab = () => {
         <h1 className="math-toy-page-title">Fibonacci Lab</h1>
       </div>
       <p className="fib-instructions">
-        Choose a center. Then point to another Fibonacci number to set the
-        index distance.
+        {selectedIndex === null
+          ? 'Scroll the Fibonacci numbers, then choose a center.'
+          : 'Adjust the distance. Tap the center to choose another.'}
       </p>
 
-      <div className="fib-equation-panel" aria-live="polite">
-        {selectedIndex === null ? (
-          <p className="fib-panel-prompt">Choose a center below to begin.</p>
-        ) : (
+      {selectedIndex !== null && (
+        <div className="fib-equation-panel" aria-live="polite">
           <>
             <div className="fib-equation-step">
               <div className="fib-equation-label">Center</div>
@@ -249,8 +156,8 @@ const FibonacciLab = () => {
               </p>
             )}
           </>
-        )}
-      </div>
+        </div>
+      )}
 
       {selectedIndex !== null && (
         <div
@@ -264,6 +171,15 @@ const FibonacciLab = () => {
           <div className="fib-relationship-track">
             {productInfo && (
               <>
+                <button
+                  type="button"
+                  className="fib-distance-control"
+                  onClick={() => adjustDistance(-1)}
+                  disabled={productInfo.x <= 1}
+                  aria-label="Decrease index distance"
+                >
+                  −
+                </button>
                 <div className="fib-relationship-term endpoint">
                   <span className="fib-relationship-index">
                     F<sub>{productInfo.leftIndex}</sub>
@@ -281,10 +197,15 @@ const FibonacciLab = () => {
               </>
             )}
 
-            <div className="fib-relationship-term center">
+            <button
+              type="button"
+              className="fib-relationship-term center"
+              onClick={() => handleCenterClick(selectedIndex)}
+              aria-label={`Clear center F ${selectedIndex} and choose another`}
+            >
               <span className="fib-relationship-index">F<sub>{selectedIndex}</sub></span>
               <span className="fib-relationship-number">{fib[selectedIndex]}</span>
-            </div>
+            </button>
 
             {productInfo && (
               <>
@@ -302,54 +223,64 @@ const FibonacciLab = () => {
                     {fib[productInfo.rightIndex]}
                   </span>
                 </div>
+                <button
+                  type="button"
+                  className="fib-distance-control"
+                  onClick={() => adjustDistance(1)}
+                  disabled={productInfo.x >= maxDistance}
+                  aria-label="Increase index distance"
+                >
+                  +
+                </button>
               </>
             )}
           </div>
         </div>
       )}
 
-      <div className="fib-list-container">
-        <div className="fib-list" ref={containerRef}>
+      <div
+        className={`fib-center-picker ${selectedIndex !== null ? 'reference' : ''}`}
+        aria-label={
+          selectedIndex === null
+            ? 'Choose a center Fibonacci number'
+            : 'Fibonacci number reference'
+        }
+      >
+        <div className="fib-center-picker-track">
           {fib.map((num, index) => {
-            const isSelected = selectedIndex === index;
-            const isHighlighted = productInfo && 
+            const unavailable = index === 0 || index === fib.length - 1;
+            const isCenter = index === selectedIndex;
+            const isEndpoint = productInfo &&
               (index === productInfo.leftIndex || index === productInfo.rightIndex);
             const isDistance = productInfo && index === productInfo.x;
 
             return (
-              <div
-                key={index}
-                className={`fib-square ${isHighlighted ? 'highlight' : ''} ${isDistance ? 'highlight-distance' : ''}`}
-              >
-                <div className="fib-index">F<sub>{index}</sub></div>
-                <button
-                  type="button"
-                  className={`fib-circle ${isSelected ? 'on' : ''}`}
-                  style={{
-                    backgroundColor: isSelected ? colors[index] : '#f5f5f5'
-                  }}
-                  onClick={() => handleClick(index)}
-                  onPointerEnter={(event) => {
-                    if (event.pointerType === 'mouse') {
-                      handleMouseOver(index);
-                    }
-                  }}
-                  onPointerLeave={(event) => {
-                    if (event.pointerType === 'mouse') {
-                      handleMouseOut();
-                    }
-                  }}
-                  aria-label={`Fibonacci number F ${index} equals ${num}${isSelected ? ', selected as center' : ''}`}
+              <div className="fib-center-option" key={index}>
+                <div
+                  className={[
+                    'fib-center-option-term',
+                    isCenter ? 'center' : '',
+                    isEndpoint ? 'endpoint' : '',
+                    isDistance ? 'distance' : ''
+                  ].filter(Boolean).join(' ')}
                 >
-                  {num}
-                </button>
-                
-                {isDistance && (
-                  <div className="square-display">
-                    F<sub>{index}</sub> = {num}
-                    <span aria-hidden="true"> · </span>
-                    F<sub>{index}</sub><sup>2</sup> = {num * num}
-                  </div>
+                  <span>F<sub>{index}</sub></span>
+                  <strong>{num}</strong>
+                </div>
+                {selectedIndex === null && (
+                  <button
+                    type="button"
+                    className="fib-set-center"
+                    disabled={unavailable}
+                    onClick={() => handleCenterClick(index)}
+                    aria-label={
+                      unavailable
+                        ? `F ${index} equals ${num}, unavailable as a center`
+                        : `Set F ${index}, which equals ${num}, as the center`
+                    }
+                  >
+                    {unavailable ? 'Unavailable' : 'Set center'}
+                  </button>
                 )}
               </div>
             );

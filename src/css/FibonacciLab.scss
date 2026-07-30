@@ -163,8 +163,111 @@ $fib-highlight: #a7f3d0;
       font-size: 0.7rem;
     }
 
-    .fib-list-container {
-      margin-top: 0.65rem;
+  }
+
+  .fib-center-picker {
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 0.8rem;
+    border: 1px solid $fib-border-soft;
+    border-radius: 10px;
+    background: $fib-card-bg;
+    box-shadow: $fib-shadow-soft;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+
+    &.reference {
+      padding-block: 0.55rem;
+
+      .fib-center-option {
+        width: 3.9rem;
+      }
+    }
+  }
+
+  .fib-center-picker-track {
+    width: max-content;
+    display: flex;
+    align-items: stretch;
+    gap: 0.55rem;
+  }
+
+  .fib-center-option {
+    flex: 0 0 auto;
+    width: 4.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .fib-center-option-term {
+    width: 3.8rem;
+    min-height: 3.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.08rem;
+    border: 1px solid $fib-border;
+    border-radius: 999px;
+    background: #fff;
+    color: $fib-text-main;
+
+    span {
+      color: $fib-text-muted;
+      font-size: 0.65rem;
+      line-height: 1;
+    }
+
+    strong {
+      font-size: 1rem;
+      line-height: 1.1;
+    }
+
+    &.center {
+      border: 2px solid darken($fib-accent, 10%);
+      background: rgba($fib-accent, 0.16);
+      box-shadow: 0 3px 10px rgba($fib-accent, 0.22);
+    }
+
+    &.endpoint {
+      border-color: darken($fib-highlight, 18%);
+      background: rgba($fib-highlight, 0.38);
+      box-shadow: inset 0 0 0 1px rgba($fib-highlight, 0.75);
+    }
+
+    &.distance {
+      box-shadow: 0 0 0 2px #93c5fd;
+    }
+
+    &.center.distance {
+      box-shadow: 0 3px 10px rgba($fib-accent, 0.22);
+    }
+  }
+
+  .fib-set-center {
+    width: 100%;
+    padding: 0.25rem 0.2rem;
+    border: 1px solid $fib-border;
+    border-radius: 999px;
+    background: #fff;
+    color: $fib-text-main;
+    font: inherit;
+    font-size: 0.62rem;
+    cursor: pointer;
+    touch-action: manipulation;
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      &:not(:disabled):hover {
+        border-color: $fib-accent;
+        background: rgba($fib-accent, 0.08);
+      }
     }
   }
 
@@ -184,7 +287,36 @@ $fib-highlight: #a7f3d0;
     gap: 0.35rem;
   }
 
+  .fib-distance-control {
+    flex: 0 0 auto;
+    width: 1.8rem;
+    height: 1.8rem;
+    padding: 0;
+    border: 1px solid $fib-border;
+    border-radius: 999px;
+    background: #fff;
+    color: $fib-text-main;
+    font: inherit;
+    font-size: 1.15rem;
+    line-height: 1;
+    cursor: pointer;
+    touch-action: manipulation;
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      &:not(:disabled):hover {
+        border-color: $fib-accent;
+        background: rgba($fib-accent, 0.08);
+      }
+    }
+  }
+
   .fib-relationship-term {
+    padding: 0;
     flex: 0 0 auto;
     width: 2.7rem;
     min-height: 3.25rem;
@@ -197,12 +329,15 @@ $fib-highlight: #a7f3d0;
     border-radius: 999px;
     color: $fib-text-main;
     background: #fff;
+    font: inherit;
 
     &.center {
       border: 2px solid darken($fib-accent, 10%);
       background: rgba($fib-accent, 0.16);
       box-shadow: 0 3px 10px rgba($fib-accent, 0.22);
       font-weight: 650;
+      cursor: pointer;
+      touch-action: manipulation;
     }
 
     &.endpoint {
@@ -214,7 +349,7 @@ $fib-highlight: #a7f3d0;
   }
 
   .fib-relationship-gap {
-    width: 4.2rem;
+    width: 3.4rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -240,117 +375,6 @@ $fib-highlight: #a7f3d0;
   .fib-relationship-number {
     font-size: 0.86rem;
     line-height: 1.1;
-  }
-
-  .fib-list-container {
-    position: relative;
-    margin-top: 1.5rem;
-    min-height: 200px;
-    padding-bottom: 180px;
-    border-radius: 10px;
-    border: 1px solid $fib-border-soft;
-    background: $fib-card-bg;
-    padding: 1rem;
-    overflow-x: auto;
-    box-shadow: $fib-shadow-soft;
-  }
-
-  .fib-list {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    row-gap: 40px;
-    align-items: flex-start;
-  }
-
-  .fib-square {
-    position: relative;
-    min-width: 50px;
-    height: 70px;
-    background: #ffffff;
-    border-radius: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    box-sizing: border-box;
-    transition: box-shadow 0.15s ease, transform 0.15s ease;
-    border: 1px solid $fib-border-soft;
-
-    &.highlight {
-      box-shadow: 0 0 0 2px $fib-highlight;
-      transform: translateY(-2px);
-    }
-
-    &.highlight-distance {
-      box-shadow: 0 0 0 2px #93c5fd;
-      transform: translateY(-2px);
-    }
-  }
-
-  .fib-index {
-    position: absolute;
-    top: 2px;
-    left: 4px;
-    font-size: 0.7rem;
-    color: $fib-text-muted;
-    font-weight: 600;
-  }
-
-  .fib-circle {
-    padding: 0;
-    width: 32px;
-    height: 32px;
-    border-radius: 999px;
-    background: #f5f5f5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 0.9rem;
-    user-select: none;
-    border: 1px solid $fib-border;
-    transition: background-color 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
-    color: $fib-text-main;
-    font-family: inherit;
-    font-weight: 500;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        transform: scale(1.05);
-        border-color: $fib-accent;
-      }
-    }
-
-    &.on {
-      border: 2px solid darken($fib-accent, 10%);
-      box-shadow: 0 4px 12px rgba($fib-accent, 0.3);
-    }
-  }
-
-  .square-display {
-    position: absolute;
-    top: calc(100% + 0.25rem);
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.75rem;
-    color: $fib-text-main;
-    white-space: nowrap;
-  }
-
-  .product-display,
-  .x-square-display,
-  .equation-display {
-    font-size: 0.8rem;
-    color: $fib-text-main;
-  }
-
-  .product-display {
-    font-weight: 600;
   }
 
   .divider {
@@ -394,25 +418,4 @@ $fib-highlight: #a7f3d0;
     }
   }
 
-  @media (max-width: 540px) {
-    .fib-list-container {
-      margin-top: 0.65rem;
-    }
-  }
-
-  @media (min-width: 360px) and (max-width: 540px) {
-    .fib-list-container {
-      padding-inline: 0.65rem;
-    }
-
-    .fib-list {
-      display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      column-gap: 0.35rem;
-    }
-
-    .fib-square {
-      min-width: 0;
-    }
-  }
 }
