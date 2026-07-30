@@ -49,71 +49,6 @@ $fib-highlight: #a7f3d0;
     color: darken($fib-accent, 20%);
   }
 
-  .fib-equation-panel {
-    padding: 0.75rem 1.25rem;
-    border-radius: 10px;
-    background: $fib-card-bg;
-    border: 1px solid $fib-border-soft;
-    box-shadow: $fib-shadow-soft;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    font-size: 0.95rem;
-    color: $fib-text-main;
-    line-height: 1.35;
-  }
-
-  .fib-panel-prompt {
-    margin: 0;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $fib-text-muted;
-    text-align: center;
-  }
-
-  .fib-equation-step {
-    display: grid;
-    grid-template-columns: minmax(9rem, 1fr) minmax(13rem, 2fr);
-    gap: 1rem;
-    align-items: baseline;
-    padding: 0.65rem 0;
-    border-bottom: 1px solid $fib-border-soft;
-  }
-
-  .fib-equation-label {
-    color: $fib-text-muted;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .fib-equation {
-    font-size: 1.05rem;
-  }
-
-  .fib-equation-separator {
-    display: inline-block;
-    margin: 0 0.65rem;
-    color: $fib-text-muted;
-  }
-
-  .fib-equation-result {
-    background: rgba($fib-highlight, 0.22);
-    margin: 0 -0.75rem;
-    padding: 0.65rem 0.75rem;
-    border-bottom: 0;
-    border-radius: 0.5rem;
-  }
-
-  .fib-equation-summary {
-    grid-column: 2;
-    margin-top: -0.15rem;
-    color: $fib-text-muted;
-    font-size: 0.82rem;
-  }
-
   @media (max-width: 540px) {
     padding-inline: 0;
 
@@ -125,42 +60,6 @@ $fib-highlight: #a7f3d0;
       margin: 0 0 0.65rem;
       font-size: 0.82rem;
       line-height: 1.35;
-    }
-
-    .fib-equation-panel {
-      margin: 0 0 0.65rem;
-      padding: 0.4rem 0.65rem;
-    }
-
-    .fib-panel-prompt {
-      min-height: 34px;
-      font-size: 0.82rem;
-    }
-
-    .fib-equation-step {
-      grid-template-columns: 1fr;
-      gap: 0.1rem;
-      padding: 0.3rem 0;
-    }
-
-    .fib-equation-label {
-      font-size: 0.62rem;
-    }
-
-    .fib-equation {
-      font-size: 0.9rem;
-      line-height: 1.3;
-    }
-
-    .fib-equation-result {
-      margin: 0 -0.3rem;
-      padding: 0.35rem 0.3rem;
-    }
-
-    .fib-equation-summary {
-      grid-column: 1;
-      margin-top: 0;
-      font-size: 0.7rem;
     }
 
   }
@@ -271,20 +170,27 @@ $fib-highlight: #a7f3d0;
     }
   }
 
-  .fib-relationship-strip {
+  .fib-relationship-diagram {
     max-width: 100%;
-    overflow-x: auto;
-    padding: 0.35rem 0.2rem 0.55rem;
-    scrollbar-width: thin;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid $fib-border-soft;
+    border-radius: 10px;
+    background: $fib-card-bg;
+    box-shadow: $fib-shadow-soft;
   }
 
   .fib-relationship-track {
+    max-width: 100%;
+    overflow-x: auto;
     width: max-content;
     min-width: 100%;
+    padding: 0.15rem 0 0.55rem;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.35rem;
+    scrollbar-width: thin;
   }
 
   .fib-distance-control {
@@ -375,6 +281,130 @@ $fib-highlight: #a7f3d0;
   .fib-relationship-number {
     font-size: 0.86rem;
     line-height: 1.1;
+  }
+
+  .fib-comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin-top: 0.35rem;
+  }
+
+  .fib-comparison-card {
+    min-width: 0;
+    padding: 0.55rem 0.65rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    gap: 0.15rem 0.6rem;
+    border: 1px solid $fib-border-soft;
+    border-radius: 0.55rem;
+    background: #fff;
+
+    &.outer-product {
+      border-top: 3px solid darken($fib-highlight, 15%);
+    }
+
+    &.center-square {
+      border-top: 3px solid darken($fib-accent, 8%);
+    }
+
+    strong {
+      grid-column: 2;
+      font-size: 1rem;
+      font-weight: 550;
+      white-space: nowrap;
+    }
+  }
+
+  .fib-comparison-label {
+    color: $fib-text-muted;
+    font-size: 0.65rem;
+    font-weight: 650;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .fib-comparison-symbolic {
+    color: $fib-text-muted;
+    font-size: 0.8rem;
+    text-align: right;
+  }
+
+  .fib-value-outer {
+    color: darken($fib-highlight, 38%);
+  }
+
+  .fib-value-center {
+    color: darken($fib-accent, 12%);
+  }
+
+  .fib-difference-result {
+    margin-top: 0.6rem;
+    padding: 0.55rem 0.7rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    gap: 0.1rem 0.75rem;
+    border-radius: 0.55rem;
+    background: rgba($fib-highlight, 0.28);
+
+    strong {
+      font-size: 1.05rem;
+      font-weight: 550;
+    }
+  }
+
+  .fib-difference-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .fib-difference-caption {
+    color: $fib-text-muted;
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 540px) {
+    .fib-relationship-diagram {
+      padding: 0.55rem;
+    }
+
+    .fib-comparison-grid {
+      gap: 0.4rem;
+    }
+
+    .fib-comparison-card {
+      grid-template-columns: 1fr;
+      gap: 0.05rem;
+      padding: 0.45rem;
+
+      strong {
+        grid-column: 1;
+        font-size: 0.86rem;
+      }
+    }
+
+    .fib-comparison-symbolic {
+      font-size: 0.7rem;
+      text-align: left;
+    }
+
+    .fib-difference-result {
+      grid-template-columns: 1fr;
+      gap: 0.05rem;
+      padding: 0.45rem;
+
+      strong {
+        grid-column: 1;
+      }
+
+      strong {
+        font-size: 0.9rem;
+      }
+    }
   }
 
   .divider {

@@ -19,8 +19,8 @@ const FibonacciLab = () => {
   const phi = (1 + Math.sqrt(5)) / 2;
   const sqrt5 = Math.sqrt(5);
 
-  const [selectedIndex, setSelectedIndex] = useState(null);
-  const [comparisonIndex, setComparisonIndex] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(6);
+  const [comparisonIndex, setComparisonIndex] = useState(7);
 
   const handleCenterClick = (index) => {
     if (selectedIndex === index) {
@@ -107,95 +107,36 @@ const FibonacciLab = () => {
           : 'Adjust the distance. Tap the center to choose another.'}
       </p>
 
-      {selectedIndex !== null && (
-        <div className="fib-equation-panel" aria-live="polite">
-          <>
-            <div className="fib-equation-step">
-              <div className="fib-equation-label">Center</div>
-              <div className="fib-equation">
-                F<sub>{selectedIndex}</sub> = {fib[selectedIndex]}
-                <span className="fib-equation-separator" aria-hidden="true">·</span>
-                F<sub>{selectedIndex}</sub><sup>2</sup> = {centerSquare}
-              </div>
-            </div>
-
-            {productInfo ? (
-              <>
-                <div className="fib-equation-step">
-                  <div className="fib-equation-label">
-                    {productInfo.x} {productInfo.x === 1 ? 'place' : 'places'} from the center
-                  </div>
-                  <div className="fib-equation">
-                    F<sub>{productInfo.leftIndex}</sub> = {fib[productInfo.leftIndex]}
-                    <span className="fib-equation-separator" aria-hidden="true">and</span>
-                    F<sub>{productInfo.rightIndex}</sub> = {fib[productInfo.rightIndex]}
-                  </div>
-                </div>
-
-                <div className="fib-equation-step fib-equation-result">
-                  <div className="fib-equation-label">Compare</div>
-                  <div>
-                    <div className="fib-equation">
-                      {fib[productInfo.leftIndex]} × {fib[productInfo.rightIndex]} = {productInfo.product}
-                    </div>
-                    <div className="fib-equation">
-                      |{centerSquare} − {productInfo.product}| = {productInfo.fxSquare}
-                    </div>
-                  </div>
-                  <div className="fib-equation-summary">
-                    F<sub>{productInfo.x}</sub> = {fib[productInfo.x]}
-                    <span className="fib-equation-separator" aria-hidden="true">·</span>
-                    F<sub>{productInfo.x}</sub><sup>2</sup> = {productInfo.fxSquare}
-                  </div>
-                </div>
-
-              </>
-            ) : (
-              <p className="fib-panel-prompt">
-                Now point to another Fibonacci number to set the distance.
-              </p>
-            )}
-          </>
-        </div>
-      )}
-
-      {selectedIndex !== null && (
-        <div
-          className="fib-relationship-strip"
-          aria-label={
-            productInfo
-              ? `Fibonacci numbers at indices ${productInfo.leftIndex}, ${selectedIndex}, and ${productInfo.rightIndex}; each outer number is ${productInfo.x} places from the center`
-              : `Center Fibonacci number, index ${selectedIndex}`
-          }
+      {selectedIndex !== null && productInfo && (
+        <section
+          className="fib-relationship-diagram"
+          aria-live="polite"
+          aria-label={`Fibonacci numbers at indices ${productInfo.leftIndex}, ${selectedIndex}, and ${productInfo.rightIndex}; each outer number is ${productInfo.x} places from the center`}
         >
           <div className="fib-relationship-track">
-            {productInfo && (
-              <>
-                <button
-                  type="button"
-                  className="fib-distance-control"
-                  onClick={() => adjustDistance(-1)}
-                  disabled={productInfo.x <= 1}
-                  aria-label="Decrease index distance"
-                >
-                  −
-                </button>
-                <div className="fib-relationship-term endpoint">
-                  <span className="fib-relationship-index">
-                    F<sub>{productInfo.leftIndex}</sub>
-                  </span>
-                  <span className="fib-relationship-number">
-                    {fib[productInfo.leftIndex]}
-                  </span>
-                </div>
-                <div className="fib-relationship-gap" aria-hidden="true">
-                  <span className="fib-relationship-dots">
-                    {productInfo.x > 1 ? '···' : '—'}
-                  </span>
-                  <span>{productInfo.x} {productInfo.x === 1 ? 'place' : 'places'}</span>
-                </div>
-              </>
-            )}
+            <button
+              type="button"
+              className="fib-distance-control"
+              onClick={() => adjustDistance(-1)}
+              disabled={productInfo.x <= 1}
+              aria-label="Decrease index distance"
+            >
+              −
+            </button>
+            <div className="fib-relationship-term endpoint">
+              <span className="fib-relationship-index">
+                F<sub>{productInfo.leftIndex}</sub>
+              </span>
+              <span className="fib-relationship-number">
+                {fib[productInfo.leftIndex]}
+              </span>
+            </div>
+            <div className="fib-relationship-gap" aria-hidden="true">
+              <span className="fib-relationship-dots">
+                {productInfo.x > 1 ? '···' : '—'}
+              </span>
+              <span>{productInfo.x} {productInfo.x === 1 ? 'place' : 'places'}</span>
+            </div>
 
             <button
               type="button"
@@ -207,35 +148,81 @@ const FibonacciLab = () => {
               <span className="fib-relationship-number">{fib[selectedIndex]}</span>
             </button>
 
-            {productInfo && (
-              <>
-                <div className="fib-relationship-gap" aria-hidden="true">
-                  <span className="fib-relationship-dots">
-                    {productInfo.x > 1 ? '···' : '—'}
-                  </span>
-                  <span>{productInfo.x} {productInfo.x === 1 ? 'place' : 'places'}</span>
-                </div>
-                <div className="fib-relationship-term endpoint">
-                  <span className="fib-relationship-index">
-                    F<sub>{productInfo.rightIndex}</sub>
-                  </span>
-                  <span className="fib-relationship-number">
-                    {fib[productInfo.rightIndex]}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  className="fib-distance-control"
-                  onClick={() => adjustDistance(1)}
-                  disabled={productInfo.x >= maxDistance}
-                  aria-label="Increase index distance"
-                >
-                  +
-                </button>
-              </>
-            )}
+            <div className="fib-relationship-gap" aria-hidden="true">
+              <span className="fib-relationship-dots">
+                {productInfo.x > 1 ? '···' : '—'}
+              </span>
+              <span>{productInfo.x} {productInfo.x === 1 ? 'place' : 'places'}</span>
+            </div>
+            <div className="fib-relationship-term endpoint">
+              <span className="fib-relationship-index">
+                F<sub>{productInfo.rightIndex}</sub>
+              </span>
+              <span className="fib-relationship-number">
+                {fib[productInfo.rightIndex]}
+              </span>
+            </div>
+            <button
+              type="button"
+              className="fib-distance-control"
+              onClick={() => adjustDistance(1)}
+              disabled={productInfo.x >= maxDistance}
+              aria-label="Increase index distance"
+            >
+              +
+            </button>
           </div>
-        </div>
+
+          <div className="fib-comparison-grid">
+            <div className="fib-comparison-card outer-product">
+              <span className="fib-comparison-label">Outer product</span>
+              <span className="fib-comparison-symbolic">
+                F<sub>{productInfo.leftIndex}</sub> × F<sub>{productInfo.rightIndex}</sub>
+              </span>
+              <strong>
+                {fib[productInfo.leftIndex]} × {fib[productInfo.rightIndex]} ={' '}
+                <span className="fib-value-outer">{productInfo.product}</span>
+              </strong>
+            </div>
+            <div className="fib-comparison-card center-square">
+              <span className="fib-comparison-label">Center square</span>
+              <span className="fib-comparison-symbolic">
+                F<sub>{selectedIndex}</sub><sup>2</sup>
+              </span>
+              <strong>
+                {fib[selectedIndex]}<sup>2</sup> ={' '}
+                <span className="fib-value-center">{centerSquare}</span>
+              </strong>
+            </div>
+          </div>
+
+          <div className="fib-difference-result">
+            <div className="fib-difference-heading">
+              <span className="fib-comparison-label">Difference</span>
+              <span className="fib-difference-caption">
+                Distance {productInfo.x} {productInfo.x === 1 ? 'place' : 'places'}
+                {' → '}F<sub>{productInfo.x}</sub> = {fib[productInfo.x]}
+              </span>
+            </div>
+            <strong>
+              {centerSquare >= productInfo.product ? (
+                <>
+                  <span className="fib-value-center">{centerSquare}</span>
+                  {' − '}
+                  <span className="fib-value-outer">{productInfo.product}</span>
+                </>
+              ) : (
+                <>
+                  <span className="fib-value-outer">{productInfo.product}</span>
+                  {' − '}
+                  <span className="fib-value-center">{centerSquare}</span>
+                </>
+              )}
+              {' = '}{productInfo.fxSquare}
+              {' = '}{fib[productInfo.x]}<sup>2</sup>
+            </strong>
+          </div>
+        </section>
       )}
 
       <div
