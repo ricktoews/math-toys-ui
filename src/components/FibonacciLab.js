@@ -26,7 +26,7 @@ const FibonacciLab = () => {
     if (selectedIndex === index) {
       setSelectedIndex(null);
       setComparisonIndex(null);
-    } else if (selectedIndex === null) {
+    } else {
       setSelectedIndex(index);
       setComparisonIndex(index + 1);
     }
@@ -104,7 +104,7 @@ const FibonacciLab = () => {
       <p className="fib-instructions">
         {selectedIndex === null
           ? 'Scroll the Fibonacci numbers, then choose a center.'
-          : 'Adjust the distance. Tap the center to choose another.'}
+          : 'Adjust the distance or choose a new center below.'}
       </p>
 
       {selectedIndex !== null && productInfo && (
@@ -254,21 +254,21 @@ const FibonacciLab = () => {
                   <span>F<sub>{index}</sub></span>
                   <strong>{num}</strong>
                 </div>
-                {selectedIndex === null && (
-                  <button
-                    type="button"
-                    className="fib-set-center"
-                    disabled={unavailable}
-                    onClick={() => handleCenterClick(index)}
-                    aria-label={
-                      unavailable
-                        ? `F ${index} equals ${num}, unavailable as a center`
+                <button
+                  type="button"
+                  className="fib-set-center"
+                  disabled={unavailable}
+                  onClick={() => handleCenterClick(index)}
+                  aria-label={
+                    unavailable
+                      ? `F ${index} equals ${num}, unavailable as a center`
+                      : isCenter
+                        ? `Clear F ${index} as the center`
                         : `Set F ${index}, which equals ${num}, as the center`
-                    }
-                  >
-                    {unavailable ? 'Unavailable' : 'Set center'}
-                  </button>
-                )}
+                  }
+                >
+                  {unavailable ? 'Unavailable' : isCenter ? 'Clear center' : 'Set center'}
+                </button>
               </div>
             );
           })}
