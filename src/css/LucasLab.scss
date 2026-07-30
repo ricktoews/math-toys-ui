@@ -12,6 +12,8 @@ $lucas-chip-border: #ccc;
 $lucas-chip-active-bg: $glaucous;
 $lucas-chip-active-text: #ffffff;
 $lucas-accent: $glaucous;
+$lucas-previous-value: darken($app-blue, 8%);
+$lucas-current-value: $indigo-velvet;
 $lucas-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
 
 // ---- root container ----
@@ -21,11 +23,7 @@ $lucas-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   color: $lucas-text-main;
   max-width: 960px;
   margin: 0 auto;
-  padding: 1rem;
-
-  h1 {
-    margin-bottom: 1.5rem;
-  }
+  padding: 0 1rem 1rem;
 }
 
 // ---- selector section ----
@@ -109,10 +107,58 @@ $lucas-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 // ---- collapsed toggle pill ----
+.lucas-result-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.lucas-result-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 100%;
+}
+
+.lucas-back {
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid $lucas-border;
+  border-radius: 50%;
+  background: #fff;
+  color: darken($lucas-accent, 8%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: background-color 0.12s ease, border-color 0.12s ease,
+    transform 0.08s ease;
+}
+
+.lucas-back-icon {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lucas-back:hover {
+  border-color: $lucas-accent;
+  background: rgba($lucas-accent, 0.08);
+  transform: translateX(-1px);
+}
+
 .lucas-toggle {
   width: fit-content;
   max-width: 100%;
-  padding: 0.5rem 1rem;
+  padding: 0.35rem 0.8rem;
   border-radius: 999px;
   border: 1px solid $lucas-border-soft;
   background: #f7f7f7;
@@ -120,13 +166,7 @@ $lucas-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   align-items: baseline;
   gap: 0.4rem;
   font-size: 0.85rem;
-  cursor: pointer;
-  transition: background 0.12s ease-out;
-  flex-wrap: wrap;
-}
-
-.lucas-toggle:hover {
-  background: #f0f0f0;
+  white-space: nowrap;
 }
 
 .lucas-summary-label {
@@ -145,10 +185,18 @@ $lucas-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   margin: 0 0.2rem;
 }
 
-.lucas-toggle-icon {
-  font-size: 0.75rem;
-  color: $lucas-text-subtle;
-  margin-left: 0.2rem;
+.lucas-formula-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.4rem;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.55rem 0.75rem;
+  border-left: 3px solid $lucas-accent;
+  background: rgba($lucas-accent, 0.06);
+  color: $lucas-text-muted;
+  font-size: 0.88rem;
+  line-height: 1.4;
 }
 
 // ---- done button ----
@@ -215,48 +263,118 @@ $lucas-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .lucas-card {
-  background: $lucas-card-bg;
+  width: 100%;
+  min-width: 0;
+  padding: 0.9rem 1rem 1rem;
+  border: 1px solid rgba(121, 148, 150, 0.18);
   border-radius: 10px;
-  border: 1px solid $lucas-border-soft;
-  box-shadow: $lucas-shadow-soft;
-  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(73, 71, 91, 0.08);
+}
 
-  table {
-    margin-bottom: 0;
-    
-    thead {
-      background: $indigo-velvet;
-      
-      th {
-        border-bottom: 2px solid darken($indigo-velvet, 5%);
-        color: #ffffff;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-weight: 600;
-        padding: 0.75rem 1rem;
-      }
-    }
+.table.lucas-table {
+  width: 100%;
+  margin-bottom: 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.9rem;
+}
 
-    tbody {
-      tr {
-        transition: background 0.08s ease-out;
+.table.lucas-table th,
+.table.lucas-table td {
+  padding: 0.48rem 0.3rem;
+  border: 0;
+  text-align: right;
+  vertical-align: middle;
+}
 
-        &:hover {
-          background: rgba($lucas-accent, 0.05);
-        }
+.table.lucas-table thead tr th {
+  border-bottom: 1px solid rgba(121, 148, 150, 0.28);
+  background: #fff;
+  color: $lucas-text-muted;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
 
-        td {
-          padding: 0.6rem 1rem;
-          border-bottom: 1px solid $lucas-border-soft;
-          color: $lucas-text-main;
-          font-size: 0.9rem;
-        }
-      }
+.table.lucas-table th:nth-child(1) {
+  width: 9%;
+}
 
-      tr:last-child td {
-        border-bottom: none;
-      }
-    }
-  }
+.table.lucas-table th:nth-child(2),
+.table.lucas-table th:nth-child(3) {
+  width: 22.5%;
+}
+
+.table.lucas-table th:nth-child(4) {
+  width: 46%;
+}
+
+.table.lucas-table .lucas-data-row {
+  cursor: pointer;
+  transition: background-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.table.lucas-table .lucas-data-row > td {
+  color: $lucas-text-muted;
+}
+
+.table.lucas-table .lucas-data-row-alt > td {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.table.lucas-table .lucas-data-row:hover > td,
+.table.lucas-table .lucas-data-row:focus > td {
+  background: rgba(121, 148, 150, 0.06);
+}
+
+.table.lucas-table .lucas-data-row:focus {
+  outline: none;
+}
+
+.table.lucas-table .lucas-data-row-selected > td {
+  background: rgba($lucas-accent, 0.09);
+  color: $lucas-current-value;
+  font-weight: 600;
+}
+
+.table.lucas-table .lucas-detail-row td {
+  padding: 0.55rem 0 0;
+  text-align: left;
+}
+
+.lucas-row-note {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 0.55rem 0.65rem;
+  border-left: 3px solid $lucas-accent;
+  background: rgba($lucas-accent, 0.06);
+  color: $lucas-text-main;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.lucas-row-ratio {
+  font-family: 'Courier New', monospace;
+  overflow-wrap: anywhere;
+}
+
+.lucas-row-calculation {
+  overflow-wrap: anywhere;
+}
+
+.table.lucas-table .lucas-data-row-previous > td:nth-child(2),
+.table.lucas-table .lucas-data-row-previous > td:nth-child(3),
+.lucas-previous-value {
+  color: $lucas-previous-value;
+  font-weight: 600;
+}
+
+.lucas-current-value {
+  color: $lucas-current-value;
+  font-weight: 700;
 }

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal } from 'react-bootstrap';
-import { MathJax } from 'better-react-mathjax';
 import '../css/LucasLab.scss';
 
 function InfoModal(props) {
@@ -46,6 +45,7 @@ function LucasLab() {
   const [lucasData, setLucasData] = useState([]);
   const [selectorCollapsed, setSelectorCollapsed] = useState(false);
   const [infoShow, setInfoShow] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
   const numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
   useEffect(() => {
@@ -79,6 +79,7 @@ function LucasLab() {
 
   const handleNumberSelect = (num) => {
     setSelectedNumber(num);
+    setSelectedRow(null);
     setSelectorCollapsed(true);
   };
 
@@ -86,27 +87,53 @@ function LucasLab() {
     setSelectorCollapsed(false);
   };
 
+  const handleRowSelect = (index) => {
+    setSelectedRow(previous => previous === index ? null : index);
+  };
+
   return (
     <div className="lucas-lab">
-      <h1>Lucas Lab</h1>
+      <div className="math-toy-page-header">
+        <h1 className="math-toy-page-title">Square Root Lab</h1>
+      </div>
       
       <section className="lucas-selector-container">
         {selectedNumber !== null && selectorCollapsed ? (
-          <div className="lucas-toggle" onClick={handlePillClick}>
-            <span className="lucas-summary-label">D =</span>
-            <span className="lucas-summary-value">{selectedNumber}</span>
-            <span className="lucas-summary-sep">·</span>
-            <span className="lucas-summary-label">√{selectedNumber} =</span>
-            <span className="lucas-summary-value">{Math.sqrt(selectedNumber).toFixed(4)}</span>
-            <span className="lucas-summary-sep">·</span>
-            <span className="lucas-summary-label">
-              y<sub>n</sub> = {selectedNumber - 1 === 1 ? '' : selectedNumber - 1}y<sub>n-1</sub> + x<sub>n-1</sub>
-            </span>
-            <span className="lucas-summary-sep">·</span>
-            <span className="lucas-summary-label">
-              x<sub>n</sub> = {selectedNumber === 1 ? '' : selectedNumber}y<sub>n-1</sub> + {selectedNumber - 1 === 1 ? '' : selectedNumber - 1}x<sub>n-1</sub>
-            </span>
-            <span className="lucas-toggle-icon">▾</span>
+          <div className="lucas-result-summary">
+            <div className="lucas-result-heading">
+              <button
+                type="button"
+                className="lucas-back"
+                onClick={handlePillClick}
+                aria-label="Choose another number"
+              >
+                <svg
+                  className="lucas-back-icon"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path d="M19 12H5" />
+                  <path d="M11 18l-6-6 6-6" />
+                </svg>
+              </button>
+
+              <div className="lucas-toggle">
+                <span className="lucas-summary-label">D =</span>
+                <span className="lucas-summary-value">{selectedNumber}</span>
+                <span className="lucas-summary-sep">·</span>
+                <span className="lucas-summary-label">√{selectedNumber} =</span>
+                <span className="lucas-summary-value">{Math.sqrt(selectedNumber).toFixed(4)}</span>
+              </div>
+            </div>
+
+            <div className="lucas-formula-box">
+              <div>
+                y<sub>n</sub> = {selectedNumber - 1 === 1 ? '' : selectedNumber - 1}y<sub>n-1</sub> + x<sub>n-1</sub>
+              </div>
+              <div>
+                x<sub>n</sub> = {selectedNumber}y<sub>n-1</sub> + {selectedNumber - 1 === 1 ? '' : selectedNumber - 1}x<sub>n-1</sub>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="lucas-selector">
@@ -141,33 +168,91 @@ function LucasLab() {
       {lucasData.length > 0 && (
         <section className="lucas-table-section">
           <div className="lucas-card">
-            <Table striped hover>
+            <Table className="lucas-table">
               <thead>
                 <tr>
-                  <th style={{ textAlign: 'right' }}>y</th>
-                  <th style={{ textAlign: 'right' }}>x</th>
-                  <th style={{ textAlign: 'right' }}>x/y → √{selectedNumber}</th>
+                  <th>n</th>
+                  <th>y</th>
+                  <th>x</th>
+                  <th>x/y → √{selectedNumber}</th>
                 </tr>
               </thead>
               <tbody>
                 {lucasData.map((item, index) => {
                   const target = Math.sqrt(selectedNumber);
                   const difference = item.y === 0 ? 0 : Math.abs(item.ratio - target);
+                  const previous = index > 0 ? lucasData[index - 1] : null;
+                  const yCoefficient = selectedNumber - 1;
                   return (
-                    <tr key={index}>
-                      <td style={{ textAlign: 'right' }}>{item.y}</td>
-                      <td style={{ textAlign: 'right' }}>{item.x}</td>
-                      <td style={{ textAlign: 'right' }}>
-                        {item.y === 0 ? '—' : (
-                          <>
-                            {difference < 0.0001 && index > 0 && (
-                              <span style={{ marginRight: '0.5rem', color: '#26C485', fontSize: '0.8rem' }}>✓</span>
-                            )}
-                            {item.ratio.toFixed(4)} → {target.toFixed(4)}
-                          </>
-                        )}
-                      </td>
-                    </tr>
+                    <React.Fragment key={index}>
+                      {selectedRow === index && (
+                        <tr className="lucas-detail-row">
+                          <td colSpan="4">
+                            <div className="lucas-row-note" aria-live="polite">
+                              {previous ? (
+                                <>
+                                  <div className="lucas-row-calculation">
+                                    y<sub>{index}</sub> = {yCoefficient === 1 ? '' : yCoefficient}
+                                    y<sub>{index - 1}</sub> + x<sub>{index - 1}</sub>
+                                    {' = '}{yCoefficient === 1 ? '' : `${yCoefficient} × `}
+                                    <span className="lucas-previous-value">{previous.y}</span>
+                                    {' + '}<span className="lucas-previous-value">{previous.x}</span>
+                                    {' = '}<strong className="lucas-current-value">{item.y}</strong>
+                                  </div>
+                                  <div className="lucas-row-calculation">
+                                    x<sub>{index}</sub> = {selectedNumber}y<sub>{index - 1}</sub> + {yCoefficient === 1 ? '' : yCoefficient}
+                                    x<sub>{index - 1}</sub>
+                                    {' = '}{selectedNumber} × <span className="lucas-previous-value">{previous.y}</span>
+                                    {' + '}{yCoefficient === 1 ? '' : `${yCoefficient} × `}
+                                    <span className="lucas-previous-value">{previous.x}</span>
+                                    {' = '}<strong className="lucas-current-value">{item.x}</strong>
+                                  </div>
+                                </>
+                              ) : (
+                                <div className="lucas-row-calculation">
+                                  Initial values: y<sub>0</sub> = <strong className="lucas-current-value">{item.y}</strong>,{' '}
+                                  x<sub>0</sub> = D − 1 = <strong className="lucas-current-value">{item.x}</strong>
+                                </div>
+                              )}
+                              <div className="lucas-row-ratio">
+                                x/y = <span className="lucas-current-value">{item.ratio.toFixed(12)}</span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                      <tr
+                        className={[
+                          'lucas-data-row',
+                          index % 2 === 1 ? 'lucas-data-row-alt' : '',
+                          selectedRow !== null && index === selectedRow - 1 ? 'lucas-data-row-previous' : '',
+                          selectedRow === index ? 'lucas-data-row-selected' : ''
+                        ].filter(Boolean).join(' ')}
+                        onClick={() => handleRowSelect(index)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            handleRowSelect(index);
+                          }
+                        }}
+                        tabIndex="0"
+                        aria-label={`Step ${index}: x equals ${item.x}, y equals ${item.y}, x divided by y equals ${item.ratio.toFixed(12)}`}
+                      >
+                        <td>{index}</td>
+                        <td>{item.y}</td>
+                        <td>{item.x}</td>
+                        <td>
+                          {item.y === 0 ? '—' : (
+                            <>
+                              {difference < 0.0001 && index > 0 && (
+                                <span style={{ marginRight: '0.5rem', color: '#26C485', fontSize: '0.8rem' }}>✓</span>
+                              )}
+                              {item.ratio.toFixed(4)} → {target.toFixed(4)}
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    </React.Fragment>
                   );
                 })}
               </tbody>

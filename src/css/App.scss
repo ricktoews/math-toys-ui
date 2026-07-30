@@ -320,11 +320,11 @@ header {
   text-transform: none;
 }
 
-.table.phi-table tbody tr:nth-child(even) {
+.table.phi-table tbody tr:nth-child(even) > td {
   background: rgba(0, 0, 0, 0.02);
 }
 
-.table.phi-table tbody tr:hover {
+.table.phi-table tbody tr:hover > td {
   background: rgba(121, 148, 150, 0.06);
 }
 
@@ -335,7 +335,13 @@ header {
 
 .phi-result-row:focus {
   outline: none;
+}
+
+.phi-result-row:focus > td {
   background: rgba(121, 148, 150, 0.09);
+}
+
+.phi-result-row:focus > td:first-child {
   box-shadow: inset 3px 0 0 #799496;
 }
 

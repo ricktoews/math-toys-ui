@@ -81,7 +81,7 @@ function App() {
             <li><a href="/pythag-clist">Pythag C List</a></li>
             */}
             <li><a href="/pythagorean-triples-lab">Pythagorean Triples</a></li>
-            <li><a href="/lucas-lab">Lucas Lab</a></li>
+            <li><a href="/lucas-lab">Square Root Lab</a></li>
             <li><a href="/fibonacci-lab">Fibonacci Lab</a></li>
             <li><a href="/calendar">12-Digit Calendar</a></li>
             <li><a href="/denom">Decimal Expansions</a></li>
