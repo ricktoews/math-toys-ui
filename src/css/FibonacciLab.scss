@@ -101,6 +101,7 @@ $fib-highlight: #a7f3d0;
   }
 
   .fib-center-option-term {
+    padding: 0;
     width: 3.8rem;
     min-height: 3.8rem;
     display: flex;
@@ -112,6 +113,10 @@ $fib-highlight: #a7f3d0;
     border-radius: 999px;
     background: #fff;
     color: $fib-text-main;
+    font: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 
     span {
       color: $fib-text-muted;
@@ -142,6 +147,17 @@ $fib-highlight: #a7f3d0;
 
     &.center.distance {
       box-shadow: 0 3px 10px rgba($fib-accent, 0.22);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.35;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      &:not(:disabled):hover {
+        border-color: $fib-accent;
+      }
     }
   }
 

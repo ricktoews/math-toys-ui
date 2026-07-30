@@ -243,17 +243,31 @@ const FibonacciLab = () => {
 
             return (
               <div className="fib-center-option" key={index}>
-                <div
+                <button
+                  type="button"
                   className={[
                     'fib-center-option-term',
                     isCenter ? 'center' : '',
                     isEndpoint ? 'endpoint' : '',
                     isDistance ? 'distance' : ''
                   ].filter(Boolean).join(' ')}
+                  disabled={unavailable}
+                  onClick={() => {
+                    if (!isCenter) {
+                      handleCenterClick(index);
+                    }
+                  }}
+                  aria-label={
+                    unavailable
+                      ? `F ${index} equals ${num}, unavailable as a center`
+                      : isCenter
+                        ? `F ${index} equals ${num}, current center`
+                        : `Set F ${index}, which equals ${num}, as the center`
+                  }
                 >
                   <span>F<sub>{index}</sub></span>
                   <strong>{num}</strong>
-                </div>
+                </button>
                 <button
                   type="button"
                   className="fib-set-center"
