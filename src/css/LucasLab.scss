@@ -15,6 +15,8 @@ $lucas-accent: $glaucous;
 $lucas-previous-value: darken($app-blue, 8%);
 $lucas-current-value: $indigo-velvet;
 $lucas-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
+$lucas-site-header-height: 50px;
+$lucas-sticky-summary-height: 3rem;
 
 // ---- root container ----
 .lucas-lab {
@@ -30,6 +32,25 @@ $lucas-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
 .lucas-selector-container {
   max-width: 960px;
   margin: 0 auto 1.5rem;
+}
+
+.lucas-selector-container-collapsed,
+.lucas-selector-container-collapsed .lucas-result-summary {
+  display: contents;
+}
+
+.lucas-selector-container-collapsed .lucas-result-heading {
+  position: sticky;
+  top: $lucas-site-header-height;
+  z-index: 15;
+  width: 100%;
+  min-height: $lucas-sticky-summary-height;
+  padding-block: 0.5rem;
+  background: #fff;
+}
+
+.lucas-selector-container-collapsed .lucas-formula-box {
+  margin-bottom: 1.5rem;
 }
 
 .lucas-selector {
@@ -299,6 +320,12 @@ $lucas-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   text-transform: uppercase;
 }
 
+.table.lucas-table .lucas-table-head th {
+  position: sticky;
+  top: calc(#{$lucas-site-header-height} + #{$lucas-sticky-summary-height});
+  z-index: 14;
+}
+
 .table.lucas-table th:nth-child(1) {
   width: 9%;
 }
@@ -358,7 +385,8 @@ $lucas-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   line-height: 1.4;
 }
 
-.lucas-row-ratio {
+.lucas-row-ratio,
+.lucas-row-difference {
   font-family: 'Courier New', monospace;
   overflow-wrap: anywhere;
 }

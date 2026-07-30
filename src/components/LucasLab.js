@@ -2,6 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal } from 'react-bootstrap';
 import '../css/LucasLab.scss';
 
+const formatSignedDifference = (value) => {
+  if (value === 0) {
+    return '0';
+  }
+
+  const sign = value > 0 ? '+' : '−';
+  const magnitude = Math.abs(value);
+  const formattedMagnitude = magnitude < 0.000001
+    ? magnitude.toExponential(6)
+    : magnitude.toFixed(12);
+
+  return `${sign}${formattedMagnitude}`;
+};
+
 function InfoModal(props) {
   return (
     <Modal
@@ -97,7 +111,12 @@ function LucasLab() {
         <h1 className="math-toy-page-title">Square Root Lab</h1>
       </div>
       
-      <section className="lucas-selector-container">
+      <section
+        className={[
+          'lucas-selector-container',
+          selectedNumber !== null && selectorCollapsed ? 'lucas-selector-container-collapsed' : ''
+        ].filter(Boolean).join(' ')}
+      >
         {selectedNumber !== null && selectorCollapsed ? (
           <div className="lucas-result-summary">
             <div className="lucas-result-heading">
@@ -169,7 +188,7 @@ function LucasLab() {
         <section className="lucas-table-section">
           <div className="lucas-card">
             <Table className="lucas-table">
-              <thead>
+              <thead className="lucas-table-head">
                 <tr>
                   <th>n</th>
                   <th>y</th>
@@ -181,6 +200,7 @@ function LucasLab() {
                 {lucasData.map((item, index) => {
                   const target = Math.sqrt(selectedNumber);
                   const difference = item.y === 0 ? 0 : Math.abs(item.ratio - target);
+                  const signedDifference = item.ratio - target;
                   const previous = index > 0 ? lucasData[index - 1] : null;
                   const yCoefficient = selectedNumber - 1;
                   return (
@@ -216,6 +236,12 @@ function LucasLab() {
                               )}
                               <div className="lucas-row-ratio">
                                 x/y = <span className="lucas-current-value">{item.ratio.toFixed(12)}</span>
+                              </div>
+                              <div className="lucas-row-difference">
+                                x/y − √{selectedNumber} ={' '}
+                                <span className="lucas-current-value">
+                                  {formatSignedDifference(signedDifference)}
+                                </span>
                               </div>
                             </div>
                           </td>
