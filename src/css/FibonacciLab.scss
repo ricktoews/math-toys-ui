@@ -171,14 +171,6 @@ $fib-highlight: #a7f3d0;
       animation: fib-outer-pulse 0.55s ease-out;
     }
 
-    &.distance {
-      box-shadow: 0 0 0 2px #93c5fd;
-    }
-
-    &.center.distance {
-      box-shadow: 0 3px 10px rgba($fib-accent, 0.22);
-    }
-
     &:disabled {
       cursor: not-allowed;
       opacity: 0.35;

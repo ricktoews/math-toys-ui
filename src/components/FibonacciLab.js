@@ -49,13 +49,10 @@ const FibonacciLab = () => {
   }, [selectedIndex]);
 
   const handleCenterClick = (index) => {
-    if (selectedIndex === index) {
-      setSelectedIndex(null);
-      setComparisonIndex(null);
-    } else {
-      setSelectedIndex(index);
-      setComparisonIndex(index + 1);
-    }
+    if (selectedIndex === index) return;
+
+    setSelectedIndex(index);
+    setComparisonIndex(index + 1);
   };
 
   // Calculate phi info for selected number
@@ -128,9 +125,7 @@ const FibonacciLab = () => {
         <h1 className="math-toy-page-title">Fibonacci Lab</h1>
       </div>
       <p className="fib-instructions">
-        {selectedIndex === null
-          ? 'Scroll the Fibonacci numbers, then choose a center.'
-          : 'Adjust the distance or choose a new center below.'}
+        Adjust the distance or choose a new center below.
       </p>
 
       {selectedIndex !== null && productInfo && (
@@ -263,13 +258,9 @@ const FibonacciLab = () => {
       )}
 
       <div
-        className={`fib-center-picker ${selectedIndex !== null ? 'reference' : ''}`}
+        className="fib-center-picker reference"
         ref={pickerRef}
-        aria-label={
-          selectedIndex === null
-            ? 'Choose a center Fibonacci number'
-            : 'Fibonacci number reference'
-        }
+        aria-label="Choose a center Fibonacci number"
       >
         <div className="fib-center-picker-track">
           {fib.map((num, index) => {
@@ -277,7 +268,6 @@ const FibonacciLab = () => {
             const isCenter = index === selectedIndex;
             const isEndpoint = productInfo &&
               (index === productInfo.leftIndex || index === productInfo.rightIndex);
-            const isDistance = productInfo && index === productInfo.x;
 
             return (
               <div className="fib-center-option" key={index}>
@@ -289,8 +279,7 @@ const FibonacciLab = () => {
                   className={[
                     'fib-center-option-term',
                     isCenter ? 'center' : '',
-                    isEndpoint ? 'endpoint' : '',
-                    isDistance ? 'distance' : ''
+                    isEndpoint ? 'endpoint' : ''
                   ].filter(Boolean).join(' ')}
                   disabled={unavailable}
                   onClick={() => handleCenterClick(index)}
@@ -298,7 +287,7 @@ const FibonacciLab = () => {
                     unavailable
                       ? `F ${index} equals ${num}, unavailable as a center`
                       : isCenter
-                        ? `Clear F ${index} as the center`
+                        ? `F ${index} equals ${num}, current center`
                         : `Set F ${index}, which equals ${num}, as the center`
                   }
                 >
