@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '../css/FibonacciLab.scss';
 
 const FibonacciLab = () => {
@@ -21,6 +21,32 @@ const FibonacciLab = () => {
 
   const [selectedIndex, setSelectedIndex] = useState(6);
   const [comparisonIndex, setComparisonIndex] = useState(7);
+  const pickerRef = useRef(null);
+  const pickerTermRefs = useRef([]);
+
+  useEffect(() => {
+    if (selectedIndex === null) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      const picker = pickerRef.current;
+      const term = pickerTermRefs.current[selectedIndex];
+      if (!picker || !term) return;
+
+      const pickerRect = picker.getBoundingClientRect();
+      const termRect = term.getBoundingClientRect();
+      const targetLeft = picker.scrollLeft +
+        termRect.left - pickerRect.left +
+        termRect.width / 2 -
+        picker.clientWidth / 2;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      picker.scrollTo({
+        left: targetLeft,
+        behavior: prefersReducedMotion ? 'auto' : 'smooth'
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [selectedIndex]);
 
   const handleCenterClick = (index) => {
     if (selectedIndex === index) {
@@ -123,7 +149,10 @@ const FibonacciLab = () => {
             >
               −
             </button>
-            <div className="fib-relationship-term endpoint">
+            <div
+              className="fib-relationship-term endpoint"
+              key={`left-${productInfo.leftIndex}`}
+            >
               <span className="fib-relationship-index">
                 F<sub>{productInfo.leftIndex}</sub>
               </span>
@@ -138,15 +167,13 @@ const FibonacciLab = () => {
               <span>{productInfo.x} {productInfo.x === 1 ? 'place' : 'places'}</span>
             </div>
 
-            <button
-              type="button"
+            <div
               className="fib-relationship-term center"
-              onClick={() => handleCenterClick(selectedIndex)}
-              aria-label={`Clear center F ${selectedIndex} and choose another`}
+              key={`center-${selectedIndex}`}
             >
               <span className="fib-relationship-index">F<sub>{selectedIndex}</sub></span>
               <span className="fib-relationship-number">{fib[selectedIndex]}</span>
-            </button>
+            </div>
 
             <div className="fib-relationship-gap" aria-hidden="true">
               <span className="fib-relationship-dots">
@@ -154,7 +181,10 @@ const FibonacciLab = () => {
               </span>
               <span>{productInfo.x} {productInfo.x === 1 ? 'place' : 'places'}</span>
             </div>
-            <div className="fib-relationship-term endpoint">
+            <div
+              className="fib-relationship-term endpoint"
+              key={`right-${productInfo.rightIndex}`}
+            >
               <span className="fib-relationship-index">
                 F<sub>{productInfo.rightIndex}</sub>
               </span>
@@ -174,7 +204,10 @@ const FibonacciLab = () => {
           </div>
 
           <div className="fib-comparison-grid">
-            <div className="fib-comparison-card outer-product">
+            <div
+              className="fib-comparison-card outer-product"
+              key={`product-${productInfo.leftIndex}-${productInfo.rightIndex}`}
+            >
               <span className="fib-comparison-label">Outer product</span>
               <span className="fib-comparison-symbolic">
                 F<sub>{productInfo.leftIndex}</sub> × F<sub>{productInfo.rightIndex}</sub>
@@ -184,7 +217,10 @@ const FibonacciLab = () => {
                 <span className="fib-value-outer">{productInfo.product}</span>
               </strong>
             </div>
-            <div className="fib-comparison-card center-square">
+            <div
+              className="fib-comparison-card center-square"
+              key={`square-${selectedIndex}`}
+            >
               <span className="fib-comparison-label">Center square</span>
               <span className="fib-comparison-symbolic">
                 F<sub>{selectedIndex}</sub><sup>2</sup>
@@ -202,6 +238,8 @@ const FibonacciLab = () => {
               <span className="fib-difference-caption">
                 Distance {productInfo.x} {productInfo.x === 1 ? 'place' : 'places'}
                 {' → '}F<sub>{productInfo.x}</sub> = {fib[productInfo.x]}
+                {' → Difference = '}{fib[productInfo.x]}<sup>2</sup>
+                {' = '}{productInfo.fxSquare}
               </span>
             </div>
             <strong>
@@ -219,7 +257,6 @@ const FibonacciLab = () => {
                 </>
               )}
               {' = '}{productInfo.fxSquare}
-              {' = '}{fib[productInfo.x]}<sup>2</sup>
             </strong>
           </div>
         </section>
@@ -227,6 +264,7 @@ const FibonacciLab = () => {
 
       <div
         className={`fib-center-picker ${selectedIndex !== null ? 'reference' : ''}`}
+        ref={pickerRef}
         aria-label={
           selectedIndex === null
             ? 'Choose a center Fibonacci number'
@@ -245,32 +283,15 @@ const FibonacciLab = () => {
               <div className="fib-center-option" key={index}>
                 <button
                   type="button"
+                  ref={(node) => {
+                    pickerTermRefs.current[index] = node;
+                  }}
                   className={[
                     'fib-center-option-term',
                     isCenter ? 'center' : '',
                     isEndpoint ? 'endpoint' : '',
                     isDistance ? 'distance' : ''
                   ].filter(Boolean).join(' ')}
-                  disabled={unavailable}
-                  onClick={() => {
-                    if (!isCenter) {
-                      handleCenterClick(index);
-                    }
-                  }}
-                  aria-label={
-                    unavailable
-                      ? `F ${index} equals ${num}, unavailable as a center`
-                      : isCenter
-                        ? `F ${index} equals ${num}, current center`
-                        : `Set F ${index}, which equals ${num}, as the center`
-                  }
-                >
-                  <span>F<sub>{index}</sub></span>
-                  <strong>{num}</strong>
-                </button>
-                <button
-                  type="button"
-                  className="fib-set-center"
                   disabled={unavailable}
                   onClick={() => handleCenterClick(index)}
                   aria-label={
@@ -281,7 +302,8 @@ const FibonacciLab = () => {
                         : `Set F ${index}, which equals ${num}, as the center`
                   }
                 >
-                  {unavailable ? 'Unavailable' : isCenter ? 'Clear center' : 'Set center'}
+                  <span>F<sub>{index}</sub></span>
+                  <strong>{num}</strong>
                 </button>
               </div>
             );
