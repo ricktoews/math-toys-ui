@@ -21,6 +21,7 @@ export default function HexCluster({
 
     // n >= 2 for this morph visualization
     const [n, setN] = useState(Math.max(2, Math.floor(initialN || 2)));
+    const [displayMode, setDisplayMode] = useState("hex");
 
     // Wedge colors by index (0–5):
     //   (5,0) = blue family
@@ -341,13 +342,15 @@ export default function HexCluster({
 
         if (mode === "hex") {
             el.innerHTML = `
-                <span class="hex-math-label">Hexagon:</span>
-                <span class="hex-math-value">1 center + 6 triangles (T<sub>${k}</sub> = ${T} each) = ${hexCount} circles</span>
+                <span class="hex-math-label">Centered hexagonal number: <strong>${hexCount}</strong></span>
+                <span class="hex-math-value">1 center + 6 triangular groups of ${T} circles each</span>
+                <span class="hex-math-equation">1 + 6T<sub>${k}</sub> = 1 + 6(${T}) = ${hexCount}</span>
             `;
         } else {
             el.innerHTML = `
-                <span class="hex-math-label">Square:</span>
-                <span class="hex-math-value">1 center + 8 triangles (T<sub>${k}</sub> = ${T} each) = ${squareCount} circles = (${side})²</span>
+                <span class="hex-math-label">Square number: <strong>${squareCount}</strong></span>
+                <span class="hex-math-value">1 center + 6 rearranged groups + 2 added groups of ${T} circles each</span>
+                <span class="hex-math-equation">1 + 8T<sub>${k}</sub> = 1 + 8(${T}) = ${squareCount} = ${side}²</span>
             `;
         }
     }
@@ -390,7 +393,7 @@ export default function HexCluster({
 
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.rad, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
+                ctx.fillStyle = domedFill(ctx, p);
                 ctx.fill();
                 ctx.lineWidth = 1.2;
                 ctx.strokeStyle = stroke;
@@ -431,6 +434,36 @@ export default function HexCluster({
         t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
     const lerp = (a, b, t) => a + (b - a) * t;
 
+    function mixHex(color, target, amount) {
+        const value = color.replace("#", "");
+        const targetValue = target.replace("#", "");
+        const mixed = [0, 2, 4].map((offset) => {
+            const from = parseInt(value.slice(offset, offset + 2), 16);
+            const to = parseInt(targetValue.slice(offset, offset + 2), 16);
+            return Math.round(from + (to - from) * amount)
+                .toString(16)
+                .padStart(2, "0");
+        });
+        return `#${mixed.join("")}`;
+    }
+
+    function domedFill(ctx, particle) {
+        const { x, y, rad, color } = particle;
+        const gradient = ctx.createRadialGradient(
+            x - rad * 0.3,
+            y - rad * 0.34,
+            rad * 0.06,
+            x,
+            y,
+            rad
+        );
+        gradient.addColorStop(0, mixHex(color, "#ffffff", 0.7));
+        gradient.addColorStop(0.28, mixHex(color, "#ffffff", 0.24));
+        gradient.addColorStop(0.7, color);
+        gradient.addColorStop(1, mixHex(color, "#000000", 0.24));
+        return gradient;
+    }
+
     function startMorph(nextMode) {
         // cancel any existing animation
         if (rafRef.current) {
@@ -439,6 +472,7 @@ export default function HexCluster({
         }
 
         modeRef.current = nextMode;
+        setDisplayMode(nextMode);
         extrasPhaseRef.current = "hidden";
         extrasAlphaRef.current = 0;
 
@@ -549,7 +583,11 @@ export default function HexCluster({
     // ===== Render =====
     return (
         <div className="hex-page">
-            <h1>Centered Hexagonal Numbers</h1>
+            <div className="math-toy-page-header">
+                <h1 className="math-toy-page-title hex-page-title">
+                    Centered Hexagonal Numbers
+                </h1>
+            </div>
 
             <main className="hex-main">
                 {/* Live math panel - horizontal pill */}
@@ -557,6 +595,37 @@ export default function HexCluster({
                     ref={mathBoxRef}
                     className="hex-math-pill"
                 />
+
+                {showControls && (
+                    <div className="hex-stepper" aria-label="Hexagon size">
+                        <button
+                            type="button"
+                            onClick={decN}
+                            aria-label="Decrease the number of circles per edge"
+                            className="hex-control-btn"
+                        >
+                            –
+                        </button>
+
+                        <div className="hex-n-definition" aria-live="polite">
+                            <span className="hex-n-value">n = {n}</span>
+                            <span className="hex-n-explanation">
+                                {displayMode === "hex"
+                                    ? `${n} circles per edge · ${n - 1} rings around the center`
+                                    : `Rearranged from the n = ${n} hexagon · square side = 2n − 1 = ${2 * n - 1}`}
+                            </span>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={incN}
+                            aria-label="Increase the number of circles per edge"
+                            className="hex-control-btn"
+                        >
+                            +
+                        </button>
+                    </div>
+                )}
 
                 <div
                     ref={wrapRef}
@@ -567,35 +636,6 @@ export default function HexCluster({
                         className="hex-canvas"
                         onClick={toggleMode}
                     />
-
-                    {showControls && (
-                        <>
-                            {/* n label - top center */}
-                            <div className="hex-n-label">
-                                n = {n}
-                            </div>
-
-                            {/* Minus button - top left */}
-                            <button
-                                type="button"
-                                onClick={decN}
-                                aria-label="Decrease n"
-                                className="hex-control-btn hex-btn-minus"
-                            >
-                                –
-                            </button>
-
-                            {/* Plus button - top right */}
-                            <button
-                                type="button"
-                                onClick={incN}
-                                aria-label="Increase n"
-                                className="hex-control-btn hex-btn-plus"
-                            >
-                                +
-                            </button>
-                        </>
-                    )}
                 </div>
             </main>
         </div>

@@ -15,6 +15,12 @@ $hex-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   color: $hex-text-main;
 }
 
+.hex-page-title {
+  font-size: clamp(1rem, 4.25vw, 1.8rem);
+  white-space: normal;
+  text-wrap: balance;
+}
+
 // ---- main layout ----
 .hex-main {
   max-width: 960px;
@@ -44,25 +50,38 @@ $hex-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   box-shadow: $hex-shadow-soft;
 }
 
-// ---- n label (top center) ----
-.hex-n-label {
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 2px 10px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid $hex-border;
-  font-size: 14px;
-  font-weight: 600;
-  pointer-events: none;
+// ---- size stepper ----
+.hex-stepper {
+  width: calc(100% - 1rem);
+  max-width: 624px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hex-n-definition {
+  min-width: 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.hex-n-value {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.hex-n-explanation {
+  color: $hex-text-muted;
+  font-size: clamp(0.72rem, 3vw, 0.85rem);
+  line-height: 1.25;
 }
 
 // ---- control buttons ----
 .hex-control-btn {
-  position: absolute;
-  top: 8px;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -86,29 +105,21 @@ $hex-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
   color: #fff;
 }
 
-.hex-btn-minus {
-  left: 8px;
-}
-
-.hex-btn-plus {
-  right: 8px;
-}
-
 // ---- live math panel ----
 .hex-math-pill {
   max-width: 960px;
   margin: 0 auto 1rem;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid $hex-border-soft;
-  border-radius: 999px;
+  border-radius: 1.5rem;
   font-size: 14px;
   line-height: 1.4;
   box-shadow: $hex-shadow-soft;
   display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
 .hex-math-label {
@@ -118,6 +129,11 @@ $hex-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
 
 .hex-math-value {
   color: $hex-text-main;
+}
+
+.hex-math-equation {
+  color: $hex-text-main;
+  font-weight: 600;
 }
 
 .hex-math-extra {
