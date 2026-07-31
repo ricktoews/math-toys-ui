@@ -299,6 +299,7 @@ $lucas-sticky-summary-height: 3rem;
   border-collapse: collapse;
   table-layout: fixed;
   font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .table.lucas-table th,
@@ -327,16 +328,16 @@ $lucas-sticky-summary-height: 3rem;
 }
 
 .table.lucas-table th:nth-child(1) {
-  width: 9%;
+  width: 8%;
 }
 
 .table.lucas-table th:nth-child(2),
 .table.lucas-table th:nth-child(3) {
-  width: 22.5%;
+  width: 29%;
 }
 
 .table.lucas-table th:nth-child(4) {
-  width: 46%;
+  width: 34%;
 }
 
 .table.lucas-table .lucas-data-row {
@@ -376,7 +377,7 @@ $lucas-sticky-summary-height: 3rem;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.25rem;
+  gap: 0.35rem;
   padding: 0.55rem 0.65rem;
   border-left: 3px solid $lucas-accent;
   background: rgba($lucas-accent, 0.06);
@@ -385,14 +386,76 @@ $lucas-sticky-summary-height: 3rem;
   line-height: 1.4;
 }
 
-.lucas-row-ratio,
-.lucas-row-difference {
-  font-family: 'Courier New', monospace;
-  overflow-wrap: anywhere;
+.lucas-row-note-title {
+  color: $lucas-text-muted;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.lucas-previous-values {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  color: $lucas-text-muted;
+  font-size: 0.84rem;
+}
+
+.lucas-previous-values-separator {
+  color: $lucas-text-subtle;
 }
 
 .lucas-row-calculation {
   overflow-wrap: anywhere;
+}
+
+.lucas-ratio-result {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  width: 100%;
+  margin-top: 0.25rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid rgba($lucas-accent, 0.2);
+}
+
+.lucas-fraction {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 2.5rem;
+  max-width: 100%;
+  font-family: "Cambria Math", Cambria, Georgia, "Times New Roman", serif;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.lucas-fraction-numerator,
+.lucas-fraction-denominator {
+  padding-inline: 0.25rem;
+  overflow-wrap: anywhere;
+}
+
+.lucas-fraction-numerator {
+  padding-bottom: 0.12rem;
+  border-bottom: 1px solid currentColor;
+}
+
+.lucas-fraction-denominator {
+  padding-top: 0.12rem;
+}
+
+.lucas-ratio-decimal {
+  font-family: 'Courier New', monospace;
+  overflow-wrap: anywhere;
+}
+
+.lucas-ratio-comparison {
+  color: $lucas-text-muted;
+  font-size: 0.82rem;
 }
 
 .table.lucas-table .lucas-data-row-previous > td:nth-child(2),
@@ -405,4 +468,98 @@ $lucas-sticky-summary-height: 3rem;
 .lucas-current-value {
   color: $lucas-current-value;
   font-weight: 700;
+}
+
+// ---- information modal ----
+.lucas-info-modal {
+  max-width: 640px;
+}
+
+.lucas-info-modal .modal-content {
+  overflow: hidden;
+  border: 1px solid rgba(121, 148, 150, 0.45);
+  border-radius: 12px;
+}
+
+.lucas-info-modal .modal-header {
+  position: relative;
+  min-height: 64px;
+  justify-content: center;
+  padding: 8px 44px;
+  border-bottom: 0;
+  background: #f3f6ef;
+  color: #405431;
+  box-shadow: 0 3px 8px rgba(73, 71, 91, 0.12);
+}
+
+.lucas-info-modal .modal-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.lucas-info-modal .btn-close {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  box-sizing: border-box;
+  width: 2rem;
+  height: 2rem;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  background-color: rgba(172, 193, 150, 0.28);
+  background-size: 0.75rem;
+  opacity: 0.65;
+  transform: translateY(-50%);
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.lucas-info-modal .btn-close:hover,
+.lucas-info-modal .btn-close:focus {
+  background-color: rgba(172, 193, 150, 0.55);
+  opacity: 0.9;
+}
+
+.lucas-info-body {
+  padding: 1rem 1.1rem 1.15rem;
+  color: #34343b;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.lucas-info-body p {
+  margin: 0;
+}
+
+.lucas-info-body p + p,
+.lucas-info-formulas + p {
+  margin-top: 1rem;
+}
+
+.lucas-info-formulas {
+  margin-top: 0.65rem;
+  padding: 0.7rem;
+  border-radius: 8px;
+  background: #f7f9f4;
+  color: #405431;
+  font-family: "Cambria Math", Cambria, Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+@media (max-width: 575.98px) {
+  .lucas-card {
+    padding-inline: 0.65rem;
+  }
+
+  .table.lucas-table {
+    font-size: 0.8rem;
+  }
+
+  .table.lucas-table th,
+  .table.lucas-table td {
+    padding-inline: 0.18rem;
+  }
 }

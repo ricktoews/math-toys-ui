@@ -1,19 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal } from 'react-bootstrap';
+import { Table, Modal } from 'react-bootstrap';
 import '../css/LucasLab.scss';
 
-const formatSignedDifference = (value) => {
-  if (value === 0) {
-    return '0';
-  }
-
-  const sign = value > 0 ? '+' : '−';
+const formatDifferenceMagnitude = (value) => {
   const magnitude = Math.abs(value);
-  const formattedMagnitude = magnitude < 0.000001
+  return magnitude < 0.000001 && magnitude !== 0
     ? magnitude.toExponential(6)
     : magnitude.toFixed(12);
+};
 
-  return `${sign}${formattedMagnitude}`;
+const formatTruncatedFraction = (numerator, denominator, decimalPlaces) => {
+  const integerPart = numerator / denominator;
+  let remainder = numerator % denominator;
+  let decimalPart = '';
+
+  for (let place = 0; place < decimalPlaces; place++) {
+    remainder *= 10n;
+    decimalPart += (remainder / denominator).toString();
+    remainder %= denominator;
+  }
+
+  return `${integerPart.toString()}.${decimalPart}`;
+};
+
+const formatTableInteger = (value) => {
+  const digits = value.toString();
+
+  if (digits.length <= 10) {
+    return {
+      display: digits,
+      abbreviated: false
+    };
+  }
+
+  return {
+    display: `${digits[0]}.${digits.slice(1, 6)}e${digits.length - 1}`,
+    abbreviated: true
+  };
+};
+
+const greatestCommonDivisor = (a, b) => {
+  let left = a;
+  let right = b;
+
+  while (right !== 0n) {
+    [left, right] = [right, left % right];
+  }
+
+  return left;
+};
+
+const hasDigitsBeyond = (numerator, denominator, decimalPlaces) => {
+  let reducedDenominator = denominator / greatestCommonDivisor(numerator, denominator);
+  let factorsOfTwo = 0;
+  let factorsOfFive = 0;
+
+  while (reducedDenominator % 2n === 0n) {
+    reducedDenominator /= 2n;
+    factorsOfTwo += 1;
+  }
+
+  while (reducedDenominator % 5n === 0n) {
+    reducedDenominator /= 5n;
+    factorsOfFive += 1;
+  }
+
+  return reducedDenominator !== 1n || Math.max(factorsOfTwo, factorsOfFive) > decimalPlaces;
 };
 
 function InfoModal(props) {
@@ -21,35 +73,31 @@ function InfoModal(props) {
     <Modal
       {...props}
       size="lg"
+      dialogClassName="lucas-info-modal"
       aria-labelledby="lucas-info-title"
       centered
     >
       <Modal.Header closeButton>
         <Modal.Title id="lucas-info-title">
-          About Lucas Sequences
+          Square Root Lab
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body className="lucas-info-body">
         <p>
-          Lucas sequences are a method for computing square roots of integers using recursive formulas.
+          This illustrates a method for computing square roots of integers using recursive formulas.
         </p>
         <p>
           For a given integer D, the sequence converges to √D through the recurrence relations:
         </p>
-        <p>
+        <div className="lucas-info-formulas">
           • y<sub>n</sub> = (D-1)y<sub>n-1</sub> + x<sub>n-1</sub>
           <br />
           • x<sub>n</sub> = Dy<sub>n-1</sub> + (D-1)x<sub>n-1</sub>
-        </p>
+        </div>
         <p>
           Starting with y<sub>0</sub> = 1 and x<sub>0</sub> = D-1, the ratio x/y converges rapidly to √D.
         </p>
       </Modal.Body>
-      <Modal.Footer>
-        <Button className="app-btn" onClick={props.onHide}>
-          Close
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 }
@@ -70,11 +118,13 @@ function LucasLab() {
 
   const calculateLucasSequence = (n) => {
     const data = [];
-    let y = 1;
-    let x = n - 1;
+    const bigD = window.BigInt(n);
+    const bigCoefficient = window.BigInt(n - 1);
+    let y = 1n;
+    let x = bigCoefficient;
     
     for (let i = 0; i < 20; i++) {
-      const ratio = y === 0 ? 0 : (x / y);
+      const ratio = y === 0n ? 0 : Number(x) / Number(y);
       data.push({
         y: y,
         x: x,
@@ -82,8 +132,8 @@ function LucasLab() {
       });
       
       // Calculate next values
-      const nextY = (n - 1) * y + x;
-      const nextX = n * y + (n - 1) * x;
+      const nextY = bigCoefficient * y + x;
+      const nextX = bigD * y + bigCoefficient * x;
       y = nextY;
       x = nextX;
     }
@@ -141,16 +191,16 @@ function LucasLab() {
                 <span className="lucas-summary-value">{selectedNumber}</span>
                 <span className="lucas-summary-sep">·</span>
                 <span className="lucas-summary-label">√{selectedNumber} =</span>
-                <span className="lucas-summary-value">{Math.sqrt(selectedNumber).toFixed(4)}</span>
+                <span className="lucas-summary-value">{Math.sqrt(selectedNumber).toFixed(16)}</span>
               </div>
             </div>
 
             <div className="lucas-formula-box">
               <div>
-                y<sub>n</sub> = {selectedNumber - 1 === 1 ? '' : selectedNumber - 1}y<sub>n-1</sub> + x<sub>n-1</sub>
+                x<sub>n</sub> = {selectedNumber}y<sub>n-1</sub> + {selectedNumber - 1 === 1 ? '' : selectedNumber - 1}x<sub>n-1</sub>
               </div>
               <div>
-                x<sub>n</sub> = {selectedNumber}y<sub>n-1</sub> + {selectedNumber - 1 === 1 ? '' : selectedNumber - 1}x<sub>n-1</sub>
+                y<sub>n</sub> = {selectedNumber - 1 === 1 ? '' : selectedNumber - 1}y<sub>n-1</sub> + x<sub>n-1</sub>
               </div>
             </div>
           </div>
@@ -191,17 +241,20 @@ function LucasLab() {
               <thead className="lucas-table-head">
                 <tr>
                   <th>n</th>
-                  <th>y</th>
                   <th>x</th>
-                  <th>x/y → √{selectedNumber}</th>
+                  <th>y</th>
+                  <th>x/y</th>
                 </tr>
               </thead>
               <tbody>
                 {lucasData.map((item, index) => {
                   const target = Math.sqrt(selectedNumber);
-                  const difference = item.y === 0 ? 0 : Math.abs(item.ratio - target);
                   const signedDifference = item.ratio - target;
+                  const displayedRatio = formatTruncatedFraction(item.x, item.y, 8);
+                  const ratioContinues = hasDigitsBeyond(item.x, item.y, 8);
                   const previous = index > 0 ? lucasData[index - 1] : null;
+                  const displayedY = formatTableInteger(item.y);
+                  const displayedX = formatTableInteger(item.x);
                   const yCoefficient = selectedNumber - 1;
                   return (
                     <React.Fragment key={index}>
@@ -211,37 +264,72 @@ function LucasLab() {
                             <div className="lucas-row-note" aria-live="polite">
                               {previous ? (
                                 <>
-                                  <div className="lucas-row-calculation">
-                                    y<sub>{index}</sub> = {yCoefficient === 1 ? '' : yCoefficient}
-                                    y<sub>{index - 1}</sub> + x<sub>{index - 1}</sub>
-                                    {' = '}{yCoefficient === 1 ? '' : `${yCoefficient} × `}
-                                    <span className="lucas-previous-value">{previous.y}</span>
-                                    {' + '}<span className="lucas-previous-value">{previous.x}</span>
-                                    {' = '}<strong className="lucas-current-value">{item.y}</strong>
+                                  <div className="lucas-row-note-title">
+                                    Build row {index} from row {index - 1}
+                                  </div>
+                                  <div className="lucas-previous-values">
+                                    <span>Previous values:</span>
+                                    <span>
+                                      y<sub>{index - 1}</sub> ={' '}
+                                      <strong className="lucas-previous-value">{previous.y.toString()}</strong>
+                                    </span>
+                                    <span className="lucas-previous-values-separator">·</span>
+                                    <span>
+                                      x<sub>{index - 1}</sub> ={' '}
+                                      <strong className="lucas-previous-value">{previous.x.toString()}</strong>
+                                    </span>
                                   </div>
                                   <div className="lucas-row-calculation">
-                                    x<sub>{index}</sub> = {selectedNumber}y<sub>{index - 1}</sub> + {yCoefficient === 1 ? '' : yCoefficient}
-                                    x<sub>{index - 1}</sub>
-                                    {' = '}{selectedNumber} × <span className="lucas-previous-value">{previous.y}</span>
+                                    y<sub>{index}</sub> = {yCoefficient === 1 ? '' : `${yCoefficient} × `}
+                                    <span className="lucas-previous-value">{previous.y.toString()}</span>
+                                    {' + '}<span className="lucas-previous-value">{previous.x.toString()}</span>
+                                    {' = '}<strong className="lucas-current-value">{item.y.toString()}</strong>
+                                  </div>
+                                  <div className="lucas-row-calculation">
+                                    x<sub>{index}</sub> = {selectedNumber} × <span className="lucas-previous-value">{previous.y.toString()}</span>
                                     {' + '}{yCoefficient === 1 ? '' : `${yCoefficient} × `}
-                                    <span className="lucas-previous-value">{previous.x}</span>
-                                    {' = '}<strong className="lucas-current-value">{item.x}</strong>
+                                    <span className="lucas-previous-value">{previous.x.toString()}</span>
+                                    {' = '}<strong className="lucas-current-value">{item.x.toString()}</strong>
                                   </div>
                                 </>
                               ) : (
-                                <div className="lucas-row-calculation">
-                                  Initial values: y<sub>0</sub> = <strong className="lucas-current-value">{item.y}</strong>,{' '}
-                                  x<sub>0</sub> = D − 1 = <strong className="lucas-current-value">{item.x}</strong>
-                                </div>
+                                <>
+                                  <div className="lucas-row-note-title">Initial values</div>
+                                  <div className="lucas-previous-values">
+                                    <span>
+                                      y<sub>0</sub> = <strong className="lucas-current-value">{item.y.toString()}</strong>
+                                    </span>
+                                    <span className="lucas-previous-values-separator">·</span>
+                                    <span>
+                                      x<sub>0</sub> = D − 1 = <strong className="lucas-current-value">{item.x.toString()}</strong>
+                                    </span>
+                                  </div>
+                                </>
                               )}
-                              <div className="lucas-row-ratio">
-                                x/y = <span className="lucas-current-value">{item.ratio.toFixed(12)}</span>
-                              </div>
-                              <div className="lucas-row-difference">
-                                x/y − √{selectedNumber} ={' '}
-                                <span className="lucas-current-value">
-                                  {formatSignedDifference(signedDifference)}
+                              <div className="lucas-ratio-result">
+                                <span>
+                                  x<sub>{index}</sub>/y<sub>{index}</sub> =
                                 </span>
+                                <span className="lucas-fraction lucas-current-value">
+                                  <span className="lucas-fraction-numerator">{item.x.toString()}</span>
+                                  <span className="lucas-fraction-denominator">{item.y.toString()}</span>
+                                </span>
+                                <span>≈</span>
+                                <span className="lucas-ratio-decimal lucas-current-value">
+                                  {item.ratio.toFixed(12)}
+                                </span>
+                              </div>
+                              <div className="lucas-ratio-comparison">
+                                {signedDifference === 0 ? (
+                                  <>Exactly √{selectedNumber}</>
+                                ) : (
+                                  <>
+                                    <span className="lucas-current-value">
+                                      {formatDifferenceMagnitude(signedDifference)}
+                                    </span>{' '}
+                                    {signedDifference > 0 ? 'above' : 'below'} √{selectedNumber}
+                                  </>
+                                )}
                               </div>
                             </div>
                           </td>
@@ -262,19 +350,20 @@ function LucasLab() {
                           }
                         }}
                         tabIndex="0"
-                        aria-label={`Step ${index}: x equals ${item.x}, y equals ${item.y}, x divided by y equals ${item.ratio.toFixed(12)}`}
+                        aria-label={`Step ${index}: x equals ${item.x.toString()}, y equals ${item.y.toString()}, x divided by y equals ${item.ratio.toFixed(12)}`}
                       >
                         <td>{index}</td>
-                        <td>{item.y}</td>
-                        <td>{item.x}</td>
+                        <td title={displayedX.abbreviated ? item.x.toString() : undefined}>
+                          {displayedX.display}
+                        </td>
+                        <td title={displayedY.abbreviated ? item.y.toString() : undefined}>
+                          {displayedY.display}
+                        </td>
                         <td>
-                          {item.y === 0 ? '—' : (
-                            <>
-                              {difference < 0.0001 && index > 0 && (
-                                <span style={{ marginRight: '0.5rem', color: '#26C485', fontSize: '0.8rem' }}>✓</span>
-                              )}
-                              {item.ratio.toFixed(4)} → {target.toFixed(4)}
-                            </>
+                          {item.y === 0n ? '—' : (
+                            <span title={ratioContinues ? 'Truncated to 8 decimal places' : undefined}>
+                              {displayedRatio}{ratioContinues ? '…' : ''}
+                            </span>
                           )}
                         </td>
                       </tr>
