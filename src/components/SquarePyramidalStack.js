@@ -294,12 +294,12 @@ export default function SquarePyramidalStack({
         const pos = pts[i].clone();
         if (which[i] === 0) {
           pos.x += offset0;
-          // Lower dark blue (tetra0) by 100px (~1.5 units), then raise by 50px (~0.75 units)
-          pos.z -= 0.75; // Net: -1.5 + 0.75 = -0.75
+          // Lower dark blue to the shared support plane.
+          pos.z -= 1.875;
         } else {
           pos.x += offset1;
-          // Lower light blue (tetra1) by 200px (~3.0 units)
-          pos.z -= 3.0;
+          // Raise light blue to that same plane. X/Y separation is unchanged.
+          pos.z -= 1.875;
         }
         separatedPtsFinal.push(pos);
       }
@@ -453,7 +453,9 @@ export default function SquarePyramidalStack({
   // --- JSX ---
   return (
     <div className="sqpyr-page">
-      <h1>Square Pyramidal Numbers</h1>
+      <div className="math-toy-page-header">
+        <h1 className="math-toy-page-title">Square Pyramidal Numbers</h1>
+      </div>
 
       <main className="sqpyr-main">
         {/* Info pill */}
