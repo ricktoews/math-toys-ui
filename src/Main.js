@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
-import { MathJax } from 'better-react-mathjax';
 import styled from 'styled-components';
 import Periodic from './Periodic';
 
@@ -67,7 +65,15 @@ export default () => {
 	const yearTemplate = [0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5];
 
 	return (
-    <HomeWrapper className="container">
+    <HomeWrapper className="home-page">
+      <section className="home-hero">
+        <div className="hero-orbit" aria-hidden="true"><span>φ</span><span>π</span><span>√</span></div>
+        <p className="home-eyebrow">Patterns · numbers · play</p>
+        <h1>Ideas worth<br/><em>playing with.</em></h1>
+        <p className="home-intro">Small experiments and curious observations from the endlessly surprising world of mathematics.</p>
+        <div className="home-cue">Choose a note to explore <span aria-hidden="true">↓</span></div>
+      </section>
+      <section className="home-notes" aria-label="Math notes">
       <article>
         <div className="article-title">Odd Square Minus 1 - Always Divisible By 8</div>
 
@@ -323,7 +329,7 @@ export default () => {
         </ToggleRead>
       </article>
 
+      </section>
     </HomeWrapper>
 	)
 }
-

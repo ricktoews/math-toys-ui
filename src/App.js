@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/App.scss';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, NavLink } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import Main from './Main';
 import Phi from './components/Phi';
@@ -23,86 +23,64 @@ function App() {
   const hamburgerIconRef = useRef(null);
 
   useEffect(() => {
-    const handleClick = e => {
-      const el = e.target;
-      const currentEl = e.currentTarget;
-      if (navContainerRef.current.contains(el)) {
-        console.log('handleClick clicked in nav menu; leave open');
-        setMenuState(true);
-      } else {
-        // Close outside of nav container. Close menu unless clicked on hamburger icon.
-        if (!hamburgerIconRef.current.contains(el)) {
-          setMenuState(false);
-        }
-      }
-    }
-
-    document.addEventListener('click', handleClick);
-
+    document.body.classList.toggle('menu-open', menuState);
+    const closeOnEscape = event => event.key === 'Escape' && setMenuState(false);
+    document.addEventListener('keydown', closeOnEscape);
     return () => {
-      document.removeEventListener('click', handleClick);
-    }
-  }, [])
-
-  useEffect(() => {
-
-    if (menuState === true) {
-      navContainerRef.current.classList.add('show-nav-menu');
-      navContainerRef.current.classList.remove('hide-nav-menu');
-    } else {
-      navContainerRef.current.classList.remove('show-nav-menu');
-      navContainerRef.current.classList.add('hide-nav-menu');
-    }
-
+      document.body.classList.remove('menu-open');
+      document.removeEventListener('keydown', closeOnEscape);
+    };
   }, [menuState]);
 
   const toggleMenu = () => {
-    console.log('toggleMenu');
     setMenuState(!menuState);
   }
 
-  const checkMenuClick = e => {
-    const el = e.target;
-    const currentEl = e.currentTarget;
-    if (el === currentEl) {
-      setMenuState(false);
-    }
-  }
+  const navItems = [
+    ['/', 'Home', '⌂'],
+    ['/calendar', '12-Digit Calendar', '12'],
+    ['/denom', 'Decimal Expansions', '.3'],
+    ['/pythagorean-triples-lab', 'Pythagorean Triples', '△'],
+    ['/phi', 'Powers of Phi', 'φ'],
+    ['/fibonacci-lab', 'Fibonacci Lab', '∞'],
+    ['/lucas-lab', 'Square Root Lab', '√'],
+    ['/hex-cluster', 'Hex Cluster', '⬡'],
+    ['/square-pyramidal-stack', 'Square Pyramidal Stack', '▦'],
+  ];
 
   return (
     <div className="App">
-      <div ref={navContainerRef} onClick={checkMenuClick} className="nav-container">
-
-        <nav>
+      <div
+        ref={navContainerRef}
+        onMouseDown={event => event.target === event.currentTarget && setMenuState(false)}
+        className={`nav-container ${menuState ? 'show-nav-menu' : 'hide-nav-menu'}`}
+        aria-hidden={!menuState}
+      >
+        <nav aria-label="Math toys navigation">
+          <div className="nav-heading">
+            <span>Explore</span>
+            <button className="nav-close" onClick={() => setMenuState(false)} aria-label="Close menu">×</button>
+          </div>
           <ul>
-            <li><a href="/">Main</a></li>
-            <li><a href="/phi">Powers of Phi</a></li>
-            {/*
-            <li><a href="/pythag-clist">Pythag C List</a></li>
-            */}
-            <li><a href="/pythagorean-triples-lab">Pythagorean Triples</a></li>
-            <li><a href="/lucas-lab">Square Root Lab</a></li>
-            <li><a href="/fibonacci-lab">Fibonacci Lab</a></li>
-            <li><a href="/calendar">12-Digit Calendar</a></li>
-            <li><a href="/denom">Decimal Expansions</a></li>
-            <li><a href="/hex-cluster">Hex Cluster</a></li>
-            <li><a href="/square-pyramidal-stack">Square Pyramidal Stack</a></li>
-            {/*
-              <li><a href="/mastermind">Mastermind</a></li>
-              <li><a href="/wordle">Wordle</a></li>
-              */}
+            {navItems.map(([to, label, symbol]) => (
+              <li key={to}>
+                <NavLink to={to} end={to === '/'} onClick={() => setMenuState(false)}>
+                  <span className="nav-symbol" aria-hidden="true">{symbol}</span>
+                  <span>{label}</span>
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </nav>
-
       </div>
       <div className="fixed-header">
-        <div ref={hamburgerIconRef} className="hamburger-icon" onClick={toggleMenu}>
-          <div className="hamburger-line"></div>
-          <div className="hamburger-line"></div>
-          <div className="hamburger-line"></div>
-        </div>
-        <header>
-          M&Lambda;th Toy&Sigma;
+        <button ref={hamburgerIconRef} className="hamburger-icon" onClick={toggleMenu} aria-label="Open menu" aria-expanded={menuState}>
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+        </button>
+        <header aria-label="Math Toys">
+          M<span className="logo-symbol">Λ</span>TH <span className="logo-accent">TOYΣ</span>
         </header>
       </div>
       <div className="container app-content">
