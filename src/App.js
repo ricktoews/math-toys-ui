@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/App.scss';
-import { Routes, Route, NavLink } from 'react-router-dom';
+import { Routes, Route, NavLink, Link, useLocation } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import Main from './Main';
 import Phi from './components/Phi';
@@ -9,6 +9,8 @@ import SquarePyramidalStack from './components/SquarePyramidalStack';
 //import PythagCList from './components/PythagCList';
 import PythagTriples from './components/PythagTriples';
 import Calendar from './components/Calendar';
+import CalendarLab from './components/CalendarLab';
+import CalendarInstructions from './components/CalendarInstructions';
 //import Mastermind from './components/mastermind/AppSolves';
 //import Wordle from './components/wordle/AppSolves';
 import Denom from './components/Denom';
@@ -18,9 +20,12 @@ import FibonacciLab from './components/FibonacciLab';
 
 function App() {
   const [menuState, setMenuState] = useState(false);
+  const [pageMenuOpen, setPageMenuOpen] = useState(false);
+  const location = useLocation();
 
   const navContainerRef = useRef(null);
   const hamburgerIconRef = useRef(null);
+  const pageMenuRef = useRef(null);
 
   useEffect(() => {
     document.body.classList.toggle('menu-open', menuState);
@@ -31,6 +36,27 @@ function App() {
       document.removeEventListener('keydown', closeOnEscape);
     };
   }, [menuState]);
+
+  useEffect(() => {
+    setPageMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!pageMenuOpen) return undefined;
+
+    const closePageMenu = event => {
+      if (event.key === 'Escape' || !pageMenuRef.current?.contains(event.target)) {
+        setPageMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', closePageMenu);
+    document.addEventListener('mousedown', closePageMenu);
+    return () => {
+      document.removeEventListener('keydown', closePageMenu);
+      document.removeEventListener('mousedown', closePageMenu);
+    };
+  }, [pageMenuOpen]);
 
   const toggleMenu = () => {
     setMenuState(!menuState);
@@ -47,6 +73,8 @@ function App() {
     ['/hex-cluster', 'Hex Cluster', '⬡'],
     ['/square-pyramidal-stack', 'Square Pyramidal Stack', '▦'],
   ];
+
+  const hasCalendarMenu = location.pathname === '/calendar';
 
   return (
     <div className="App">
@@ -82,6 +110,26 @@ function App() {
         <header aria-label="Math Toys">
           M<span className="logo-symbol">Λ</span>TH <span className="logo-accent">TOYΣ</span>
         </header>
+        {hasCalendarMenu && (
+          <div className="page-menu" ref={pageMenuRef}>
+            <button
+              type="button"
+              className="page-menu-trigger"
+              aria-label="Calendar page options"
+              aria-haspopup="menu"
+              aria-expanded={pageMenuOpen}
+              onClick={() => setPageMenuOpen(open => !open)}
+            >
+              <span aria-hidden="true">⋮</span>
+            </button>
+            {pageMenuOpen && (
+              <div className="page-menu-popover" role="menu">
+                <Link to="/calendar/lab" role="menuitem">Generate a calendar</Link>
+                <Link to="/calendar/instructions" role="menuitem">Instructions</Link>
+              </div>
+            )}
+          </div>
+        )}
       </div>
       <div className="container app-content">
         <Routes>
@@ -90,6 +138,8 @@ function App() {
           {/*          <Route path="/pythag-clist" element={<PythagCList />} /> */}
           <Route path="/pythag" element={<PythagTriples />} />
           <Route path="/calendar" element={<Calendar />} />
+          <Route path="/calendar/lab" element={<CalendarLab />} />
+          <Route path="/calendar/instructions" element={<CalendarInstructions />} />
           <Route path="/denom" element={<Denom />} />
           <Route path="/lucas-lab" element={<LucasLab />} />
           <Route path="/fibonacci-lab" element={<FibonacciLab />} />
