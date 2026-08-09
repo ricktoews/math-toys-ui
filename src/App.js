@@ -42,6 +42,18 @@ function App() {
   }, [location.pathname]);
 
   useEffect(() => {
+    // Mobile Safari can restore/anchor the old page's scroll position after the
+    // new route has mounted. Reset once now and once after the new layout has
+    // been painted so route content always starts below the fixed masthead.
+    window.scrollTo(0, 0);
+    const frame = window.requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [location.pathname]);
+
+  useEffect(() => {
     if (!pageMenuOpen) return undefined;
 
     const closePageMenu = event => {
