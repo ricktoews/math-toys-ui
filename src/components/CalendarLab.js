@@ -1,4 +1,5 @@
-import { useLayoutEffect, useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { calc12DigitYear } from './calendar-helper';
 
@@ -15,12 +16,24 @@ const centuryOffsetFor = year => (Math.floor(year / 100) % 4 * 5) % 7;
 
 const normalizeDigits = value => value.replace(/[^0-6]/g, '');
 
+const alignCalculationCard = (card, behavior = 'auto') => {
+  if (!card?.isConnected) return;
+  const mastheadHeight = document.querySelector('.fixed-header')?.getBoundingClientRect().height ?? 60;
+  const progressHeight = document.querySelector('.calendar-lab-progress')?.getBoundingClientRect().height ?? 0;
+  const stickyGap = 18;
+  const top = window.scrollY + card.getBoundingClientRect().top
+    - mastheadHeight - progressHeight - stickyGap;
+
+  window.scrollTo({ top: Math.max(0, top), behavior });
+};
+
 function AnswerForm({
   label,
   onAnswer,
   wide = false,
   digitPad = false,
   onFocus,
+  onPointerDown,
   onDigitEntry,
   onDigitsEmpty,
   isCorrect = false,
@@ -31,6 +44,12 @@ function AnswerForm({
   const submit = event => {
     event.preventDefault();
     if (answer.trim()) onAnswer(answer.trim());
+  };
+
+  const evaluateOnBlur = event => {
+    if (answer.trim() && event.relatedTarget?.type !== 'submit') {
+      onAnswer(answer.trim());
+    }
   };
 
   const enterDigit = digit => {
@@ -114,6 +133,8 @@ function AnswerForm({
           autoComplete="off"
           maxLength={digitPad ? 12 : undefined}
           onFocus={onFocus}
+          onPointerDown={onPointerDown}
+          onBlur={evaluateOnBlur}
         />
       </label>
       <button type="submit" className="calendar-lab-answer-check" aria-label="Check answer">✓</button>
@@ -121,9 +142,9 @@ function AnswerForm({
   );
 }
 
-function CalculationCard({ title, complete = false, children }) {
+function CalculationCard({ title, complete = false, incorrect = false, children }) {
   return (
-    <article className={`calendar-lab-card ${complete ? 'calendar-lab-card-complete' : ''}`}>
+    <article className={`calendar-lab-card ${complete ? 'calendar-lab-card-complete' : ''} ${incorrect ? 'calendar-lab-card-incorrect' : ''}`}>
       <h2>{title}</h2>
       {children}
     </article>
@@ -135,11 +156,23 @@ export default function CalendarLab() {
   const [completed, setCompleted] = useState({});
   const [message, setMessage] = useState('');
   const [skipHidden, setSkipHidden] = useState(false);
+  const [skipInstant, setSkipInstant] = useState(false);
   const [walkthroughHidden, setWalkthroughHidden] = useState(false);
+  const [yearOffsetEntry, setYearOffsetEntry] = useState(null);
+  const [incorrect, setIncorrect] = useState({});
+  const focusedCardRef = useRef(null);
+  const pointerFocusRef = useRef(false);
 
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
   }, [year]);
+
+  useLayoutEffect(() => {
+    if (!skipHidden || !focusedCardRef.current) return;
+
+    alignCalculationCard(focusedCardRef.current);
+    focusedCardRef.current = null;
+  }, [skipHidden]);
 
   const answers = useMemo(() => {
     const yearWithinCentury = year % 100;
@@ -147,9 +180,10 @@ export default function CalendarLab() {
     const centuryOffset = centuryOffsetFor(year);
     const leapQuotient = Math.floor(yearWithinCentury / 4);
     const yearTotal = yearWithinCentury + leapQuotient;
-    const yearOffset = (centuryOffset + yearTotal) % 7;
+    const yearModulo = yearTotal % 7;
+    const yearOffset = (centuryOffset + yearModulo) % 7;
     const digits = calc12DigitYear(year);
-    return { yearWithinCentury, leap, centuryOffset, leapQuotient, yearTotal, yearOffset, digits };
+    return { yearWithinCentury, leap, centuryOffset, leapQuotient, yearTotal, yearModulo, yearOffset, digits };
   }, [year]);
 
   const newYear = () => {
@@ -157,18 +191,25 @@ export default function CalendarLab() {
     setCompleted({});
     setMessage('');
     setSkipHidden(false);
+    setSkipInstant(false);
     setWalkthroughHidden(false);
+    setYearOffsetEntry(null);
+    setIncorrect({});
   };
 
   const markComplete = component => {
     setCompleted(current => ({ ...current, [component]: true }));
+    setIncorrect(current => ({ ...current, [component]: false }));
   };
 
   const checkNumber = (value, expected, component) => {
-    if (Number(value) === expected) {
+    const expectedValues = Array.isArray(expected) ? expected : [expected];
+    if (expectedValues.includes(Number(value))) {
+      if (component === 'total') setYearOffsetEntry(Number(value));
       markComplete(component);
       setMessage('');
     } else {
+      setIncorrect(current => ({ ...current, [component]: true }));
       setMessage('Not quite—try that card again.');
     }
   };
@@ -180,6 +221,7 @@ export default function CalendarLab() {
       markComplete('calendar');
       setMessage('');
     } else {
+      setIncorrect(current => ({ ...current, calendar: true }));
       setMessage(entered.length === 12
         ? 'Those offsets do not match this year yet.'
         : 'Enter all 12 month offsets, using digits from 0 through 6.');
@@ -191,8 +233,37 @@ export default function CalendarLab() {
       markComplete('leap');
       setMessage('');
     } else {
+      setIncorrect(current => ({ ...current, leap: true }));
       setMessage('Check the Gregorian leap-year rule and try again.');
     }
+  };
+
+  const focusCalculationCard = event => {
+    if (pointerFocusRef.current) {
+      pointerFocusRef.current = false;
+      return;
+    }
+
+    const card = event.currentTarget.closest('.calendar-lab-card');
+    focusedCardRef.current = card;
+    setSkipInstant(true);
+    setSkipHidden(true);
+  };
+
+  const pointerFocusCalculationCard = event => {
+    event.preventDefault();
+    const input = event.currentTarget;
+    const card = input.closest('.calendar-lab-card');
+    pointerFocusRef.current = true;
+
+    flushSync(() => {
+      setSkipInstant(true);
+      setSkipHidden(true);
+    });
+
+    input.focus({ preventScroll: true });
+    pointerFocusRef.current = false;
+    alignCalculationCard(card, 'smooth');
   };
 
   const componentsComplete = ['century', 'leap', 'total', 'base']
@@ -209,7 +280,7 @@ export default function CalendarLab() {
       </div>
 
       <section
-        className={`calendar-lab-skip ${skipHidden ? 'calendar-lab-skip-hidden' : ''}`}
+        className={`calendar-lab-skip ${skipHidden ? 'calendar-lab-skip-hidden' : ''} ${skipInstant ? 'calendar-lab-skip-instant' : ''}`}
         aria-label="Enter the complete calendar"
         aria-hidden={skipHidden}
       >
@@ -238,16 +309,16 @@ export default function CalendarLab() {
               <thead>
                 <tr>
                   <th scope="col">Year Offset</th>
-                  <th scope="col">Century Offset</th>
                   <th scope="col">Leap Year</th>
+                  <th scope="col">Century Offset</th>
                   <th scope="col">Base Offset</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>{completed.total ? answers.yearTotal : '—'}</td>
-                  <td>{completed.century ? answers.centuryOffset : '—'}</td>
+                  <td>{completed.total ? yearOffsetEntry : '—'}</td>
                   <td>{completed.leap ? (answers.leap ? 'Yes' : 'No') : '—'}</td>
+                  <td>{completed.century ? answers.centuryOffset : '—'}</td>
                   <td>{completed.base ? answers.yearOffset : '—'}</td>
                 </tr>
               </tbody>
@@ -258,42 +329,48 @@ export default function CalendarLab() {
             <CalculationCard
               title="Year offset"
               complete={completed.total}
+              incorrect={incorrect.total}
             >
               <div className="calendar-lab-card-year">{year}</div>
               <p>
-                Using the last two digits of the year, divide by 4, then add the result.
-                For instance, for year 2021, the value would be 26.
+                Divide {String(answers.yearWithinCentury).padStart(2, '0')} by 4, and add that to{' '}
+                {String(answers.yearWithinCentury).padStart(2, '0')}.
               </p>
               <div className="calendar-lab-card-calculation">
                 <div>
                   {completed.total ? (
-                    <p className="calendar-lab-card-answer">= <strong>{answers.yearTotal}</strong></p>
+                    <p className="calendar-lab-card-answer">= <strong>{yearOffsetEntry}</strong></p>
                   ) : (
                     <AnswerForm
-                      label="Year calculation total"
-                      onAnswer={value => checkNumber(value, answers.yearTotal, 'total')}
-                      onFocus={() => setSkipHidden(true)}
+                      label="Year sum or its offset modulo 7"
+                      onAnswer={value => checkNumber(
+                        value,
+                        [answers.yearTotal, answers.yearModulo],
+                        'total'
+                      )}
+                      onFocus={focusCalculationCard}
+                      onPointerDown={pointerFocusCalculationCard}
                     />
                   )}
                 </div>
               </div>
             </CalculationCard>
 
-          <CalculationCard title="Leap-year status" complete={completed.leap}>
+          <CalculationCard title="Leap Year" complete={completed.leap} incorrect={incorrect.leap}>
             {completed.leap ? (
-              <p><strong>{answers.leap ? 'Leap year' : 'Non-leap year'}</strong></p>
+              <p><strong>{answers.leap ? 'Yes' : 'No'}</strong></p>
             ) : (
               <>
                 <p>Is {year} a leap year?</p>
                 <div className="calendar-lab-choices">
-                  <button type="button" onClick={() => { setSkipHidden(true); chooseLeap(true); }}>Leap year</button>
-                  <button type="button" onClick={() => { setSkipHidden(true); chooseLeap(false); }}>Non-leap year</button>
+                  <button type="button" onClick={() => { setSkipHidden(true); chooseLeap(true); }}>Yes</button>
+                  <button type="button" onClick={() => { setSkipHidden(true); chooseLeap(false); }}>No</button>
                 </div>
               </>
             )}
           </CalculationCard>
 
-          <CalculationCard title="Century offset" complete={completed.century}>
+          <CalculationCard title="Century offset" complete={completed.century} incorrect={incorrect.century}>
             {completed.century ? (
               <p>Century offset: <strong>{answers.centuryOffset}</strong></p>
             ) : (
@@ -318,28 +395,24 @@ export default function CalendarLab() {
             )}
           </CalculationCard>
 
-          <CalculationCard title="Base offset" complete={completed.base}>
+          <CalculationCard title="Base offset" complete={completed.base} incorrect={incorrect.base}>
             {completed.base ? (
               <p>Base offset: <strong>{answers.yearOffset}</strong></p>
             ) : (
               <>
-                <p>Add the century offset and year total, then reduce modulo 7.</p>
-                <div className="calendar-lab-equation">
-                  <span>{completed.century ? answers.centuryOffset : '?'}</span>
-                  <span>+</span>
-                  <span>{completed.total ? answers.yearTotal : '?'}</span>
-                </div>
+                <p>Add the Year and Century offsets.</p>
                 <AnswerForm
                   label="Base offset"
                   onAnswer={value => checkNumber(value, answers.yearOffset, 'base')}
-                  onFocus={() => setSkipHidden(true)}
+                  onFocus={focusCalculationCard}
+                  onPointerDown={pointerFocusCalculationCard}
                 />
               </>
             )}
           </CalculationCard>
 
         {componentsComplete && (
-          <CalculationCard title="Build the calendar" complete={completed.calendar}>
+          <CalculationCard title="Build the calendar" complete={completed.calendar} incorrect={incorrect.calendar}>
             <p>
               The year offset is <strong>{answers.yearOffset}</strong>.
               {answers.leap && ' Subtract 1 from the ordinary January and February offsets.'}

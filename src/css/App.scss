@@ -275,7 +275,7 @@ article a:hover {
 
 .hide-nav-menu nav { transform: translateX(-105%); }
 
-header {
+.fixed-header > header {
   background: #172036;
   min-height: 60px;
   display: flex;
@@ -770,7 +770,7 @@ header {
 .calendar-instructions-heading { margin: 20px 0 32px; }
 .calendar-instructions-heading h1 {
   margin: 0 0 12px;
-  text-align: left;
+  text-align: center;
   color: #282b32;
   font-family: inherit;
   font-size: clamp(1.75rem, 5vw, 2.6rem);
@@ -779,10 +779,86 @@ header {
   letter-spacing: normal;
   line-height: 1.2;
 }
-.calendar-instructions-heading p { color: #646873; font-size: 1.08rem; }
 .calendar-instructions-page section,
 .calendar-instructions-note { margin-bottom: 34px; }
 .calendar-instructions-page h2 { margin: 0 0 10px; font-size: 1.25rem; color: #172036; }
+.calendar-instructions-summary p { margin: 0 0 18px; }
+.calendar-instructions-summary p:last-child { margin-top: 26px; }
+.calendar-instructions-introduction p { margin-bottom: 18px; }
+
+.calendar-instructions-page p { margin-bottom: 18px; }
+.calendar-instructions-page ul {
+  margin: 0 0 18px;
+  padding-left: 28px;
+}
+.calendar-instructions-page li + li { margin-top: 5px; }
+
+.calendar-instructions-weekly-cycle,
+.calendar-instructions-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(36px, 1fr));
+  gap: 2px;
+  margin: 22px auto;
+  max-width: 620px;
+  text-align: center;
+}
+.calendar-instructions-weekly-cycle > *,
+.calendar-instructions-calendar > * {
+  min-height: 36px;
+  padding: 6px 3px;
+}
+.calendar-instructions-weekly-cycle strong,
+.calendar-instructions-calendar > strong:not(.calendar-instructions-calendar-heading) {
+  background: #49475b;
+  color: white;
+  font-size: .85rem;
+}
+.calendar-instructions-weekly-cycle span:not(:empty),
+.calendar-instructions-calendar > span {
+  background: rgba(172, 193, 150, .24);
+}
+.calendar-instructions-weekly-cycle span:not(:empty) { border-radius: 50%; }
+
+.calendar-instructions-calendar {
+  overflow: hidden;
+  border: 1px solid rgba(64, 84, 49, .22);
+  border-radius: 10px;
+  background: rgba(64, 84, 49, .12);
+}
+.calendar-instructions-calendar-heading {
+  grid-column: 1 / -1;
+  padding: 10px;
+  background: #172036;
+  color: white;
+  font-size: 1rem;
+}
+.calendar-instructions-calendar .calendar-instructions-offset-cell {
+  background: rgba(109, 92, 231, .14);
+}
+.calendar-instructions-offset-label {
+  position: relative;
+  z-index: 1;
+  width: calc(500% + 8px);
+  background: rgba(109, 92, 231, .22);
+  color: #403486;
+  font-size: .78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.calendar-instructions-month-offsets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  border: 1px solid rgba(64, 84, 49, .22);
+  border-radius: 10px;
+  background: rgba(64, 84, 49, .14);
+}
+.calendar-instructions-month-offsets div {
+  padding: 8px 12px;
+  background: #f7f5ee;
+}
 
 .calendar-instructions-century-grid {
   display: grid;
@@ -849,6 +925,9 @@ header {
 
 @media (max-width: 575.98px) {
   .calendar-instructions-page { padding-inline: 4px; }
+  .calendar-instructions-weekly-cycle > *,
+  .calendar-instructions-calendar > * { min-height: 31px; padding: 5px 1px; font-size: .75rem; }
+  .calendar-instructions-month-offsets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .calendar-instructions-century-grid { grid-template-columns: repeat(2, minmax(64px, 1fr)); }
   .calendar-instructions-months,
   .calendar-instructions-offset-row > div { gap: 1px; font-size: .82rem; }
@@ -1118,6 +1197,7 @@ ul.pythag-triple-title {
   visibility: hidden;
   transition-delay: 0s, 0s, 0s, 0s, 0s, .32s;
 }
+.calendar-lab-skip.calendar-lab-skip-instant { transition: none; }
 .calendar-lab-intro { margin: 0 0 22px; color: #646873; font-size: .95rem; }
 
 .calendar-lab-work-heading {
@@ -1191,12 +1271,12 @@ ul.pythag-triple-title {
 .calendar-lab-card p { margin: 0 0 12px; }
 .calendar-lab-card p:last-child { margin-bottom: 0; }
 .calendar-lab-card-complete {
-  border-color: rgba(64, 84, 49, .32);
-  background: rgba(172, 193, 150, .2);
+  border-color: #6fa56f;
+  background: #e4f3e4;
 }
-.calendar-lab-card-complete h2::after {
-  content: ' ✓';
-  color: #405431;
+.calendar-lab-card-incorrect {
+  border-color: #c96363;
+  background: #fae7e7;
 }
 .calendar-lab-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
 
