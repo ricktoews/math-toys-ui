@@ -7,6 +7,15 @@ const monthOffsets = [
   ['May', 1], ['June', 4], ['July', 6], ['August', 2],
   ['September', 5], ['October', 0], ['November', 3], ['December', 5],
 ];
+const contents = [
+  ['summary', 'Summary'],
+  ['introduction', 'Introduction'],
+  ['month-offset', 'Month Offset'],
+  ['year-offsets', 'Year Offsets'],
+  ['leap-years', 'Leap Years'],
+  ['other-centuries', 'Other Centuries'],
+  ['calendar-1582', '1582'],
+];
 
 function WeeklyCycle() {
   return (
@@ -41,11 +50,20 @@ export default function CalendarInstructions() {
     <main className="calendar-instructions-page">
       <Link to="/calendar" className="calendar-lab-back">← Back to calendar</Link>
 
+      <nav className="calendar-instructions-toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          {contents.map(([id, label]) => (
+            <li key={id}><a href={`#${id}`}>{label}</a></li>
+          ))}
+        </ol>
+      </nav>
+
       <header className="calendar-instructions-heading">
         <h1>Calculate Day of Week</h1>
       </header>
 
-      <section className="calendar-instructions-summary">
+      <section id="summary" className="calendar-instructions-summary">
         <h2>Summary</h2>
         <p><em>generic month offsets</em>: 0 3 3 6 1 4 6 2 5 0 3 5</p>
         <p><em>century offset</em>: 0 for 2000s, 1 for 1900s; others given below.</p>
@@ -56,7 +74,7 @@ export default function CalendarInstructions() {
         <p><em>For January or February in a leap year, subtract 1 from month offset.</em></p>
       </section>
 
-      <section>
+      <section id="introduction">
         <h2>Introduction</h2>
         <p>It really just comes down to the position of a day within the weekly cycle. Day 1 is Sunday, day 2 is Monday, and so on.</p>
         <p>When the position of the day is more than 7, you can just divide by 7 and use the remainder. For example, the 8th day is the same as the 1st day.</p>
@@ -65,7 +83,7 @@ export default function CalendarInstructions() {
         <p>To get the position of the day from the date, you need the <em>month offset</em>.</p>
       </section>
 
-      <section>
+      <section id="month-offset">
         <h2>Month Offset</h2>
         <p>The <em>month offset</em> is just the number of placeholders in the week before the first day of the month. You&apos;ve seen this many times on a conventional calendar. Here, for example, is the calendar for September 2023, which has a <em>month offset</em> of 5 days:</p>
         <SeptemberCalendar />
@@ -90,7 +108,7 @@ export default function CalendarInstructions() {
         </div>
       </section>
 
-      <section>
+      <section id="year-offsets">
         <h2>Year Offsets</h2>
         <p>Just like the <em>month offset</em>, you can think of the <em>year offset</em> as the number of placeholders in the week before the first day of the year. (Disclaimer, because I&apos;d be &quot;that guy&quot;: this isn&apos;t strictly accurate in the case of a leap year, but it &quot;works.&quot;) We&apos;ll be focusing on years in the 21st century.</p>
         <p>To get the <em>year offset</em>, start with the two-digit year, divide by 4 to get the number of leap days from 2001 to that year, and add the number of leap days to the two-digit year.</p>
@@ -110,7 +128,7 @@ export default function CalendarInstructions() {
         </ul>
       </section>
 
-      <section>
+      <section id="leap-years">
         <h2>Leap Years</h2>
         <p>If the date you want is in January or February of a leap year, there&apos;s one small adjustment you need to make. To compensate for the leap day, just subtract 1 at some point in your process.</p>
         <p>Let&apos;s take an example: February 4, 2024.</p>
@@ -124,7 +142,7 @@ export default function CalendarInstructions() {
         <p>The reason only January and February need to be adjusted is that no adjustment is needed for dates after the leap day.</p>
       </section>
 
-      <section>
+      <section id="other-centuries">
         <h2>Other Centuries</h2>
         <p>As with months and years, each century has its own offset. The offset for the 21st century happens to be 0, which is why there&apos;s no need to add it when finding the day of the week in the 21st century.</p>
         <p>The 20th century had an offset of 1. If you want to find the day of the week for a date in the 1900s, just follow the process above, and add 1.</p>
@@ -142,7 +160,7 @@ export default function CalendarInstructions() {
         <p>As a random curiosity, this would mean that dates in the 1200s, as in the 1600s, had the same weekdays as the same dates in the 2000s. That&apos;s right: September 21, 1223 was a Thursday, just like September 21, 2023.</p>
       </section>
 
-      <section>
+      <section id="calendar-1582">
         <h2>1582</h2>
         <p>It&apos;s told that in October 1582, 10 days were dropped from the calendar to sort of recalibrate. Seems too many leap days had been added over the centuries, and things were a bit off.</p>
         <p>So instead of October 5 following October 4 that year, Thursday, October 4 was followed by Friday, October 15.</p>

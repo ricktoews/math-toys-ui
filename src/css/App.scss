@@ -792,6 +792,48 @@ article a:hover {
   padding-left: 28px;
 }
 .calendar-instructions-page li + li { margin-top: 5px; }
+.calendar-instructions-page section { scroll-margin-top: 84px; }
+
+.calendar-instructions-toc {
+  position: fixed;
+  top: 92px;
+  left: calc(50% + 400px);
+  z-index: 20;
+  width: 180px;
+  padding: 14px 16px;
+  border: 1px solid rgba(64, 84, 49, .2);
+  border-radius: 12px;
+  background: rgba(247, 245, 238, .94);
+  box-shadow: 0 8px 24px rgba(16, 24, 40, .08);
+  backdrop-filter: blur(8px);
+}
+.calendar-instructions-toc > strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #172036;
+  font-size: .78rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.calendar-instructions-toc ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.calendar-instructions-toc li + li { margin-top: 3px; }
+.calendar-instructions-toc a {
+  display: block;
+  padding: 3px 0;
+  color: #526342;
+  font-size: .88rem;
+  line-height: 1.35;
+  text-decoration: none;
+}
+.calendar-instructions-toc a:hover,
+.calendar-instructions-toc a:focus-visible {
+  color: #403486;
+  text-decoration: underline;
+}
 
 .calendar-instructions-weekly-cycle,
 .calendar-instructions-calendar {
@@ -922,6 +964,27 @@ article a:hover {
   text-decoration: none;
 }
 .calendar-instructions-actions a:last-child { background: transparent; color: #405431; border: 1px solid #819f6e; }
+
+@media (max-width: 1199.98px) {
+  .calendar-instructions-page section { scroll-margin-top: 132px; }
+  .calendar-instructions-toc {
+    position: sticky;
+    top: 60px;
+    width: auto;
+    margin: 10px -12px 24px;
+    padding: 8px 12px;
+    overflow-x: auto;
+    border-width: 1px 0;
+    border-radius: 0;
+    box-shadow: 0 5px 14px rgba(16, 24, 40, .07);
+    white-space: nowrap;
+  }
+  .calendar-instructions-toc > strong { display: inline; margin: 0 12px 0 0; }
+  .calendar-instructions-toc ol,
+  .calendar-instructions-toc li { display: inline; }
+  .calendar-instructions-toc li + li { margin: 0 0 0 12px; }
+  .calendar-instructions-toc a { display: inline; padding: 5px 0; }
+}
 
 @media (max-width: 575.98px) {
   .calendar-instructions-page { padding-inline: 4px; }
