@@ -5,6 +5,7 @@ function PythagSquare(props) {
   const [mode, setMode] = useState('wrap');
   const [cArea, setCArea] = useState(200);
   const [triple, setTriple] = useState(props.triple);
+  const [captionOpen, setCaptionOpen] = useState(false);
   const [unified, setUnified] = useState(false);
   const unifyTimeoutRef = useRef(null);
 
@@ -25,6 +26,7 @@ function PythagSquare(props) {
     if (props.highlightedArea !== 'a') {
       setMode('wrap');
     }
+    setCaptionOpen(false);
   }, [props.highlightedArea]);
 
   useEffect(() => {
@@ -336,17 +338,39 @@ function drawASquare(triple) {
 
   const cSquare = drawCSquare(triple);
   const corner = c - b;
+  const captions = {
+    a: mode === 'wrap'
+      ? `${a * a} cells shown as a ${corner}² corner and two ${b}×${corner} strips.`
+      : `The same ${a * a} cells rearranged into a ${a}×${a} square.`,
+    b: `${b * b} cells form a ${b}×${b} square.`,
+    c: `${c * c} cells form a ${c}×${c} square: ${a * a} from a² and ${b * b} from b².`,
+  };
 
   return (
     <div>
       <div className="pythag-square-stage">
         {cSquare}
-        {props.highlightedArea === 'a' && (
-          <div className="pythag-arrangement-caption" aria-live="polite">
-            {mode === 'wrap'
-              ? `${a * a} cells shown as a ${corner}² corner and two ${b}×${corner} strips.`
-              : `The same ${a * a} cells rearranged into a ${a}×${a} square.`}
+        {captions[props.highlightedArea] && captionOpen && (
+          <div
+            id="pythag-area-explanation"
+            className="pythag-arrangement-caption"
+            role="tooltip"
+            aria-live="polite"
+          >
+            {captions[props.highlightedArea]}
           </div>
+        )}
+        {captions[props.highlightedArea] && (
+          <button
+            type="button"
+            className="pythag-explanation-toggle"
+            aria-label={`${captionOpen ? 'Hide' : 'Show'} explanation for ${props.highlightedArea} squared`}
+            aria-expanded={captionOpen}
+            aria-controls="pythag-area-explanation"
+            onClick={() => setCaptionOpen((open) => !open)}
+          >
+            i
+          </button>
         )}
       </div>
       {props.highlightedArea === 'a' && (

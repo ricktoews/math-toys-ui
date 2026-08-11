@@ -1837,16 +1837,65 @@ h4 {
 .pythag-arrangement-caption {
   position: absolute;
   z-index: 3;
-  right: 0.45rem;
-  bottom: 0.45rem;
-  max-width: calc(100% - 0.9rem);
-  padding: 0.25rem 0.4rem;
-  border-radius: 0.35rem;
-  background: rgba(247, 249, 244, 0.9);
-  color: var(--palette-grey-2);
+  right: 4px;
+  bottom: 2.15rem;
+  width: 8.25rem;
+  box-sizing: border-box;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #d6e0dd;
+  border-radius: 0.5rem;
+  background: rgba(252, 253, 251, 0.96);
+  box-shadow: 0 5px 16px rgba(40, 55, 52, 0.16);
+  backdrop-filter: blur(4px);
+  color: #4d5d59;
   font-size: 0.68rem;
-  line-height: 1.25;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  text-align: left;
   pointer-events: none;
+}
+
+.pythag-arrangement-caption::after {
+  content: '';
+  position: absolute;
+  right: 0.45rem;
+  bottom: -5px;
+  width: 8px;
+  height: 8px;
+  border-right: 1px solid #d6e0dd;
+  border-bottom: 1px solid #d6e0dd;
+  background: rgba(252, 253, 251, 0.96);
+  transform: rotate(45deg);
+}
+
+.pythag-explanation-toggle {
+  position: absolute;
+  z-index: 4;
+  right: 4px;
+  bottom: 4px;
+  display: grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  padding: 0;
+  border: 1px solid rgba(79, 119, 113, 0.4);
+  border-radius: 50%;
+  background: rgba(250, 252, 249, 0.88);
+  box-shadow: 0 2px 6px rgba(40, 55, 52, 0.12);
+  color: #4f7771;
+  font-family: Georgia, serif;
+  font-size: 0.78rem;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pythag-explanation-toggle:hover,
+.pythag-explanation-toggle:focus-visible {
+  border-color: #4f7771;
+  background: #fff;
 }
 
 
