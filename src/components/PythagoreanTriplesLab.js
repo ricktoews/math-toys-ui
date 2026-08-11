@@ -122,6 +122,7 @@ function TripleModal({ triple, onClose }) {
     if (!triple) return null;
 
     const { a, b, c } = triple;
+    const canShowSquareGrid = c <= 50;
 
     return (
         <div className="pt-modal-backdrop pt-triple-modal-backdrop" onClick={onClose}>
@@ -146,49 +147,89 @@ function TripleModal({ triple, onClose }) {
                 </header>
 
                 <div className="pt-modal-body">
-                    <div
-                        className="pt-square-summary-controls"
-                        role="group"
-                        aria-label="Highlight a square region"
-                    >
-                        {[
-                            { area: "c", value: c },
-                            { operator: "=" },
-                            { area: "a", value: a },
-                            { operator: "+" },
-                            { area: "b", value: b },
-                        ].map(({ area, value, operator }, index) =>
-                            operator ? (
-                                <span
-                                    className="pt-square-summary-operator"
-                                    aria-hidden="true"
-                                    key={`${operator}-${index}`}
-                                >
-                                    {operator}
-                                </span>
-                            ) : (
-                            <button
-                                key={area}
-                                type="button"
-                                className={highlightedArea === area ? "active" : ""}
-                                aria-pressed={highlightedArea === area}
-                                onClick={() => setHighlightedArea(area)}
+                    {canShowSquareGrid ? (
+                        <>
+                            <div
+                                className="pt-square-summary-controls"
+                                role="group"
+                                aria-label="Highlight a square region"
                             >
-                                <i>{area}</i>² = {value * value}
-                            </button>
-                            )
-                        )}
-                    </div>
+                                {[
+                                    { area: "c", value: c },
+                                    { operator: "=" },
+                                    { area: "a", value: a },
+                                    { operator: "+" },
+                                    { area: "b", value: b },
+                                ].map(({ area, value, operator }, index) =>
+                                    operator ? (
+                                        <span
+                                            className="pt-square-summary-operator"
+                                            aria-hidden="true"
+                                            key={`${operator}-${index}`}
+                                        >
+                                            {operator}
+                                        </span>
+                                    ) : (
+                                    <button
+                                        key={area}
+                                        type="button"
+                                        className={highlightedArea === area ? "active" : ""}
+                                        aria-pressed={highlightedArea === area}
+                                        onClick={() => setHighlightedArea(area)}
+                                    >
+                                        <i>{area}</i>² = {value * value}
+                                    </button>
+                                    )
+                                )}
+                            </div>
 
-                    {/* Your grid visualizer goes here */}
-                    <div className="pt-modal-grid-wrapper">
-                        {c <= 50 && (
+                            <div className="pt-modal-grid-wrapper">
                             <PythagSquare
                                 triple={[a, b, c]}
                                 highlightedArea={highlightedArea}
                             />
-                        )}
-                    </div>
+                            </div>
+                        </>
+                    ) : (
+                        <div
+                            className="pt-large-triple-equation"
+                            aria-label={`${c} squared equals ${a} squared plus ${b} squared`}
+                        >
+                            <div className="pt-large-triple-equation-heading">
+                                Pythagorean relationship
+                            </div>
+                            <div className="pt-triangle-area-animation" aria-hidden="true">
+                                <svg viewBox="0 0 280 170" focusable="false">
+                                    <path d="M58 20 V145 H248 Z" />
+                                    <path className="pt-triangle-right-angle" d="M58 131 H72 V145" />
+                                </svg>
+                                <span className="pt-triangle-side-label pt-triangle-side-a">
+                                    <i>a</i>² = {(a * a).toLocaleString()}
+                                </span>
+                                <span className="pt-triangle-side-label pt-triangle-side-b">
+                                    <i>b</i>² = {(b * b).toLocaleString()}
+                                </span>
+                                <span className="pt-triangle-ghost pt-triangle-ghost-a">
+                                    {(a * a).toLocaleString()}
+                                </span>
+                                <span className="pt-triangle-ghost pt-triangle-ghost-b">
+                                    {(b * b).toLocaleString()}
+                                </span>
+                                <span className="pt-triangle-merge-result">
+                                    <i>c</i>² = {(c * c).toLocaleString()}
+                                </span>
+                            </div>
+                            <div className="pt-large-triple-equation-row pt-large-triple-equation-symbols" aria-hidden="true">
+                                <span><i>c</i>²</span><b>=</b><span><i>a</i>²</span><b>+</b><span><i>b</i>²</span>
+                            </div>
+                            <div className="pt-large-triple-equation-row">
+                                <span>{c}²</span><b>=</b><span>{a}²</span><b>+</b><span>{b}²</span>
+                            </div>
+                            <div className="pt-large-triple-equation-row pt-large-triple-equation-values">
+                                <span>{(c * c).toLocaleString()}</span><b>=</b><span>{(a * a).toLocaleString()}</span><b>+</b><span>{(b * b).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
             </div>
