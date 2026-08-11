@@ -521,9 +521,9 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
 .pt-square-summary-controls button {
   flex: 1 1 0;
   padding: 0.35rem 0.65rem;
-  border: 1px solid rgba(121, 148, 150, 0.45);
+  border: 1px solid $pt-chip-border;
   border-radius: 999px;
-  background: #f3f6ef;
+  background: $pt-chip-bg;
   color: $pt-text-main;
   font-size: 0.78rem;
   cursor: pointer;
@@ -532,13 +532,13 @@ $pt-shadow-soft: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .pt-square-summary-controls button:hover {
-  border-color: #799496;
-  background: rgba(172, 193, 150, 0.3);
+  border-color: darken($pt-chip-border, 8%);
+  background: #f2f2f2;
 }
 
 .pt-square-summary-controls button.active {
-  border-color: #91aaa6;
-  background: #91aaa6;
+  border-color: #12b0c9;
+  background: #12b0c9;
   color: #fff;
   box-shadow: 0 2px 6px rgba(73, 71, 91, 0.18);
 }

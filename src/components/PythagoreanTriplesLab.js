@@ -172,11 +172,7 @@ function TripleModal({ triple, onClose }) {
                                 type="button"
                                 className={highlightedArea === area ? "active" : ""}
                                 aria-pressed={highlightedArea === area}
-                                onClick={() => {
-                                    setHighlightedArea((current) =>
-                                        current === area ? null : area
-                                    );
-                                }}
+                                onClick={() => setHighlightedArea(area)}
                             >
                                 <i>{area}</i>² = {value * value}
                             </button>

@@ -1,170 +1,181 @@
-import { useLayoutEffect } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const monthOffsets = [
-  ['January', 0], ['February', 3], ['March', 3], ['April', 6],
-  ['May', 1], ['June', 4], ['July', 6], ['August', 2],
-  ['September', 5], ['October', 0], ['November', 3], ['December', 5],
-];
+const months = ['January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'];
+const genericOffsets = [0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5];
+const offsets2025 = [3, 6, 6, 2, 4, 0, 2, 5, 1, 3, 6, 1];
 const contents = [
-  ['summary', 'Summary'],
-  ['introduction', 'Introduction'],
-  ['month-offset', 'Month Offset'],
-  ['year-offsets', 'Year Offsets'],
-  ['leap-years', 'Leap Years'],
-  ['other-centuries', 'Other Centuries'],
-  ['calendar-1582', '1582'],
+  ['idea', 'The idea'],
+  ['pattern', 'The pattern'],
+  ['year', 'Choose a year'],
+  ['use', 'Use a digit'],
 ];
 
 function WeeklyCycle() {
   return (
     <div className="calendar-instructions-weekly-cycle" aria-label="Weekly cycle">
       {weekdays.map(day => <strong key={day}>{day}</strong>)}
-      {Array.from({ length: 6 }, (_, index) => <span key={`blank-${index}`} />)}
-      {Array.from({ length: 9 }, (_, index) => <span key={index}>{index}</span>)}
+      {Array.from({ length: 8 }, (_, index) => <span key={index + 1}>{index + 1}</span>)}
     </div>
   );
 }
 
-function SeptemberCalendar() {
+function OffsetGrid({ offsets, label }) {
   return (
-    <div className="calendar-instructions-calendar" aria-label="September 2023 calendar">
-      <strong className="calendar-instructions-calendar-heading">September 2023</strong>
-      {weekdays.map(day => <strong key={day}>{day}</strong>)}
-      <div className="calendar-instructions-offset-label">Month Offset</div>
-      {Array.from({ length: 4 }, (_, index) => (
-        <span className="calendar-instructions-offset-cell" key={`offset-${index}`} />
+    <div className="calendar-instructions-month-offsets" aria-label={label}>
+      {months.map((month, index) => (
+        <div key={month}>
+          <span>{month}</span>
+          <strong>{offsets[index]}</strong>
+        </div>
       ))}
-      {Array.from({ length: 30 }, (_, index) => <span key={index + 1}>{index + 1}</span>)}
     </div>
   );
 }
 
 export default function CalendarInstructions() {
+  const [activeSection, setActiveSection] = useState(contents[0][0]);
+  const tocRef = useRef(null);
+
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    let frame;
+    const updateActiveSection = () => {
+      const marker = window.innerWidth < 1200 ? 145 : 110;
+      const current = contents.reduce((active, [id]) => {
+        const section = document.getElementById(id);
+        return section && section.getBoundingClientRect().top <= marker ? id : active;
+      }, contents[0][0]);
+
+      setActiveSection(current);
+      frame = undefined;
+    };
+    const requestUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateActiveSection);
+    };
+
+    updateActiveSection();
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
+    return () => {
+      window.removeEventListener('scroll', requestUpdate);
+      window.removeEventListener('resize', requestUpdate);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  useEffect(() => {
+    const toc = tocRef.current;
+    const activeLink = toc?.querySelector(`[href="#${activeSection}"]`);
+    if (!toc || !activeLink || toc.scrollWidth <= toc.clientWidth) return;
+
+    const left = activeLink.offsetLeft - (toc.clientWidth - activeLink.offsetWidth) / 2;
+    toc.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+  }, [activeSection]);
 
   return (
     <main className="calendar-instructions-page">
       <Link to="/calendar" className="calendar-lab-back">← Back to calendar</Link>
 
-      <nav className="calendar-instructions-toc" aria-label="On this page">
+      <nav ref={tocRef} className="calendar-instructions-toc" aria-label="On this page">
         <strong>On this page</strong>
         <ol>
           {contents.map(([id, label]) => (
-            <li key={id}><a href={`#${id}`}>{label}</a></li>
+            <li key={id}>
+              <a
+                href={`#${id}`}
+                aria-current={activeSection === id ? 'location' : undefined}
+                onClick={() => setActiveSection(id)}
+              >
+                {label}
+              </a>
+            </li>
           ))}
         </ol>
       </nav>
 
       <header className="calendar-instructions-heading">
-        <h1>Calculate Day of Week</h1>
+        <h1>How the 12-Digit Calendar Works</h1>
+        <p>One digit for each month. Add the date, and you have the day of the week.</p>
       </header>
 
-      <section id="summary" className="calendar-instructions-summary">
-        <h2>Summary</h2>
-        <p><em>generic month offsets</em>: 0 3 3 6 1 4 6 2 5 0 3 5</p>
-        <p><em>century offset</em>: 0 for 2000s, 1 for 1900s; others given below.</p>
-        <p><em>year offset</em>: <em>two-digit year</em> + <em>number of leap days</em> + <em>century offset</em></p>
-        <p><em>leap days</em>: <em>two-digit year divided by 4</em></p>
-        <p><em>month offset</em> = <em>generic month offset</em> + <em>year offset</em></p>
-        <p><strong>Day of week: (month offset + date) modulo 7</strong></p>
-        <p><em>For January or February in a leap year, subtract 1 from month offset.</em></p>
-      </section>
-
-      <section id="introduction">
-        <h2>Introduction</h2>
-        <p>It really just comes down to the position of a day within the weekly cycle. Day 1 is Sunday, day 2 is Monday, and so on.</p>
-        <p>When the position of the day is more than 7, you can just divide by 7 and use the remainder. For example, the 8th day is the same as the 1st day.</p>
+      <section id="idea">
+        <h2>The idea</h2>
+        <p>
+          Weekdays repeat in a cycle of seven. After Saturday, counting starts again
+          at Sunday. That is why day 8 lands in the same place as day 1.
+        </p>
         <WeeklyCycle />
-        <p>And if the position turns out to be 0, that&apos;s the same as 7, so Saturday.</p>
-        <p>To get the position of the day from the date, you need the <em>month offset</em>.</p>
+        <p>
+          Whenever a number is larger than 7, keep only its remainder after division
+          by 7. This is called <em>modulo 7</em>.
+        </p>
       </section>
 
-      <section id="month-offset">
-        <h2>Month Offset</h2>
-        <p>The <em>month offset</em> is just the number of placeholders in the week before the first day of the month. You&apos;ve seen this many times on a conventional calendar. Here, for example, is the calendar for September 2023, which has a <em>month offset</em> of 5 days:</p>
-        <SeptemberCalendar />
-        <p>To determine the day of the week, you just add the <em>month offset</em> to the date. For example, the day of the week for September 1, 2023 is Friday:</p>
-        <ul>
-          <li><em>Month offset</em> for September 2023: 5.</li>
-          <li>Add the date: 1 + 5 = 6.</li>
-          <li>Day 6 in the weekly cycle is Friday.</li>
-        </ul>
-        <p>How about September 23?</p>
-        <ul>
-          <li><em>Month offset</em> for September 2023: 5.</li>
-          <li>Add the date: 23 + 5 = 28.</li>
-          <li>Day 28 in the weekly cycle is Saturday.</li>
-        </ul>
-        <p>Because the number of days in a month doesn&apos;t change (except February in a leap year), the month offsets follow the same pattern from year to year. If you calculate the offset for a given <em>year</em>, you can get any <em>month offset</em> in that year by adding the <em>generic month offset</em>.</p>
-        <p>These offsets aren&apos;t arbitrary: each one represents the sum of the previous one and the number of days in the previous month. February&apos;s is 3. That&apos;s because January&apos;s is 0, and there are 31 days in January. April&apos;s is 6. That&apos;s because March&apos;s is 3, and there are 31 days in March. You could calculate the offset for any month by adding the number of days in the preceding months, dividing by 7, and taking the remainder.</p>
-        <p>Or you could just become familiar with this chart.</p>
-        <p>Generic month offsets:</p>
-        <div className="calendar-instructions-month-offsets">
-          {monthOffsets.map(([month, offset]) => <div key={month}>{month}: {offset}</div>)}
+      <section id="pattern">
+        <h2>The 12-digit pattern</h2>
+        <p>
+          Each digit is an offset for one month, from January through December. The
+          starting pattern for an ordinary year is:
+        </p>
+        <OffsetGrid offsets={genericOffsets} label="Generic month offsets" />
+        <p>
+          The pattern follows the lengths of the months. You do not need to derive it
+          each time—just use it as the starting point.
+        </p>
+      </section>
+
+      <section id="year">
+        <h2>Shift the pattern for a year</h2>
+        <p>First find the year offset:</p>
+        <div className="calendar-instructions-formula">
+          two-digit year + whole leap days + century offset, modulo 7
         </div>
+        <p>
+          Whole leap days means the two-digit year divided by 4, with the fraction
+          discarded. Century offsets are 0 for the 2000s, 1 for the 1900s, 3 for the
+          1800s, and 5 for the 1700s. This sequence repeats every 400 years.
+        </p>
+        <div className="calendar-instructions-example">
+          <h3>Example: 2025</h3>
+          <p>25 + 6 leap days + 0 century offset = 31. Modulo 7, the year offset is 3.</p>
+          <p>Add 3 to every generic digit and reduce each result modulo 7:</p>
+          <OffsetGrid offsets={offsets2025} label="Month offsets for 2025" />
+          <p className="calendar-instructions-example-result"><strong>2025:</strong> 3 6 6 2 4 0 2 5 1 3 6 1</p>
+        </div>
+        <aside className="calendar-instructions-note">
+          <h3>Leap years</h3>
+          <p>
+            In a leap year, subtract 1 from the January and February digits. The other
+            ten digits stay the same.
+          </p>
+        </aside>
       </section>
 
-      <section id="year-offsets">
-        <h2>Year Offsets</h2>
-        <p>Just like the <em>month offset</em>, you can think of the <em>year offset</em> as the number of placeholders in the week before the first day of the year. (Disclaimer, because I&apos;d be &quot;that guy&quot;: this isn&apos;t strictly accurate in the case of a leap year, but it &quot;works.&quot;) We&apos;ll be focusing on years in the 21st century.</p>
-        <p>To get the <em>year offset</em>, start with the two-digit year, divide by 4 to get the number of leap days from 2001 to that year, and add the number of leap days to the two-digit year.</p>
-        <p>Let&apos;s use 2025 as an example:</p>
-        <ul>
-          <li>Two-digit year: 25.</li>
-          <li>25 / 4 = 6 (we&apos;re only interested in the whole number).</li>
-          <li>6 + 25 = 31. Day 31 in the weekly cycle is also day 3.</li>
-          <li>So the <em>year offset</em> for 2025 is 3.</li>
-        </ul>
-        <p>Let&apos;s get the day of the week for June 28, 2025</p>
-        <ul>
-          <li>We have the <em>year offset</em> for 2025: 3.</li>
-          <li>The <em>month offset</em> for June is the <em>year offset</em> (3) + the <em>generic month offset</em> (4), so 7, which in the weekly cycle is the same as 0.</li>
-          <li>Add the <em>month offset</em> (0) to the date (28), for a total of 28.</li>
-          <li>The 28th day in the weekly cycle is Saturday.</li>
-        </ul>
-      </section>
-
-      <section id="leap-years">
-        <h2>Leap Years</h2>
-        <p>If the date you want is in January or February of a leap year, there&apos;s one small adjustment you need to make. To compensate for the leap day, just subtract 1 at some point in your process.</p>
-        <p>Let&apos;s take an example: February 4, 2024.</p>
-        <ul>
-          <li>Start with the <em>year offset</em>: 24 + 6 = 30 = 2.</li>
-          <li>The <em>month offset</em> for February is the <em>year offset</em> + 3, so 5.</li>
-          <li>Add that to the date, for a total of 9, so 2.</li>
-          <li>To adjust for the leap year, Subtract 1, giving a result of 1.</li>
-        </ul>
-        <p>So February 4, 2024 is on the 1st day of the week.</p>
-        <p>The reason only January and February need to be adjusted is that no adjustment is needed for dates after the leap day.</p>
-      </section>
-
-      <section id="other-centuries">
-        <h2>Other Centuries</h2>
-        <p>As with months and years, each century has its own offset. The offset for the 21st century happens to be 0, which is why there&apos;s no need to add it when finding the day of the week in the 21st century.</p>
-        <p>The 20th century had an offset of 1. If you want to find the day of the week for a date in the 1900s, just follow the process above, and add 1.</p>
-        <p>Let&apos;s take May 8, 1934 as an example:</p>
-        <ul>
-          <li><em>Year offset</em> for 2034: 34 + 8 = 42 = 0.</li>
-          <li><em>Century offset</em> for 1900 is 1: 0 + 1 = 1.</li>
-          <li><em>Generic month offset</em> for May is 1: 1 + 1 = 2.</li>
-          <li><em>Month offset</em> for May 1934 is therefore 2.</li>
-          <li>Day of week for May 8, 1934 is 2 + 8 = 10 = 3.</li>
-          <li>May 8, 1934 was the 3rd day of the week: Tuesday.</li>
-        </ul>
-        <p>The 19th century had an offset of 3, and the 18th century had an offset of 5. The 1600s are exactly the same as the 2000s, so September 16, 1623 was a Saturday, just like September 16, 2023.</p>
-        <p>For earlier centuries, you can take the integer value of any year in that century divided by 100, and subtract that from 19. So for the 1500s, the offset is 4; for the 1400s, it&apos;s 5; for the 700s, it&apos;s 12 = 5; &amp;c.</p>
-        <p>As a random curiosity, this would mean that dates in the 1200s, as in the 1600s, had the same weekdays as the same dates in the 2000s. That&apos;s right: September 21, 1223 was a Thursday, just like September 21, 2023.</p>
-      </section>
-
-      <section id="calendar-1582">
-        <h2>1582</h2>
-        <p>It&apos;s told that in October 1582, 10 days were dropped from the calendar to sort of recalibrate. Seems too many leap days had been added over the centuries, and things were a bit off.</p>
-        <p>So instead of October 5 following October 4 that year, Thursday, October 4 was followed by Friday, October 15.</p>
-        <p>How does this affect weekday calculation? Treat dates up to October 4, 1582 as any other date in the 1500s: the century offset is 19 - 15, or 4. Treat any subsequent dates in the 1500s as though they were in the 1900s, so the century offset is 1.</p>
+      <section id="use">
+        <h2>Use one digit</h2>
+        <p>Choose the digit for the month, add the date, and reduce modulo 7.</p>
+        <div className="calendar-instructions-formula">
+          month digit + date, modulo 7
+        </div>
+        <p>
+          For June 28, 2025, the June digit is 0. So 0 + 28 = 28, which is 0 modulo 7.
+          A result of 0 means Saturday.
+        </p>
+        <div className="calendar-instructions-weekday-key" aria-label="Weekday result key">
+          <span><strong>0</strong> Sat</span>
+          <span><strong>1</strong> Sun</span>
+          <span><strong>2</strong> Mon</span>
+          <span><strong>3</strong> Tue</span>
+          <span><strong>4</strong> Wed</span>
+          <span><strong>5</strong> Thu</span>
+          <span><strong>6</strong> Fri</span>
+        </div>
       </section>
 
       <div className="calendar-instructions-actions">

@@ -6,11 +6,7 @@ function PythagSquare(props) {
   const [cArea, setCArea] = useState(200);
   const [triple, setTriple] = useState(props.triple);
   const [unified, setUnified] = useState(false);
-  const [cDecomposing, setCDecomposing] = useState(
-    props.highlightedArea === 'c'
-  );
   const unifyTimeoutRef = useRef(null);
-  const cDecompositionTimeoutRef = useRef(null);
 
   const [a, b, c] = triple;
 
@@ -29,30 +25,6 @@ function PythagSquare(props) {
     if (props.highlightedArea !== 'a') {
       setMode('wrap');
     }
-  }, [props.highlightedArea]);
-
-  useEffect(() => {
-    if (cDecompositionTimeoutRef.current) {
-      clearTimeout(cDecompositionTimeoutRef.current);
-      cDecompositionTimeoutRef.current = null;
-    }
-
-    if (props.highlightedArea === 'c') {
-      setCDecomposing(true);
-      cDecompositionTimeoutRef.current = setTimeout(() => {
-        setCDecomposing(false);
-        cDecompositionTimeoutRef.current = null;
-      }, 1000);
-    } else {
-      setCDecomposing(false);
-    }
-
-    return () => {
-      if (cDecompositionTimeoutRef.current) {
-        clearTimeout(cDecompositionTimeoutRef.current);
-        cDecompositionTimeoutRef.current = null;
-      }
-    };
   }, [props.highlightedArea]);
 
   useEffect(() => {
@@ -343,7 +315,7 @@ function drawASquare(triple) {
     <div
       className={`pythag-square-wrapper ${
         props.highlightedArea ? `has-highlight highlight-${props.highlightedArea}` : ''
-      } ${cDecomposing ? 'c-decomposing' : ''}`}
+      } ${props.highlightedArea === 'c' ? 'c-decomposing' : ''}`}
     >
         <div className="pythag-square-cols">
           <div className="pythag-square-col">
