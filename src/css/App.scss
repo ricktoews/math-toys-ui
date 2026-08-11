@@ -1213,18 +1213,22 @@ ul.pythag-triple-title {
   transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 
   &:hover {
-    background-color: rgba(172, 193, 150, 0.24);
+    background-color: rgba(18, 176, 201, .1);
     box-shadow: 0 3px 8px rgba(73, 71, 91, 0.14);
     transform: translateY(-1px);
   }
 }
 
 .current-year {
-  background-color: rgba(172, 193, 150, 0.42);
-  box-shadow: inset 0 0 0 1px rgba(121, 148, 150, 0.7);
+  background-color: #12b0c9;
+  box-shadow: inset 0 0 0 1px #12b0c9;
+
+  .digit-grid {
+    color: #fff;
+  }
 
   .year-label {
-    color: #405431;
+    color: #fff;
   }
 }
 
@@ -1235,8 +1239,8 @@ ul.pythag-triple-title {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(121, 148, 150, 0.4) 15%,
-    rgba(121, 148, 150, 0.4) 85%,
+    #ccc 15%,
+    #ccc 85%,
     transparent
   );
 }
@@ -1244,6 +1248,11 @@ ul.pythag-triple-title {
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
+  padding: 12px 8px;
+  border: 1px solid rgba(121, 148, 150, .18);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(73, 71, 91, .08);
 
   >div:not(.century-divider) {
     justify-self: center;
@@ -1289,8 +1298,10 @@ ul.pythag-triple-title {
   margin-bottom: 28px;
   padding: 18px;
   overflow: hidden;
+  border: 1px solid rgba(121, 148, 150, .18);
   border-radius: 12px;
-  background: rgba(172, 193, 150, .2);
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(73, 71, 91, .08);
   opacity: 1;
   transform: translateY(0);
   visibility: visible;
@@ -1306,6 +1317,7 @@ ul.pythag-triple-title {
   max-height: 0;
   margin-bottom: 0;
   padding-block: 0;
+  border-width: 0;
   opacity: 0;
   pointer-events: none;
   transform: translateY(-10px);
@@ -1333,10 +1345,10 @@ ul.pythag-triple-title {
   z-index: 20;
   margin: 0 0 14px;
   padding: 6px;
-  border: 1px solid rgba(64, 84, 49, .2);
+  border: 1px solid rgba(121, 148, 150, .18);
   border-radius: 10px;
-  background: var(--paper);
-  box-shadow: 0 5px 16px rgba(23, 35, 59, .1);
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(73, 71, 91, .08);
 }
 .calendar-lab-progress table {
   width: 100%;
@@ -1357,12 +1369,12 @@ ul.pythag-triple-title {
 .calendar-lab-progress td {
   height: 32px;
   border-radius: 6px;
-  background: rgba(172, 193, 150, .18);
-  color: #405431;
+  background: rgba(18, 176, 201, .12);
+  color: #222;
   font-size: 1rem;
   font-weight: 700;
 }
-.calendar-lab-progress td + td { border-left: 4px solid var(--paper); }
+.calendar-lab-progress td + td { border-left: 4px solid #fff; }
 .calendar-lab-cards {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1371,13 +1383,14 @@ ul.pythag-triple-title {
 .calendar-lab-card {
   min-width: 0;
   padding: 16px;
-  border: 1px solid rgba(64, 84, 49, .2);
+  border: 1px solid rgba(121, 148, 150, .18);
   border-radius: 12px;
-  background: rgba(255, 255, 255, .62);
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(73, 71, 91, .08);
 }
 .calendar-lab-card h2 {
   margin: 0 0 10px;
-  color: #405431;
+  color: #666;
   font-size: .82rem;
   font-weight: 700;
   letter-spacing: .06em;
@@ -1397,7 +1410,7 @@ ul.pythag-triple-title {
 
 .calendar-lab-card-year {
   margin: -2px 0 8px;
-  color: #405431;
+  color: #222;
   font-size: 1.45rem;
   font-weight: 700;
   letter-spacing: .03em;
@@ -1409,10 +1422,10 @@ ul.pythag-triple-title {
 }
 .calendar-lab-card-calculation > div + div {
   padding-top: 12px;
-  border-top: 1px solid rgba(64, 84, 49, .15);
+  border-top: 1px solid #eee;
 }
 .calendar-lab-card-answer {
-  color: #405431;
+  color: #222;
   font-size: 1.05rem;
 }
 
@@ -1426,17 +1439,17 @@ ul.pythag-triple-title {
   width: 42px;
   height: 42px;
   padding: 0;
-  border: 1px solid rgba(64, 84, 49, .3);
+  border: 1px solid #ccc;
   border-radius: 50%;
-  background: #f7f5ee;
-  color: #405431;
+  background: #fff;
+  color: #222;
   font-size: 1rem;
   font-weight: 650;
   cursor: pointer;
 }
-.calendar-lab-offset-choices button:hover { background: rgba(172, 193, 150, .35); }
+.calendar-lab-offset-choices button:hover { border-color: #b8b8b8; background: #f2f2f2; }
 .calendar-lab-offset-choices button:focus-visible {
-  outline: 3px solid rgba(109, 92, 231, .35);
+  outline: 2px solid #0d7f90;
   outline-offset: 2px;
 }
 
@@ -1450,7 +1463,7 @@ ul.pythag-triple-title {
   align-self: start;
   padding: 4px 9px;
   border-radius: 999px;
-  background: #6d5ce7;
+  background: #12b0c9;
   color: white;
   font-size: .82rem;
   text-align: center;
@@ -1481,7 +1494,7 @@ ul.pythag-triple-title {
   padding: 8px 16px;
   border: 0;
   border-radius: 999px;
-  background: #819f6e;
+  background: #12b0c9;
   color: white;
   font-size: 1rem;
   cursor: pointer;
@@ -1504,9 +1517,9 @@ ul.pythag-triple-title {
   font-size: .8rem;
 }
 .calendar-lab-answer button:hover,
-.calendar-lab-choices button:hover { background: #6d8c5a; }
+.calendar-lab-choices button:hover { background: #0f9caf; }
 .calendar-lab-answer button:focus-visible,
-.calendar-lab-choices button:focus-visible { outline: 3px solid rgba(109, 92, 231, .35); outline-offset: 2px; }
+.calendar-lab-choices button:focus-visible { outline: 2px solid #0d7f90; outline-offset: 2px; }
 
 .calendar-lab-builder-body {
   display: grid;
@@ -1527,24 +1540,31 @@ ul.pythag-triple-title {
   width: 48px;
   height: 48px;
   padding: 0;
-  border: 1px solid rgba(64, 84, 49, .35);
+  border: 1px solid #ccc;
   border-radius: 50%;
-  background: #f7f5ee;
-  color: #405431;
+  background: #fff;
+  color: #222;
   font-size: 1rem;
   font-weight: 650;
   cursor: pointer;
   transform: translate(-50%, -50%);
 }
-.calendar-lab-digit-0 { left: 50%; top: 15%; }
-.calendar-lab-digit-1 { left: 80%; top: 32.5%; }
-.calendar-lab-digit-2 { left: 80%; top: 67.5%; }
-.calendar-lab-digit-3 { left: 50%; top: 85%; }
-.calendar-lab-digit-4 { left: 20%; top: 67.5%; }
-.calendar-lab-digit-5 { left: 20%; top: 32.5%; }
-.calendar-lab-digit-6 { left: 50%; top: 50%; background: rgba(172, 193, 150, .5); }
-.calendar-lab-digit:hover { background: rgba(172, 193, 150, .35); }
-.calendar-lab-digit:focus-visible { outline: 3px solid rgba(109, 92, 231, .35); outline-offset: 2px; }
+.calendar-lab-digit-1 { left: 50%; top: 15%; }
+.calendar-lab-digit-2 { left: 80%; top: 32.5%; }
+.calendar-lab-digit-3 { left: 80%; top: 67.5%; }
+.calendar-lab-digit-4 { left: 50%; top: 85%; }
+.calendar-lab-digit-5 { left: 20%; top: 67.5%; }
+.calendar-lab-digit-6 { left: 20%; top: 32.5%; }
+.calendar-lab-digit-0 {
+  left: 50%;
+  top: 50%;
+  border-color: #12b0c9;
+  background: #12b0c9;
+  color: #fff;
+}
+.calendar-lab-digit:hover { border-color: #b8b8b8; background: #f2f2f2; }
+.calendar-lab-digit-0:hover { border-color: #12b0c9; background: #12b0c9; }
+.calendar-lab-digit:focus-visible { outline: 2px solid #0d7f90; outline-offset: 2px; }
 .calendar-lab-digit:disabled { cursor: default; opacity: .42; }
 
 .calendar-lab-calendar-entry {
@@ -1565,17 +1585,18 @@ ul.pythag-triple-title {
 .calendar-lab-calendar-entry span.filled {
   border-radius: 5px;
   border-bottom-color: transparent;
-  background: rgba(172, 193, 150, .3);
+  background: #12b0c9;
+  color: #fff;
 }
 @keyframes calendar-digit-confirmed {
   0%, 100% {
-    color: #405431;
-    background: rgba(172, 193, 150, .3);
+    color: #fff;
+    background: #12b0c9;
     transform: scale(1);
   }
   45% {
     color: white;
-    background: #6d8c5a;
+    background: #12b0c9;
     transform: scale(1.12);
   }
 }
@@ -1598,12 +1619,19 @@ ul.pythag-triple-title {
   cursor: pointer;
 }
 .calendar-lab-builder-actions .calendar-lab-undo {
-  border: 1px solid rgba(64, 84, 49, .35);
-  background: transparent;
-  color: #646873;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #222;
 }
 .calendar-lab-builder-actions .calendar-lab-builder-check,
-.calendar-lab-builder-actions .calendar-lab-builder-another { background: #819f6e; color: white; }
+.calendar-lab-builder-actions .calendar-lab-builder-another { background: #12b0c9; color: white; }
+.calendar-lab-builder-actions .calendar-lab-undo:hover {
+  border-color: #b8b8b8;
+  background: #f2f2f2;
+}
+.calendar-lab-builder-actions .calendar-lab-builder-check:hover,
+.calendar-lab-builder-actions .calendar-lab-builder-another:hover { background: #12b0c9; }
+.calendar-lab-builder-actions button:focus-visible { outline: 2px solid #0d7f90; outline-offset: 2px; }
 .calendar-lab-builder-actions button:disabled { cursor: default; opacity: .42; }
 
 .calendar-lab-equation { margin: 0 0 12px; }
@@ -1614,7 +1642,7 @@ ul.pythag-triple-title {
   min-height: 52px;
   padding: 6px 10px;
   border-radius: 50%;
-  background: #8bc98e;
+  background: #12b0c9;
   color: white;
   font-size: 1.4rem;
 }
@@ -1637,7 +1665,7 @@ ul.pythag-triple-title {
   .calendar-lab-calendar-entry-correct span {
     animation: none;
     color: white;
-    background: #6d8c5a;
+    background: #12b0c9;
   }
 }
 
@@ -1652,6 +1680,14 @@ ul.pythag-triple-title {
   margin-left: auto;
   margin-right: auto;
 
+  .modal-content {
+    overflow: hidden;
+    border: 1px solid rgba(121, 148, 150, .18);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(73, 71, 91, .16);
+  }
+
   .modal-header {
     position: relative;
     z-index: 1;
@@ -1659,12 +1695,12 @@ ul.pythag-triple-title {
     min-height: 48px;
     padding: 8px 44px;
     border-bottom: 0;
-    background: #f3f6ef;
+    background: rgba(18, 176, 201, .1);
     box-shadow: 0 3px 8px rgba(73, 71, 91, 0.12);
   }
 
   .modal-title {
-    color: #405431;
+    color: #0d7f90;
     font-size: 1.25rem;
     font-weight: 600;
     line-height: 1.4;
@@ -1678,19 +1714,21 @@ ul.pythag-triple-title {
     padding: 8px;
     transform: translateY(-50%);
     border-radius: 50%;
-    background-color: rgba(172, 193, 150, 0.28);
+    background-color: rgba(18, 176, 201, .18);
     opacity: 0.65;
     transition: background-color 0.15s ease, opacity 0.15s ease;
 
     &:hover,
     &:focus {
-      background-color: rgba(172, 193, 150, 0.55);
+      background-color: rgba(18, 176, 201, .32);
       opacity: 0.9;
     }
   }
 
   .modal-body {
     padding-top: 4px;
+    background: #fff;
+    color: #222;
   }
 }
 

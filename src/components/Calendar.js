@@ -105,8 +105,12 @@ function Calendar(props) {
   const currentYearRef = useRef(null);
 
   useEffect(() => {
-    currentYearRef.current.scrollIntoView({ block: "center", behavior: "smooth" });
-  }, [currentYearRef.current]);
+    const frame = window.requestAnimationFrame(() => {
+      currentYearRef.current?.scrollIntoView({ block: "center", behavior: "auto" });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   const years = [];
   for (let i = 0; i < 800; i++) {

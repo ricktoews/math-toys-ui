@@ -1,14 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-const CSSRoot = document.querySelector(':root');
-const CSSRootStyle = getComputedStyle(CSSRoot);
-
-const getCSSVar = cssVarName => {
-	let result = CSSRootStyle.getPropertyValue(cssVarName);
-	return result;
-} 
-
 const monthName = [
   'January', 'February', 'March',
   'April', 'May', 'June',
@@ -35,12 +27,12 @@ const MonthDigit = styled.div`
 	font-family: times new roman;
 	font-style: italic;
 	font-size:7em;
-	color: ${getCSSVar('--palette-4')};
+	color: rgba(18, 176, 201, 0.42);
 	transition: color 0.15s ease, text-shadow 0.15s ease, transform 0.15s ease;
 
 	&.show-leading-blank {
-		color: ${getCSSVar('--palette-3')};
-		text-shadow: 0 0 8px rgba(121, 148, 150, 0.28);
+		color: rgba(18, 176, 201, 0.68);
+		text-shadow: 0 0 8px rgba(18, 176, 201, 0.2);
 		transform: scale(1.08);
 	}
 `;
@@ -54,7 +46,8 @@ const MonthHeader = styled.div`
 	font-weight: bold;
 	text-align:center;
 	border-radius: 10px;
-	background-color: ${getCSSVar('--palette-4')};
+	background-color: rgba(18, 176, 201, 0.18);
+	color: #222;
 `;
 
 const MonthMasthead = styled.div`
@@ -83,7 +76,7 @@ const DateCell = styled.div`
 		height: 10px;
 		margin: 0;
 		border-radius: 2px;
-		background: ${getCSSVar('--palette-4')};
+		background: #12b0c9;
 		opacity: 0.65;
 	}
 

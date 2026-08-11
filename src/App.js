@@ -42,6 +42,10 @@ function App() {
   }, [location.pathname]);
 
   useEffect(() => {
+    // The calendar manages its own initial position by scrolling to the current
+    // year. Do not overwrite that page-specific behavior with the route reset.
+    if (location.pathname === '/calendar') return undefined;
+
     // Mobile Safari can restore/anchor the old page's scroll position after the
     // new route has mounted. Reset once now and once after the new layout has
     // been painted so route content always starts below the fixed masthead.

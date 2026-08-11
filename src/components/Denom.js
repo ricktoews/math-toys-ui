@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Table, Modal, Button } from 'react-bootstrap';
 import '../css/Denom.scss';
 import NumeratorList from './NumeratorList';
+import DigitMemorizer from './DigitMemorizer';
 import { getDenomByExpansion, getExpansions, postExpansions } from '../api/math-toys-api';
 import { getDenominatorFactors, parsedPeriod, getPeriodJSX } from './denom-helper';
 
@@ -237,6 +238,7 @@ function Denom(props) {
   const [recipModalShow, setRecipModalShow] = useState(false);
   const [recipModalPrime, setRecipModalPrime] = useState(null);
   const [recipModalJSX, setRecipModalJSX] = useState(null);
+  const [memorizerShow, setMemorizerShow] = useState(false);
 
 
   // Period catalog state
@@ -485,9 +487,18 @@ function Denom(props) {
 
                 {reciprocalDisplay && (
                   <div className="denom-reciprocal-info">
-                    <span className="denom-reciprocal-fraction">1/{denom}</span>
-                    <span className="denom-reciprocal-equals">=</span>
-                    <span className="denom-reciprocal-value">0.{reciprocalDisplay}</span>
+                    <div className="denom-reciprocal-expression">
+                      <span className="denom-reciprocal-fraction">1/{denom}</span>
+                      <span className="denom-reciprocal-equals">=</span>
+                      <span className="denom-reciprocal-value">0.{reciprocalDisplay}</span>
+                    </div>
+                    <button
+                      type="button"
+                      className="denom-practice-button"
+                      onClick={() => setMemorizerShow(true)}
+                    >
+                      Practice digits
+                    </button>
                   </div>
                 )}
 
@@ -723,6 +734,13 @@ function Denom(props) {
         </section>
         )}
       </main>
+      <DigitMemorizer
+        show={memorizerShow}
+        onHide={() => setMemorizerShow(false)}
+        digits={reciprocalData?.expansion}
+        title={`Practice 1/${denom}`}
+        prompt="Enter the decimal expansion from memory. Incorrect digits are not added."
+      />
 
       <InfoModal show={infoShow} onHide={() => setInfoShow(false)} />
 
