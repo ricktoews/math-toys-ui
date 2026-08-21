@@ -74,6 +74,70 @@ export default () => {
         <div className="home-cue">Choose a note to explore <span aria-hidden="true">↓</span></div>
       </section>
       <section className="home-notes" aria-label="Math notes">
+      <article className="reciprocal-article">
+        <div className="article-title">Reciprocal of 998001</div>
+
+        <ToggleRead className="article-closed">
+        <div className="reciprocal-intro">
+          <p className="article-kicker">A decimal with one surprising omission</p>
+          <div className="decimal-ribbon" aria-label="Zero point zero zero zero, zero zero one, zero zero two, zero zero three, continuing through nine hundred ninety-six, nine hundred ninety-seven, nine hundred ninety-nine">
+            <span>0.</span><span>000</span><span>001</span><span>002</span><span>003</span><span className="decimal-ellipsis">…</span><span>996</span><span>997</span><span className="decimal-surprise">999</span>
+          </div>
+          <p>The decimal remains faultlessly predictable almost to 1000. Just before 999, however, the pattern apparently stumbles: <strong>998 is missing</strong>, and then the cycle begins again at 000, 001…</p>
+        </div>
+
+        <p>This is, of course, the decimal expansion of 1/998001. And because we're curious&mdash;inquisitive&mdash;we'd quite like to know what's going on. Why do we get most of the integers from 0 to 999, and why is 998 skipped?</p>
+
+        <div className="article-insight">
+          <span className="insight-label">The vital clue</span>
+          <div className="equation-pair">
+            <span>998001 = 999<sup>2</sup></span>
+            <span>1 / 999 = 0.001 001 001…</span>
+          </div>
+          <p>The reciprocal of 10<sup>n</sup> − 1 is always an unending series of zero-padded 1s. Since 998001 is 999 &times; 999, we can examine 1/998001 by starting with 1/999 and dividing by 999.</p>
+        </div>
+
+        <h3>Follow the remainder</h3>
+        <p>Let's set up our long division by placing 0.001001001… under the division bar and 999 to the left. We'll take the dividend in groups of three digits for convenience: <span className="inline-digits">001 001 001 …</span></p>
+
+        <p>For the first step, we have 001 divided by 999, which is 0 remainder 1. So on the quotient line above the dividend, we write 000 after the decimal, and we bring down the remainder of 1 beneath the first group of three digits.</p>
+
+        <p>Then, to the right of the 1, we bring down the next group of three, giving us 1001 divided by 999. This gives us 1 remainder 2. On the quotient line, we add 001 after the 000, and we subtract 999 from 1001, bringing down the remainder of 2.</p>
+
+        <p>Next, to the right of the 2, we bring down the next group of three: 2001. This divided by 999 gives us 2 remainder 3: 999 &times; 2 is 1998, and 2001 - 1998 = 3. The quotient now has 000001002, and the next number to divide by 999 is 3001.</p>
+
+        <p>This process continues with fascinating regularity into the 990s. At each step, we bring down the remainder, append 001, and divide by 999.</p>
+
+        <div className="division-steps" aria-label="The first three long-division steps">
+          <div><span className="step-number">01</span><strong>001 ÷ 999</strong><span>quotient 000</span><span>remainder 1 → 1001</span></div>
+          <div><span className="step-number">02</span><strong>1001 ÷ 999</strong><span>quotient 001</span><span>remainder 2 → 2001</span></div>
+          <div><span className="step-number">03</span><strong>2001 ÷ 999</strong><span>quotient 002</span><span>remainder 3 → 3001</span></div>
+        </div>
+
+        <div className="recurrence-rule">
+          <span>In general, at step <i>n</i></span>
+          <strong>[n − 1]001 ÷ 999</strong>
+          <span>quotient [n − 1] · remainder n · next [n]001</span>
+        </div>
+
+        <p><b>Step 998:</b> 997001 divided by 999; quotient 997; remainder 998; setup for the next step: 998001.</p>
+
+        <h3>The apparent stumble</h3>
+        <p>Step 999 is where it gets interesting. If we continued the pattern mechanically, we'd expect this:</p>
+
+        <div className="false-step"><span>Expected</span><s>quotient 998 · remainder 999</s></div>
+
+        <p>Except that the remainder must be less than the divisor. If the remainder is equal to the divisor, the quotient needs to be increased by 1, and the remainder goes away. So Step 999 must be handled differently.</p>
+
+        <div className="resolution-card">
+          <span className="insight-label">Step 999</span>
+          <strong>998001 ÷ 999 = 999</strong>
+          <span>remainder 0 · next group 001</span>
+          <p>The carry turns the expected 998 into 999—and brings us right back to the beginning.</p>
+        </div>
+        </ToggleRead>
+      </article>
+
       <article>
         <div className="article-title">Odd Square Minus 1 - Always Divisible By 8</div>
 
