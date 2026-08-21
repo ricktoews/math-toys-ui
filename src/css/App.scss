@@ -428,6 +428,7 @@ article a:hover {
 .daily-teaser-content { display: grid; gap: 24px; padding: 4px 24px 24px; border-top: 1px solid rgba(141,226,219,.12); background: rgba(43,53,74,.82); }
 .daily-teaser-content:has(.calendar-teaser-demo) { gap: 18px; }
 .daily-teaser-copy { min-width: 0; }
+.daily-teaser-copy:empty { display: none; }
 .daily-teaser h2 { margin: 0 0 9px; color: white; font-family: Georgia, serif; font-size: clamp(1.35rem, 4.5vw, 2rem); font-weight: 400; line-height: 1.12; }
 .daily-teaser-copy > p:not(.daily-teaser-eyebrow) { max-width: 560px; margin: 0; color: rgba(255,255,255,.76); font-size: .91rem; line-height: 1.55; }
 .daily-teaser-action { margin-top: 17px; }
@@ -481,6 +482,30 @@ article a:hover {
 .stacked-addend { position: relative; padding-bottom: 3px; border-bottom: 1px solid #8de2db; }
 .stacked-addend i { position: absolute; left: 0; font-style: normal; }
 .stacked-sum strong { padding-top: 3px; color: #8de2db; font: inherit; font-weight: 700; }
+.pythagorean-teaser { display: grid; gap: 18px; width: min(100%, 620px); margin-inline: auto; }
+.pythagorean-squares-diagram { display: grid; justify-items: center; margin: 0; }
+.pythagorean-squares-diagram svg { width: min(100%, 285px); overflow: visible; }
+.pythagorean-square path { stroke-width: 1.8; }
+.pythagorean-square line { fill: none; stroke-width: .75; }
+.pythagorean-square-3 path { fill: rgba(68,199,189,.14); stroke: #65d4cb; }
+.pythagorean-square-3 line { stroke: rgba(101,212,203,.48); }
+.pythagorean-square-4 path { fill: rgba(109,92,231,.14); stroke: #9184ee; }
+.pythagorean-square-4 line { stroke: rgba(145,132,238,.48); }
+.pythagorean-square-5 path { fill: rgba(141,226,219,.08); stroke: #8de2db; }
+.pythagorean-square-5 line { stroke: rgba(141,226,219,.4); }
+.pythagorean-center-triangle { fill: rgba(255,255,255,.055); stroke: rgba(255,255,255,.85); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.pythagorean-center-corner { fill: none; stroke: rgba(255,255,255,.55); stroke-width: 1.2; }
+.pythagorean-side-labels text { fill: white; paint-order: stroke; stroke: #263147; stroke-width: 4px; stroke-linejoin: round; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; font-weight: 750; text-anchor: middle; }
+.pythagorean-squares-diagram figcaption { display: flex; gap: 9px; align-items: baseline; margin-top: -2px; color: rgba(255,255,255,.72); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .82rem; }
+.pythagorean-squares-diagram figcaption span:first-child { color: #65d4cb; }
+.pythagorean-squares-diagram figcaption span:nth-of-type(2) { color: #a99ff3; }
+.pythagorean-squares-diagram figcaption .pythagorean-caption-operator { color: rgba(255,255,255,.45); font-style: normal; }
+.pythagorean-squares-diagram figcaption strong { color: #8de2db; font-weight: 800; }
+.pythagorean-teaser-intro { margin: 0; color: rgba(255,255,255,.76); font-size: .86rem; line-height: 1.55; }
+.pythagorean-teaser-intro i { color: #8de2db; }
+.pythagorean-construction { display: grid; gap: 7px; padding: 15px 16px; border-left: 2px solid rgba(141,226,219,.58); background: rgba(7,14,30,.2); color: rgba(255,255,255,.76); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: clamp(.75rem, 2.4vw, .88rem); }
+.pythagorean-construction strong { color: #8de2db; }
+.pythagorean-teaser > .daily-teaser-action { margin-top: 0; }
 .home-cue { color: rgba(255,255,255,.9); font-size: .78rem; font-weight: 600; letter-spacing: .06em; }
 .home-cue span { margin-left: 8px; color: #8de2db; }
 .hero-orbit { position: absolute; top: 36px; right: 8%; width: 130px; height: 130px; border: 1px solid rgba(141,226,219,.24); border-radius: 50%; opacity: .85; }
@@ -492,8 +517,13 @@ article a:hover {
 .home-notes { display: grid; gap: 14px; max-width: 920px; margin: 0 auto; padding: 30px 18px 60px; }
 .home-notes article { margin: 0 !important; border: 1px solid rgba(23,35,59,.09); border-radius: 14px; background: #fff; box-shadow: 0 5px 18px rgba(23,35,59,.06); overflow: hidden; transition: transform .2s ease, box-shadow .2s ease; }
 .home-notes article:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(23,35,59,.1); }
-.home-notes article .article-title { position: relative; padding: 18px 44px 18px 20px; scroll-margin-top: 76px; border-radius: 0; background: transparent; color: var(--ink); font-family: Georgia, serif; font-size: 1.08rem; line-height: 1.35; }
+.home-notes article .article-title { position: relative; padding: 18px 90px 18px 20px; scroll-margin-top: 76px; border-radius: 0; background: transparent; color: var(--ink); font-family: Georgia, serif; font-size: 1.08rem; line-height: 1.35; }
 .home-notes article .article-title::after { content: '+'; position: absolute; top: 50%; right: 18px; transform: translateY(-50%); display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #eef0ff; color: var(--accent); font-family: sans-serif; font-size: 1rem; }
+.article-copy { position: absolute; z-index: 1; top: 50%; right: 51px; display: grid; place-items: center; min-width: 27px; height: 27px; padding: 0 6px; border: 0; border-radius: 6px; background: transparent; color: #747b8a; transform: translateY(-50%); cursor: pointer; }
+.article-copy:hover { background: #f1f2f5; color: var(--accent); }
+.article-copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.article-copy svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
+.article-copy-feedback { color: #338681; font-family: ui-sans-serif, system-ui, sans-serif; font-size: .62rem; font-weight: 750; }
 .home-notes article .article-opened { padding: 0 20px 20px; font-family: 'Cormorant Garamond', serif; font-size: 1.12rem; }
 .home-notes article p { line-height: 1.7; }
 
@@ -661,6 +691,7 @@ article a:hover {
 @media (min-width: 760px) {
   .home-hero { padding: 92px max(8vw, 40px) 74px; }
   .daily-teaser-content { grid-template-columns: minmax(0, 1.15fr) minmax(290px, .85fr); align-items: center; padding: 22px 30px 28px; }
+  .daily-teaser-content:has(.pythagorean-teaser) { grid-template-columns: 1fr; }
   .home-notes { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-top: 42px; }
   .home-notes article:has(.article-opened) { grid-column: 1 / -1; }
 }

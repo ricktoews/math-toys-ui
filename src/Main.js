@@ -39,12 +39,59 @@ const ToggleRead = styled.div`
 	}
 `;
 
+const ArticleTitle = ({ children }) => {
+	const [copied, setCopied] = useState(false);
+	const feedbackTimer = React.useRef(null);
+
+	useEffect(() => () => window.clearTimeout(feedbackTimer.current), []);
+
+	const copyArticle = async event => {
+		event.stopPropagation();
+		const article = event.currentTarget.closest('article');
+		const content = article?.querySelector('.article-closed, .article-opened');
+		if (!article || !content) return;
+
+		const copy = content.cloneNode(true);
+		copy.querySelectorAll('button, .sr-only').forEach(element => element.remove());
+		copy.classList.remove('article-closed', 'article-opened');
+		Object.assign(copy.style, { position: 'fixed', left: '-10000px', top: '0', display: 'block', width: '700px' });
+		document.body.appendChild(copy);
+		const text = `${String(children)}\n\n${copy.innerText.trim()}`;
+		copy.remove();
+
+		try {
+			await navigator.clipboard.writeText(text);
+		} catch {
+			const textarea = document.createElement('textarea');
+			textarea.value = text;
+			Object.assign(textarea.style, { position: 'fixed', left: '-10000px' });
+			document.body.appendChild(textarea);
+			textarea.select();
+			document.execCommand('copy');
+			textarea.remove();
+		}
+
+		setCopied(true);
+		window.clearTimeout(feedbackTimer.current);
+		feedbackTimer.current = window.setTimeout(() => setCopied(false), 1600);
+	};
+
+	return (
+		<div className="article-title">
+			<span className="article-title-text">{children}</span>
+			<button type="button" className="article-copy" onClick={copyArticle} aria-label={`Copy ${children}`}>
+				{copied ? <span className="article-copy-feedback">Copied</span> : <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>}
+			</button>
+		</div>
+	);
+};
+
 
 // Click an article title to toggle it open or closed.
 const readArticle = e => {
 	e.preventDefault();
 
-	var classList = e.target.nextSibling.classList;
+	var classList = e.currentTarget.nextElementSibling.classList;
 	if (classList.contains('article-closed')) {
 		classList.remove('article-closed');
 		classList.add('article-opened');
@@ -69,6 +116,44 @@ const MissingCenterSquare = () => (
   </div>
 );
 
+const PythagoreanSquaresDiagram = () => {
+	const divisions = [1, 2, 3, 4];
+
+	return (
+		<figure className="pythagorean-squares-diagram">
+			<svg viewBox="35 -40 225 240" role="img" aria-labelledby="pythagorean-diagram-title pythagorean-diagram-desc">
+				<title id="pythagorean-diagram-title">The 3–4–5 right triangle with a square on each side</title>
+				<desc id="pythagorean-diagram-desc">The square on side 3 contains 9 unit squares, the square on side 4 contains 16, and the square on side 5 contains 25.</desc>
+
+				<g className="pythagorean-square pythagorean-square-3">
+					<path d="M110 50 H50 V110 H110 Z" />
+					{[70, 90].map(value => <line key={`three-v-${value}`} x1={value} y1="50" x2={value} y2="110" />)}
+					{[70, 90].map(value => <line key={`three-h-${value}`} x1="50" y1={value} x2="110" y2={value} />)}
+				</g>
+
+				<g className="pythagorean-square pythagorean-square-4">
+					<path d="M110 110 H190 V190 H110 Z" />
+					{[130, 150, 170].map(value => <line key={`four-v-${value}`} x1={value} y1="110" x2={value} y2="190" />)}
+					{[130, 150, 170].map(value => <line key={`four-h-${value}`} x1="110" y1={value} x2="190" y2={value} />)}
+				</g>
+
+				<g className="pythagorean-square pythagorean-square-5">
+					<path d="M110 50 L190 110 L250 30 L170 -30 Z" />
+					{divisions.map(i => <line key={`five-parallel-${i}`} x1={110 + 12 * i} y1={50 - 16 * i} x2={190 + 12 * i} y2={110 - 16 * i} />)}
+					{divisions.map(i => <line key={`five-cross-${i}`} x1={110 + 16 * i} y1={50 + 12 * i} x2={170 + 16 * i} y2={-30 + 12 * i} />)}
+				</g>
+
+				<path className="pythagorean-center-triangle" d="M110 50 V110 H190 Z" />
+				<path className="pythagorean-center-corner" d="M110 96 H124 V110" />
+				<g className="pythagorean-side-labels" aria-hidden="true">
+					<text x="101" y="84">3</text><text x="150" y="125">4</text><text x="157" y="72">5</text>
+				</g>
+			</svg>
+			<figcaption><span><i>a</i>²</span><i className="pythagorean-caption-operator">+</i><span><i>b</i>²</span><i className="pythagorean-caption-operator">=</i><strong><i>c</i>²</strong></figcaption>
+		</figure>
+	);
+};
+
 const DailyTeaser = ({ onOpenNote }) => {
 	const today = new Date();
 	const dateLabel = new Intl.DateTimeFormat('en-US', {
@@ -82,8 +167,8 @@ const DailyTeaser = ({ onOpenNote }) => {
 	const cycleWeekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 	const dayNumber = Math.floor(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) / 86400000);
 	const requestedCuriosity = new URLSearchParams(window.location.search).get('curiosity');
-	const curiosityOverrides = { consecutive: 0, calendar: 1, sevenths: 2 };
-	const teaserIndex = curiosityOverrides[requestedCuriosity] ?? ((dayNumber % 3) + 3) % 3;
+	const curiosityOverrides = { consecutive: 0, calendar: 1, sevenths: 2, pythagorean: 3 };
+	const teaserIndex = curiosityOverrides[requestedCuriosity] ?? ((dayNumber % 4) + 4) % 4;
 	const storageKey = `math-toys-curiosity-${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 	const [isOpen, setIsOpen] = useState(() => {
 		try {
@@ -165,6 +250,23 @@ const DailyTeaser = ({ onOpenNote }) => {
 			),
 			action: <button type="button" onClick={() => onOpenNote('periodic-decimals-prime-reciprocals')}>Learn more <span aria-hidden="true">→</span></button>,
 		},
+		{
+			title: null,
+			body: null,
+			preview: (
+				<div className="pythagorean-teaser">
+					<PythagoreanSquaresDiagram />
+					<p className="pythagorean-teaser-intro">The familiar (3, 4, 5) triangle commonly illustrates the Pythagorean Theorem. But did you know there’s a Pythagorean triple for every odd number? For example, (5, 12, 13), (7, 24, 25), … (11, 60, 61), &amp;c. Let (<i>a</i>, <i>b</i>, <i>c</i>) represent a triple:</p>
+					<div className="pythagorean-construction">
+						<span>Pick an odd number <strong><i>a</i></strong></span>
+						<span><strong><i>b</i></strong> = (<i>a</i>² − 1) / 2</span>
+						<span><strong><i>c</i></strong> = (<i>a</i>² + 1) / 2</span>
+					</div>
+					<div className="daily-teaser-action"><Link to="/pythagorean-triples-lab">Explore Pythagorean triples <span aria-hidden="true">→</span></Link></div>
+				</div>
+			),
+			action: null,
+		},
 	];
 	const teaser = teasers[teaserIndex];
 
@@ -184,7 +286,7 @@ const DailyTeaser = ({ onOpenNote }) => {
 				<div className="daily-teaser-content" id="daily-teaser-content">
 					<div className="daily-teaser-copy">
 						{teaser.title && <h2>{teaser.title}</h2>}
-						<p>{teaser.body}</p>
+						{teaser.body && <p>{teaser.body}</p>}
 						{teaser.action && <div className="daily-teaser-action">{teaser.action}</div>}
 					</div>
 					<div className="daily-teaser-preview">{teaser.preview}</div>
@@ -227,7 +329,7 @@ export default () => {
       </section>
       <section className="home-notes" aria-label="Math notes">
       <article className="reciprocal-article">
-        <div className="article-title">Reciprocal of 998001</div>
+        <ArticleTitle>Reciprocal of 998001</ArticleTitle>
 
         <ToggleRead className="article-closed">
         <div className="reciprocal-intro">
@@ -313,7 +415,7 @@ export default () => {
       </article>
 
       <article className="consecutive-article" id="four-consecutive-integers">
-        <div className="article-title">Four Consecutive Integers: One Less Than a Square</div>
+        <ArticleTitle>Four Consecutive Integers: One Less Than a Square</ArticleTitle>
 
         <ToggleRead className="article-closed">
           <div className="consecutive-intro">
@@ -377,7 +479,7 @@ export default () => {
       </article>
 
       <article className="odd-square-article">
-        <div className="article-title">An Odd Square Minus 1 Is Always Divisible by 8</div>
+        <ArticleTitle>An Odd Square Minus 1 Is Always Divisible by 8</ArticleTitle>
 
         <ToggleRead className="article-closed">
           <div className="odd-square-intro">
@@ -415,7 +517,7 @@ export default () => {
       </article>
 
       <article>
-        <div className="article-title">The 12-digit Calendar, Part 2</div>
+        <ArticleTitle>The 12-digit Calendar, Part 2</ArticleTitle>
 
         <ToggleRead className="article-closed">
 
@@ -478,7 +580,7 @@ export default () => {
       </article>
 
       <article>
-        <div className="article-title">The 12-digit Calendar, Part 1</div>
+        <ArticleTitle>The 12-digit Calendar, Part 1</ArticleTitle>
 
         <ToggleRead className="article-closed">
         <p>2021: 5 1 1 4 6 2 4 0 3 5 1 3</p>
@@ -495,7 +597,7 @@ export default () => {
       </article>
 
       <article>
-        <div className="article-title">New Insight On 1/11</div>
+        <ArticleTitle>New Insight On 1/11</ArticleTitle>
 
         <ToggleRead className="article-closed">
         <p>In base 10, the reciprocal of 11&mdash;1/11&mdash;has the decimal expansion <Periodic whole="0" repeating="09" />. This caught my attention long ago, since 1/9 is <Periodic whole="0" repeating="11" />. That is, the period of 1/11 is 1 &times; 9, and the period of 1/9 is 1 &times; 11. Curious; but Why?</p>
@@ -510,7 +612,7 @@ export default () => {
 
       <article>
         <p className="article-date">August 16, 2020</p>
-        <div className="article-title">Pythagorean Triples - Primitives</div>
+        <ArticleTitle>Pythagorean Triples - Primitives</ArticleTitle>
 
 	<ToggleRead className="article-closed">
 
@@ -534,7 +636,7 @@ export default () => {
       </article>
  
       <article>
-        <div className="article-title">Prime Powers of 2 and Mersenne Primes</div>
+        <ArticleTitle>Prime Powers of 2 and Mersenne Primes</ArticleTitle>
 	<ToggleRead className="article-closed">
 
         <p>So a Mersenne prime is a prime number of the form 2^n - 1. All known perfect numbers are based on Mersenne primes. I was toying one night with why the power of 2 for a Mersenne prime must itself be prime. I'm sure an algebraic proof would show that 2^n - 1 is factorable (and therefore not prime) if n is composite. But it was a different approach that occurred to me as I was lying there.</p>
@@ -544,7 +646,7 @@ export default () => {
       </article>
  
       <article>
-        <div className="article-title">Golden Ratio Fiddlings</div>
+        <ArticleTitle>Golden Ratio Fiddlings</ArticleTitle>
 	<ToggleRead className="article-closed">
 
         <p>So I've not explored this much yet, but it's looking curious to me.</p>
@@ -593,7 +695,7 @@ export default () => {
       </article>
 
       <article>
-        <div className="article-title">Fibonacci Numbers as Sums of Products of Fibonacci Numbers</div>
+        <ArticleTitle>Fibonacci Numbers as Sums of Products of Fibonacci Numbers</ArticleTitle>
 	<ToggleRead className="article-closed">
 
         <p>Let (a, b) be two consecutive Fibonacci numbers, and let (c, d) be two consecutive Fibonacci numbers. (a, b) can overlap (c, d). The number ac + bd is a Fibonacci number. Examples: (a=3, b=5), (c=8, d=13). Then ac = 24, bd = 65, ac + bd = 89.</p>
@@ -604,7 +706,7 @@ export default () => {
       </article>
 
       <article>
-        <div className="article-title">Reciprocals of Composite Denominators</div>
+        <ArticleTitle>Reciprocals of Composite Denominators</ArticleTitle>
 	<ToggleRead className="article-closed">
 
         <p>I've long known that when a denominator is prime (other than 2, 5), the period length of the reciprocal is the smallest 9s reptend that the number divides. For 7, that's 6; for 31, it's 15; for 41, it's 5; and so on. I don't believe there can be a pattern: it just depends on which value 10^n - 1 that prime number happens to divide. Of course, this number will be either one less than the prime number (as with 7), or a factor of that (as with 31 and 41). If the number is even, the period is internally complementary&mdash;that is, the sum of its two halves is a 9s reptend. For 1/7, the period is 142857, and 142 + 857 = 999.</p>
@@ -619,7 +721,7 @@ export default () => {
       </article>
 
       <article id="prime-reciprocal-periods" className="periodic-prime-article">
-        <div className="article-title">Description of Periodic Decimals of Reciprocals of Prime Numbers</div>
+        <ArticleTitle>Description of Periodic Decimals of Reciprocals of Prime Numbers</ArticleTitle>
 	<ToggleRead className="article-closed">
 
         <div className="periodic-prime-intro">
@@ -661,7 +763,7 @@ export default () => {
       </article>
 
       <article id="periodic-decimals-prime-reciprocals" className="periodic-prime-article sevenths-proof-article">
-        <div className="article-title">Why the Two Halves of 1/7 Add to 999</div>
+        <ArticleTitle>Why the Two Halves of 1/7 Add to 999</ArticleTitle>
         <ToggleRead className="article-closed">
 
         <div className="periodic-prime-intro sevenths-proof-intro">
