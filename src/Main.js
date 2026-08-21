@@ -53,8 +53,22 @@ const readArticle = e => {
 	}
 }
 
-export default () => {
+const MissingCenterSquare = () => (
+  <div className="missing-square" aria-label="A five by five square of dots with its center dot missing">
+    {Array.from({ length: 25 }, (_, i) => {
+      const row = Math.floor(i / 5);
+      const column = i % 5;
+      let region = 'center';
+      if (row < 2 && column < 3) region = 'top';
+      else if (column > 2 && row < 3) region = 'right';
+      else if (row > 2 && column > 1) region = 'bottom';
+      else if (column < 2 && row > 1) region = 'left';
+      return <span key={i} className={`square-dot ${region}`}></span>;
+    })}
+  </div>
+);
 
+export default () => {
 	// This is for adding the 'click' handler to each article title.
 	useEffect(() => {
 		var els = Array.from(document.querySelectorAll('.article-title'));
@@ -64,7 +78,7 @@ export default () => {
 	const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 	const yearTemplate = [0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5];
 
-	return (
+		return (
     <HomeWrapper className="home-page">
       <section className="home-hero">
         <div className="hero-orbit" aria-hidden="true"><span>φ</span><span>π</span><span>√</span></div>
@@ -160,22 +174,105 @@ export default () => {
         </ToggleRead>
       </article>
 
-      <article>
-        <div className="article-title">Odd Square Minus 1 - Always Divisible By 8</div>
+      <article className="consecutive-article">
+        <div className="article-title">Four Consecutive Integers: One Less Than a Square</div>
 
         <ToggleRead className="article-closed">
-        <p>2025 is an odd square. At first glance, one less than an odd number is even, and so divisible by 2. But what can we say beyond that?</p>
+          <div className="consecutive-intro">
+            <p className="article-kicker">A hard-looking square root with a short way through</p>
+            <div className="challenge-expression">
+              <span className="radical">√</span><span className="radicand">48 × 49 × 50 × 51 + 1</span>
+              <span className="challenge-equals">= ?</span>
+            </div>
+            <p>The challenge is to find this square root without multiplying four large numbers, adding 1, and then somehow extracting the root.</p>
+          </div>
 
-        <p>Let's take a closer look at the square. In general, an odd number is 2x + 1 for some integer x. The square of this is (2x + 1)^2 = 4x^2 + 4x + 1.</p>
+          <p>Now, of course you're not going to actually multiply those four numbers, add 1, and figure out the square root. No—the puzzle is to find a way to get the answer without doing all that work.</p>
 
-        <p>Now, if we subtract 1 from this expression, we get 4x^2 + 4x + 1 - 1 = 4x^2 + 4x, which is clearly divisible by 4. But is it also divisible by 8?</p>
+          <p>At first, I wasn't seeing the trick. So I began looking for a pattern, starting with smaller sets of four consecutive integers.</p>
 
-        <p>To determine this, we can factor out a 4: 4(x^2 + x). Now, we need to see if (x^2 + x) is even, because if it is, then the entire expression will be divisible by 8.</p>
+          <div className="pattern-cases" aria-label="The first three examples">
+            <div><span>1 × 2 × 3 × 4 + 1</span><strong>25</strong><em>√25 = 5</em></div>
+            <div><span>2 × 3 × 4 × 5 + 1</span><strong>121</strong><em>√121 = 11</em></div>
+            <div><span>3 × 4 × 5 × 6 + 1</span><strong>361</strong><em>√361 = 19</em></div>
+          </div>
 
-        <p>Notice that (x^2 + x) can be factored as x(x + 1). This product is always even because one of the two consecutive integers x or (x + 1) must be even. Therefore, (x^2 + x) is even, and we can express it as 2k for some integer k.</p>
+          <p>Another pattern appears in the roots: each is 1 greater than the product of the first and last integers.</p>
 
-        <p>Substituting this back into our expression, we have 4 * 2k = 8k, which shows that the entire expression is divisible by 8.</p>
-        
+          <div className="root-pattern">
+            <span>1 × 4 + 1 = <strong>5</strong></span>
+            <span>2 × 5 + 1 = <strong>11</strong></span>
+            <span>3 × 6 + 1 = <strong>19</strong></span>
+          </div>
+
+          <div className="article-insight consecutive-answer">
+            <span className="insight-label">Back to the challenge</span>
+            <div className="answer-calculation"><span>48 × 51 + 1</span><strong>= 2449</strong></div>
+            <p>So the square root of 48 × 49 × 50 × 51 + 1 is <strong>2449</strong>—with no four-number product required.</p>
+          </div>
+
+          <h3>Why it works</h3>
+          <p>Let <i>x</i> be the first of the four integers. The product is <span className="inline-math">x(x + 1)(x + 2)(x + 3)</span>. Pair the outside terms and the inside terms:</p>
+
+          <div className="proof-chain" aria-label="Algebraic proof">
+            <div><span>Group the factors</span><strong>[x(x + 3)] [(x + 1)(x + 2)]</strong></div>
+            <div><span>Expand each pair</span><strong>(x² + 3x)(x² + 3x + 2)</strong></div>
+            <div><span>Let n be their midpoint</span><strong>n = x² + 3x + 1</strong></div>
+            <div><span>The two factors are</span><strong>(n − 1)(n + 1)</strong></div>
+            <div className="proof-result"><span>Difference of squares</span><strong>n² − 1</strong></div>
+          </div>
+
+          <p>The product is therefore <span className="inline-math">n² − 1</span>. Add 1 and we get <span className="inline-math">n²</span>, so its square root is simply <span className="inline-math">n = x² + 3x + 1 = x(x + 3) + 1</span>: one more than the first integer times the last.</p>
+
+          <h3>A square with its center missing</h3>
+          <div className="geometric-proof">
+            <MissingCenterSquare />
+            <div>
+              <span className="insight-label">The smallest case</span>
+              <strong>1 × 2 × 3 × 4 = 24 = 5² − 1</strong>
+              <p>These 24 dots split into four 2-by-3 rectangles. Arranged around a center, they make an odd square with exactly its middle point missing.</p>
+            </div>
+          </div>
+
+          <p>So the product of any four consecutive integers is one less than an odd perfect square. Larger cases admit the same missing-center interpretation; there's a related four-rectangle illustration on the Hex Clusters page.</p>
+        </ToggleRead>
+      </article>
+
+      <article className="odd-square-article">
+        <div className="article-title">An Odd Square Minus 1 Is Always Divisible by 8</div>
+
+        <ToggleRead className="article-closed">
+          <div className="odd-square-intro">
+            <p className="article-kicker">More than merely even</p>
+            <div className="odd-square-example">
+              <span>45² − 1</span><span>=</span><strong>2024</strong><span>=</span><strong>8 × 253</strong>
+            </div>
+            <p>2025 is the square of an odd number. Subtracting 1 plainly gives us an even number—but it turns out we can say considerably more.</p>
+          </div>
+
+          <p>Every odd integer can be written as <span className="inline-math">2x + 1</span> for some integer <i>x</i>. So let's square that expression and then subtract 1.</p>
+
+          <div className="odd-proof" aria-label="Proof that an odd square minus one is divisible by eight">
+            <div><span>Start with an odd number</span><strong>2x + 1</strong></div>
+            <div><span>Square it</span><strong>(2x + 1)² = 4x² + 4x + 1</strong></div>
+            <div><span>Subtract 1</span><strong>(2x + 1)² − 1 = 4x² + 4x</strong></div>
+            <div><span>Factor</span><strong>4x² + 4x = 4x(x + 1)</strong></div>
+          </div>
+
+          <p>We have an obvious factor of 4. The remaining factor, <span className="inline-math">x(x + 1)</span>, is the product of two consecutive integers—and one of any two consecutive integers must be even.</p>
+
+          <div className="parity-pair" aria-label="One of x and x plus one must be even">
+            <span>x</span><span className="pair-link">consecutive</span><span>x + 1</span>
+            <strong>one of these is always even</strong>
+          </div>
+
+          <p>Therefore <span className="inline-math">x(x + 1) = 2k</span> for some integer <i>k</i>. Substituting that into the factored expression finishes the argument:</p>
+
+          <div className="odd-square-result">
+            <span className="insight-label">The extra factor of 2</span>
+            <strong>4x(x + 1) = 4(2k) = 8k</strong>
+            <p>So the square of every odd integer is 1 more than a multiple of 8.</p>
+          </div>
         </ToggleRead>
       </article>
 
