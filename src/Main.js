@@ -108,11 +108,33 @@ export default () => {
 
         <p>This process continues with fascinating regularity into the 990s. At each step, we bring down the remainder, append 001, and divide by 999.</p>
 
-        <div className="division-steps" aria-label="The first three long-division steps">
-          <div><span className="step-number">01</span><strong>001 ÷ 999</strong><span>quotient 000</span><span>remainder 1 → 1001</span></div>
-          <div><span className="step-number">02</span><strong>1001 ÷ 999</strong><span>quotient 001</span><span>remainder 2 → 2001</span></div>
-          <div><span className="step-number">03</span><strong>2001 ÷ 999</strong><span>quotient 002</span><span>remainder 3 → 3001</span></div>
-        </div>
+        <figure className="division-work">
+          <figcaption>Watch the remainder become the next dividend</figcaption>
+          <div className="division-scroll">
+            <div className="division-layout" aria-hidden="true">
+              <div className="division-quotient"><span>000</span><span>001</span><span>002</span></div>
+              <div className="division-problem"><span className="division-divisor">999</span><span className="division-dividend">001 001 001 <i>…</i></span></div>
+              <div className="division-working">
+                <div className="division-subtract first"><span>−</span>000</div>
+                <div className="division-rule first"></div>
+                <div className="division-partial second"><b>1</b> 001</div>
+                <div className="division-subtract second"><span>−</span> 999</div>
+                <div className="division-rule second"></div>
+                <div className="division-partial third"><b>2</b> 001</div>
+                <div className="division-subtract third"><span>−</span>1 998</div>
+                <div className="division-rule third"></div>
+                <div className="division-partial fourth"><b>3</b> 001</div>
+                <div className="division-more">⋮</div>
+              </div>
+            </div>
+          </div>
+          <ol className="division-key">
+            <li><span className="step-number">01</span><span><strong>001</strong> gives <strong>000</strong>, remainder <strong>1</strong>.</span></li>
+            <li><span className="step-number">02</span><span>Bring down <strong>001</strong>: <strong>1001</strong> gives <strong>001</strong>, remainder <strong>2</strong>.</span></li>
+            <li><span className="step-number">03</span><span>Bring down <strong>001</strong>: <strong>2001</strong> gives <strong>002</strong>, remainder <strong>3</strong>.</span></li>
+          </ol>
+          <span className="sr-only">The first three long-division steps: 001 divided by 999 gives quotient 000 and remainder 1. Bringing down 001 makes 1001, giving quotient 001 and remainder 2. Bringing down 001 makes 2001, giving quotient 002 and remainder 3.</span>
+        </figure>
 
         <div className="recurrence-rule">
           <span>In general, at step <i>n</i></span>
