@@ -121,7 +121,7 @@ const DailyTeaser = ({ onOpenNote }) => {
 			preview: (
 				<div className="calendar-teaser-demo">
 					<div className="calendar-cycle" aria-label={`Weekly cycles numbered 1 through ${cycleLength}; day ${cyclePosition} is ${weekdayLabel}`}>
-						<div className="calendar-cycle-head" aria-hidden="true">{cycleWeekdays.map(day => <span key={day}>{day.slice(0, 3)}</span>)}</div>
+						<div className="calendar-cycle-head" aria-hidden="true">{cycleWeekdays.map(day => <span key={day} className={day === weekdayLabel ? 'calendar-cycle-weekday-today' : ''}>{day.slice(0, 3)}</span>)}</div>
 						<div className="calendar-cycle-days">
 							{Array.from({ length: cycleLength }, (_, index) => {
 								const day = index + 1;

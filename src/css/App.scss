@@ -454,6 +454,7 @@ article a:hover {
 .calendar-cycle-head,
 .calendar-cycle-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
 .calendar-cycle-head { margin-bottom: 7px; color: rgba(255,255,255,.48); font-size: clamp(.52rem, 1.7vw, .65rem); letter-spacing: .04em; text-align: center; text-transform: uppercase; }
+.calendar-cycle-head .calendar-cycle-weekday-today { border-radius: 999px; background: rgba(141,226,219,.1); color: #8de2db; font-weight: 800; }
 .calendar-cycle-days span { display: grid; place-items: center; min-width: 0; aspect-ratio: 1; border-radius: 50%; color: rgba(255,255,255,.7); font-size: clamp(.62rem, 2vw, .78rem); }
 .calendar-cycle-days .calendar-cycle-today { background: #8de2db; color: #172036; font-weight: 850; box-shadow: 0 0 0 3px rgba(141,226,219,.16); }
 .calendar-position-explanation > strong { display: block; margin-bottom: 4px; color: white; font-family: Georgia, serif; font-size: 1.05rem; font-weight: 500; }
