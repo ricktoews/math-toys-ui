@@ -21,6 +21,7 @@ import FibonacciLab from './components/FibonacciLab';
 function App() {
   const [menuState, setMenuState] = useState(false);
   const [pageMenuOpen, setPageMenuOpen] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const location = useLocation();
 
   const navContainerRef = useRef(null);
@@ -40,6 +41,13 @@ function App() {
   useEffect(() => {
     setPageMenuOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    const updateBackToTop = () => setShowBackToTop(window.scrollY > 520);
+    updateBackToTop();
+    window.addEventListener('scroll', updateBackToTop, { passive: true });
+    return () => window.removeEventListener('scroll', updateBackToTop);
+  }, []);
 
   useEffect(() => {
     // The calendar manages its own initial position by scrolling to the current
@@ -168,6 +176,20 @@ function App() {
 */}
         </Routes>
       </div>
+      <button
+        type="button"
+        className={`back-to-top ${showBackToTop ? 'back-to-top-visible' : ''}`}
+        aria-label="Back to top"
+        aria-hidden={!showBackToTop}
+        tabIndex={showBackToTop ? 0 : -1}
+        onClick={() => window.scrollTo({
+          top: 0,
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        })}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6" /></svg>
+        <span>Top</span>
+      </button>
     </div>
   );
 }

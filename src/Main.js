@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Periodic from './Periodic';
 
@@ -68,12 +69,116 @@ const MissingCenterSquare = () => (
   </div>
 );
 
+const DailyTeaser = ({ onOpenNote }) => {
+	const today = new Date();
+	const dateLabel = new Intl.DateTimeFormat('en-US', {
+		weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+	}).format(today);
+	const dayNumber = Math.floor(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) / 86400000);
+	const requestedCuriosity = new URLSearchParams(window.location.search).get('curiosity');
+	const curiosityOverrides = { consecutive: 0, calendar: 1, sevenths: 2 };
+	const teaserIndex = curiosityOverrides[requestedCuriosity] ?? ((dayNumber % 3) + 3) % 3;
+	const storageKey = `math-toys-curiosity-${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+	const [isOpen, setIsOpen] = useState(() => {
+		try {
+			return window.localStorage.getItem(storageKey) !== 'seen';
+		} catch {
+			return true;
+		}
+	});
+
+	useEffect(() => {
+		try {
+			window.localStorage.setItem(storageKey, 'seen');
+		} catch {
+			// Storage may be unavailable in private or restricted browsing modes.
+		}
+	}, [storageKey]);
+
+	const teasers = [
+		{
+			title: null,
+			body: 'Pick any four consecutive integers and multiply them. Add 1, and the result is always a perfect square.',
+			preview: (
+				<div className="teaser-pattern" aria-label="Examples of four consecutive integers whose product plus one is a square">
+					<span>1×2×3×4 + 1 = 25 = 5²</span>
+					<span>2×3×4×5 + 1 = 121 = 11²</span>
+					<span>3×4×5×6 + 1 = 361 = 19²</span>
+					<span>10×11×12×13 + 1 = 17,161 <em>also a square</em></span>
+				</div>
+			),
+			action: <button type="button" onClick={() => onOpenNote('four-consecutive-integers')}>Weird, eh? See why <span aria-hidden="true">→</span></button>,
+		},
+		{
+			title: `${dateLabel}. What day was any date?`,
+			body: 'With a short string of twelve digits and a little arithmetic, you can find the day of the week for dates across centuries.',
+			preview: <div className="teaser-big-mark" aria-hidden="true">SUN · MON · TUE · WED · THU · FRI · SAT</div>,
+			action: <Link to="/calendar/instructions">Learn the calendar trick <span aria-hidden="true">→</span></Link>,
+		},
+		{
+			title: null,
+			body: <>You’re familiar with 1/2 = 0.5 and 1/3 = 0.<span className="repeating-digits">3</span>. But if you really want to start getting adventurous with decimals, have a look at 1/7.</>,
+			preview: (
+				<div className="teaser-fraction teaser-sevenths">
+					<span>1/7</span><strong>= 0.<span className="repeating-digits"><b>142</b><b>857</b></span></strong>
+					<div className="teaser-sum">
+						<small>And check this out:</small>
+						<div className="stacked-sum" aria-label="142 plus 857 equals 999">
+							<span>142</span>
+							<span className="stacked-addend"><i>+</i>857</span>
+							<strong>999</strong>
+						</div>
+					</div>
+				</div>
+			),
+			action: <button type="button" onClick={() => onOpenNote('periodic-decimals-prime-reciprocals')}>Learn more <span aria-hidden="true">→</span></button>,
+		},
+	];
+	const teaser = teasers[teaserIndex];
+
+	return (
+		<aside className={`daily-teaser ${isOpen ? 'daily-teaser-open' : 'daily-teaser-closed'}`} aria-labelledby="daily-teaser-label">
+			<button
+				type="button"
+				className="daily-teaser-toggle"
+				aria-expanded={isOpen}
+				aria-controls="daily-teaser-content"
+				onClick={() => setIsOpen(open => !open)}
+			>
+				<span id="daily-teaser-label">Today’s Curiosity</span>
+				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+			</button>
+			{isOpen && (
+				<div className="daily-teaser-content" id="daily-teaser-content">
+					<div className="daily-teaser-copy">
+						{teaser.title && <h2>{teaser.title}</h2>}
+						<p>{teaser.body}</p>
+						<div className="daily-teaser-action">{teaser.action}</div>
+					</div>
+					<div className="daily-teaser-preview">{teaser.preview}</div>
+				</div>
+			)}
+		</aside>
+	);
+};
+
 export default () => {
 	// This is for adding the 'click' handler to each article title.
 	useEffect(() => {
 		var els = Array.from(document.querySelectorAll('.article-title'));
-		els.map(el => el.addEventListener('click', readArticle, el));
+		els.forEach(el => el.addEventListener('click', readArticle));
+		return () => els.forEach(el => el.removeEventListener('click', readArticle));
 	}, []);
+
+	const openNote = id => {
+		const article = document.getElementById(id);
+		const content = article?.querySelector('.article-closed, .article-opened');
+		const title = article?.querySelector('.article-title');
+		if (!article || !content) return;
+		content.classList.remove('article-closed');
+		content.classList.add('article-opened');
+		window.requestAnimationFrame(() => title?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+	};
   
 	const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 	const yearTemplate = [0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5];
@@ -82,10 +187,11 @@ export default () => {
     <HomeWrapper className="home-page">
       <section className="home-hero">
         <div className="hero-orbit" aria-hidden="true"><span>φ</span><span>π</span><span>√</span></div>
+        <DailyTeaser onOpenNote={openNote} />
         <p className="home-eyebrow">Patterns · numbers · play</p>
         <h1>Ideas worth<br/><em>playing with.</em></h1>
         <p className="home-intro">Small experiments and curious observations from the endlessly surprising world of mathematics.</p>
-        <div className="home-cue">Choose a note to explore <span aria-hidden="true">↓</span></div>
+        <div className="home-cue">Or choose a note to explore <span aria-hidden="true">↓</span></div>
       </section>
       <section className="home-notes" aria-label="Math notes">
       <article className="reciprocal-article">
@@ -174,7 +280,7 @@ export default () => {
         </ToggleRead>
       </article>
 
-      <article className="consecutive-article">
+      <article className="consecutive-article" id="four-consecutive-integers">
         <div className="article-title">Four Consecutive Integers: One Less Than a Square</div>
 
         <ToggleRead className="article-closed">
@@ -480,34 +586,75 @@ export default () => {
         </ToggleRead>
       </article>
 
-      <article>
+      <article id="prime-reciprocal-periods" className="periodic-prime-article">
         <div className="article-title">Description of Periodic Decimals of Reciprocals of Prime Numbers</div>
 	<ToggleRead className="article-closed">
 
-        <p>Let p be the denominator, a prime number that is not a factor of the base. So in base 10, p is not 2 or 5.</p>
+        <div className="periodic-prime-intro">
+          <p>Let <i>p</i> be the denominator, a prime number that is not a factor of the base. So in base 10, <i>p</i> is not 2 or 5.</p>
+        </div>
 
-        <p>Observations:</p>
+        <p className="periodic-prime-label">Observations:</p>
 
-        <ul>
-          <li>The maximum period length is (p-1).</li>
-          <li>The period length is the minimum n, such that 10^n - 1 is a multiple of p.</li>
-          <li>The period length is either (p-1) or a factor of (p-1).</li>
-          <li>If the period length is even, the period can be split into two parts, the sum of which is 10^x - 1, where x is one half the period length.</li>
+        <ul className="periodic-observations">
+          <li>The maximum period length is <span className="inline-math">(<i>p</i> − 1)</span>.</li>
+          <li>The period length is the minimum <i>n</i>, such that <span className="inline-math">10<sup><i>n</i></sup> − 1</span> is a multiple of <i>p</i>.</li>
+          <li>The period length is either <span className="inline-math">(<i>p</i> − 1)</span> or a factor of <span className="inline-math">(<i>p</i> − 1)</span>.</li>
+          <li>If the period length is even, the period can be split into two parts, the sum of which is <span className="inline-math">10<sup><i>x</i></sup> − 1</span>, where <i>x</i> is one half the period length.</li>
         </ul>
 
         <p>I actually did find it a little tiresome to try to defend some of these; however, I think I succeeded&mdash;or at least was confident of navigating there.</p>
 
-        <p>Two classic examples: 1/7, whose period is 142857; and 1/13, with period 076923.</p>
+        <div className="periodic-classic-examples">
+          <p>Two classic examples: <span className="inline-math">1/7</span>, whose period is <span className="periodic-digits">142857</span>; and <span className="inline-math">1/13</span>, with period <span className="periodic-digits">076923</span>.</p>
 
-        <p>For 7, the maximum period length is 6, and the period length actually is 6.</p>
+          <div className="periodic-example-grid">
+            <p>For 7, the maximum period length is 6, and the period length actually is 6.</p>
 
-        <p>For 13, the maximum period length would be 12; however, the actual period length is 6, a factor of 12.</p>
+            <p>For 13, the maximum period length would be 12; however, the actual period length is 6, a factor of 12.</p>
+          </div>
+        </div>
 
-        <p>For both 7 and 13, 10^6 - 1, or 999999, is the minimum such number of which they're factors. 9, 99, 999, 9999, and 99999 all leave remainders when divided by either 7 or 13.</p>
+        <p>For both 7 and 13, <span className="inline-math">10<sup>6</sup> − 1</span>, or <span className="periodic-digits">999999</span>, is the minimum such number of which they're factors. <span className="periodic-digits">9, 99, 999, 9999, and 99999</span> all leave remainders when divided by either 7 or 13.</p>
 
-        <p>Since the period lengths are even (both 6), they can be split in half, and the sum of the halves is 10^x - 1, where x is half the period length, or 3 in this case. So, for 7: 142 + 857 = 999. For 13: 076 + 923 = 999.</p>
+        <div className="periodic-complements">
+          <p>Since the period lengths are even (both 6), they can be split in half, and the sum of the halves is <span className="inline-math">10<sup><i>x</i></sup> − 1</span>, where <i>x</i> is half the period length, or 3 in this case. <span className="complement-equation">So, for 7: <strong>142 + 857 = 999</strong>.</span> <span className="complement-equation">For 13: <strong>076 + 923 = 999</strong>.</span></p>
+        </div>
 
-        <p>In many cases, the period length is odd, so you don't get complementary halves. The determining factor is the smallest 9s repdigit (10^n - 1) the prime number happens to divide. For example, not only do 7 and 13 divide 999999: 37 also divides it, as do 3 and 11. However, the period lengths of 1/3, 1/11, and 1/37 are 1, 2, and 3, since 3 divides 10^1 - 1, 11 divides 10^2 - 1, and 37 divides 10^3 - 1.</p>
+        <button className="article-cross-link" type="button" onClick={() => openNote('periodic-decimals-prime-reciprocals')}>See why the halves add to all 9s <span aria-hidden="true">→</span></button>
+
+        <p>In many cases, the period length is odd, so you don't get complementary halves. The determining factor is the smallest 9s repdigit (<span className="inline-math">10<sup><i>n</i></sup> − 1</span>) the prime number happens to divide. For example, not only do 7 and 13 divide <span className="periodic-digits">999999</span>: 37 also divides it, as do 3 and 11. However, the period lengths of <span className="inline-math">1/3</span>, <span className="inline-math">1/11</span>, and <span className="inline-math">1/37</span> are 1, 2, and 3, since 3 divides <span className="inline-math">10<sup>1</sup> − 1</span>, 11 divides <span className="inline-math">10<sup>2</sup> − 1</span>, and 37 divides <span className="inline-math">10<sup>3</sup> − 1</span>.</p>
+
+        </ToggleRead>
+      </article>
+
+      <article id="periodic-decimals-prime-reciprocals" className="periodic-prime-article sevenths-proof-article">
+        <div className="article-title">Why the Two Halves of 1/7 Add to 999</div>
+        <ToggleRead className="article-closed">
+
+        <div className="periodic-prime-intro sevenths-proof-intro">
+          <p>The repeating decimal for <span className="inline-math">1/7</span> is <span className="periodic-digits">0.142857…</span>. Split its six-digit period in half, and <span className="inline-math">142 + 857 = 999</span>. This is not a coincidence.</p>
+        </div>
+
+        <p>Let <i>p</i> be a prime denominator other than 2 or 5. Suppose its period length is even, and call it <span className="inline-math">2<i>n</i></span>. This means that <span className="inline-math">10<sup>2<i>n</i></sup> − 1</span> is the smallest number of the form <span className="inline-math">10<sup><i>x</i></sup> − 1</span> that <i>p</i> divides. For 7, the period length is 6, so <i>n</i> is 3.</p>
+
+        <div className="periodic-proof-chain" aria-label="Why the remainder halfway through an even decimal period is p minus one">
+          <div><span>Factor a difference of squares</span><strong>10<sup>2<i>n</i></sup> − 1 = (10<sup><i>n</i></sup> − 1)(10<sup><i>n</i></sup> + 1)</strong></div>
+          <div><span>The first factor is too early</span><strong><i>p</i> ∤ (10<sup><i>n</i></sup> − 1)</strong></div>
+          <div><span>So the prime divides the other factor</span><strong><i>p</i> | (10<sup><i>n</i></sup> + 1)</strong></div>
+          <div className="periodic-proof-result"><span>Halfway through the period</span><strong>10<sup><i>n</i></sup> ≡ −1 ≡ <i>p</i> − 1 &nbsp;(mod <i>p</i>)</strong></div>
+        </div>
+
+        <p>In long division, that congruence tells us the remainder after the first <i>n</i> digits. The expansion begins with remainder 1, representing <span className="inline-math">1/<i>p</i></span>. Halfway through the period, the remainder is <span className="inline-math"><i>p</i> − 1</span>, so the second half begins with the digits of <span className="inline-math">(<i>p</i> − 1)/<i>p</i></span>.</p>
+
+        <div className="sevenths-remainder-example">
+          <span className="insight-label">For sevenths, 10³ ≡ 6 (mod 7)</span>
+          <div><span>1/7</span><strong>= 0.<b>142</b><b>857</b>…</strong></div>
+          <div><span>6/7</span><strong>= 0.<b>857</b><b>142</b>…</strong></div>
+          <div className="sevenths-fraction-sum"><span>And</span><strong>1/7 + 6/7 = 1</strong></div>
+        </div>
+
+        <p>The two fractions add to 1; in their nonterminating decimal forms, their corresponding digits therefore add to repeating 9s. The first <i>n</i> digits of <span className="inline-math">(<i>p</i> − 1)/<i>p</i></span> are also the second half of the period of <span className="inline-math">1/<i>p</i></span>. That is why the two halves add to <span className="inline-math">10<sup><i>n</i></sup> − 1</span>.</p>
 
         </ToggleRead>
       </article>

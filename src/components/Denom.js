@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Table, Modal, Button } from 'react-bootstrap';
 import '../css/Denom.scss';
 import NumeratorList from './NumeratorList';
@@ -223,6 +223,7 @@ function getPrimesUpTo(max) {
 }
 
 function Denom(props) {
+  const loadedQueryDenominator = useRef(false);
   const [denom, setDenom] = useState();
   const [inputValue, setInputValue] = useState('');
   const [infoShow, setInfoShow] = useState(false);
@@ -307,6 +308,19 @@ function Denom(props) {
     // Collapse the selection panel after a successful selection
     setDenomCollapsed(true);
   }
+
+  useEffect(() => {
+    if (loadedQueryDenominator.current) return;
+    loadedQueryDenominator.current = true;
+
+    const selectedDenom = Number.parseInt(new URLSearchParams(window.location.search).get('denominator'), 10);
+    if (selectedDenom > 1) {
+      setInputValue(String(selectedDenom));
+      getDenomData(selectedDenom);
+    }
+    // The query string is an initial deep link, not ongoing form state.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const showPrimeReciprocal = async (p) => {
     // Load full expansion data for the prime
