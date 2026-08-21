@@ -5,7 +5,7 @@ const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const months = ['January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'];
 const genericOffsets = [0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5];
-const offsets2025 = [3, 6, 6, 2, 4, 0, 2, 5, 1, 3, 6, 1];
+const offsets2026 = [4, 0, 0, 3, 5, 1, 3, 6, 2, 4, 0, 2];
 const contents = [
   ['idea', 'The idea'],
   ['pattern', 'The pattern'],
@@ -142,11 +142,11 @@ export default function CalendarInstructions() {
           1800s, and 5 for the 1700s. This sequence repeats every 400 years.
         </p>
         <div className="calendar-instructions-example">
-          <h3>Example: 2025</h3>
-          <p>25 + 6 leap days + 0 century offset = 31. Modulo 7, the year offset is 3.</p>
-          <p>Add 3 to every generic digit and reduce each result modulo 7:</p>
-          <OffsetGrid offsets={offsets2025} label="Month offsets for 2025" />
-          <p className="calendar-instructions-example-result"><strong>2025:</strong> 3 6 6 2 4 0 2 5 1 3 6 1</p>
+          <h3>Example: 2026</h3>
+          <p>26 + 6 leap days + 0 century offset = 32. Modulo 7, the year offset is 4.</p>
+          <p>Add 4 to every generic digit and reduce each result modulo 7:</p>
+          <OffsetGrid offsets={offsets2026} label="Month offsets for 2026" />
+          <p className="calendar-instructions-example-result"><strong>2026:</strong> 4 0 0 3 5 1 3 6 2 4 0 2</p>
         </div>
         <aside className="calendar-instructions-note">
           <h3>Leap years</h3>
@@ -164,8 +164,8 @@ export default function CalendarInstructions() {
           month digit + date, modulo 7
         </div>
         <p>
-          For June 28, 2025, the June digit is 0. So 0 + 28 = 28, which is 0 modulo 7.
-          A result of 0 means Saturday.
+          For June 28, 2026, the June digit is 1. So 1 + 28 = 29, which is 1 modulo 7.
+          A result of 1 means Sunday.
         </p>
         <div className="calendar-instructions-weekday-key" aria-label="Weekday result key">
           <span><strong>0</strong> Sat</span>
