@@ -72,8 +72,14 @@ const MissingCenterSquare = () => (
 const DailyTeaser = ({ onOpenNote }) => {
 	const today = new Date();
 	const dateLabel = new Intl.DateTimeFormat('en-US', {
-		weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+		year: 'numeric', month: 'long', day: 'numeric',
 	}).format(today);
+	const weekdayLabel = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(today);
+	const monthYearLabel = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(today);
+	const monthOffset = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
+	const cyclePosition = today.getDate() + monthOffset;
+	const cycleLength = Math.max(28, Math.ceil(cyclePosition / 7) * 7);
+	const cycleWeekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 	const dayNumber = Math.floor(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) / 86400000);
 	const requestedCuriosity = new URLSearchParams(window.location.search).get('curiosity');
 	const curiosityOverrides = { consecutive: 0, calendar: 1, sevenths: 2 };
@@ -110,10 +116,36 @@ const DailyTeaser = ({ onOpenNote }) => {
 			action: <button type="button" onClick={() => onOpenNote('four-consecutive-integers')}>Weird, eh? See why <span aria-hidden="true">→</span></button>,
 		},
 		{
-			title: `${dateLabel}. What day was any date?`,
-			body: 'With a short string of twelve digits and a little arithmetic, you can find the day of the week for dates across centuries.',
-			preview: <div className="teaser-big-mark" aria-hidden="true">SUN · MON · TUE · WED · THU · FRI · SAT</div>,
-			action: <Link to="/calendar/instructions">Learn the calendar trick <span aria-hidden="true">→</span></Link>,
+			title: null,
+			body: <><span className="calendar-teaser-today">{weekdayLabel}, {dateLabel}.</span><span className="calendar-teaser-question">Why is this day a {weekdayLabel}?</span></>,
+			preview: (
+				<div className="calendar-teaser-demo">
+					<div className="calendar-cycle" aria-label={`Weekly cycles numbered 1 through ${cycleLength}; day ${cyclePosition} is ${weekdayLabel}`}>
+						<div className="calendar-cycle-head" aria-hidden="true">{cycleWeekdays.map(day => <span key={day}>{day.slice(0, 3)}</span>)}</div>
+						<div className="calendar-cycle-days">
+							{Array.from({ length: cycleLength }, (_, index) => {
+								const day = index + 1;
+								return <span key={day} className={day === cyclePosition ? 'calendar-cycle-today' : ''} aria-label={`${day}: ${cycleWeekdays[index % 7]}`}>{day}</span>;
+							})}
+						</div>
+					</div>
+					<div className="calendar-position-explanation">
+						<strong>{cyclePosition}? Why {cyclePosition}?</strong>
+						<p>We get {cyclePosition} by adding today’s date to the offset for {monthYearLabel}, which is {monthOffset}. Look at the number of blanks in the first week:</p>
+					</div>
+					<div className="calendar-offset-example" aria-label={`${monthYearLabel}, showing ${monthOffset} offset spaces before the first day`}>
+						<div className="calendar-offset-title">{monthYearLabel} <span>offset {monthOffset}</span></div>
+						<div className="calendar-cycle-head" aria-hidden="true">{cycleWeekdays.map(day => <span key={day}>{day.slice(0, 3)}</span>)}</div>
+						<div className="calendar-offset-days">
+							{Array.from({ length: monthOffset }, (_, index) => <span className="calendar-offset-space" key={`offset-${index}`} aria-hidden="true">·</span>)}
+							{Array.from({ length: 8 }, (_, index) => <span key={`date-${index + 1}`}>{index + 1}</span>)}
+							<span className="calendar-offset-ellipsis" aria-hidden="true"><i></i><i></i><i></i></span>
+						</div>
+					</div>
+					<div className="daily-teaser-action"><Link to="/calendar/instructions">Learn the calendar trick <span aria-hidden="true">→</span></Link></div>
+				</div>
+			),
+			action: null,
 		},
 		{
 			title: null,
@@ -153,7 +185,7 @@ const DailyTeaser = ({ onOpenNote }) => {
 					<div className="daily-teaser-copy">
 						{teaser.title && <h2>{teaser.title}</h2>}
 						<p>{teaser.body}</p>
-						<div className="daily-teaser-action">{teaser.action}</div>
+						{teaser.action && <div className="daily-teaser-action">{teaser.action}</div>}
 					</div>
 					<div className="daily-teaser-preview">{teaser.preview}</div>
 				</div>
