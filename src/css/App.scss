@@ -517,13 +517,15 @@ article a:hover {
 .home-notes { display: grid; gap: 14px; max-width: 920px; margin: 0 auto; padding: 30px 18px 60px; }
 .home-notes article { margin: 0 !important; border: 1px solid rgba(23,35,59,.09); border-radius: 14px; background: #fff; box-shadow: 0 5px 18px rgba(23,35,59,.06); overflow: hidden; transition: transform .2s ease, box-shadow .2s ease; }
 .home-notes article:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(23,35,59,.1); }
-.home-notes article .article-title { position: relative; padding: 18px 90px 18px 20px; scroll-margin-top: 76px; border-radius: 0; background: transparent; color: var(--ink); font-family: Georgia, serif; font-size: 1.08rem; line-height: 1.35; }
+.home-notes article .article-title { position: relative; padding: 18px 120px 18px 20px; scroll-margin-top: 76px; border-radius: 0; background: transparent; color: var(--ink); font-family: Georgia, serif; font-size: 1.08rem; line-height: 1.35; }
 .home-notes article .article-title::after { content: '+'; position: absolute; top: 50%; right: 18px; transform: translateY(-50%); display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #eef0ff; color: var(--accent); font-family: sans-serif; font-size: 1rem; }
-.article-copy { position: absolute; z-index: 1; top: 50%; right: 51px; display: grid; place-items: center; min-width: 27px; height: 27px; padding: 0 6px; border: 0; border-radius: 6px; background: transparent; color: #747b8a; transform: translateY(-50%); cursor: pointer; }
-.article-copy:hover { background: #f1f2f5; color: var(--accent); }
-.article-copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.article-copy svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
-.article-copy-feedback { color: #338681; font-family: ui-sans-serif, system-ui, sans-serif; font-size: .62rem; font-weight: 750; }
+.article-copy, .article-link { position: absolute; z-index: 1; top: 50%; display: grid; place-items: center; min-width: 27px; height: 27px; padding: 0 6px; border: 0; border-radius: 6px; background: transparent; color: #747b8a; transform: translateY(-50%); cursor: pointer; }
+.article-copy { right: 51px; }
+.article-link { right: 82px; }
+.article-copy:hover, .article-link:hover { background: #f1f2f5; color: var(--accent); }
+.article-copy:focus-visible, .article-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.article-copy svg, .article-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
+.article-action-feedback { color: #338681; font-family: ui-sans-serif, system-ui, sans-serif; font-size: .62rem; font-weight: 750; white-space: nowrap; }
 .home-notes article .article-opened { padding: 0 20px 20px; font-family: 'Cormorant Garamond', serif; font-size: 1.12rem; }
 .home-notes article p { line-height: 1.7; }
 

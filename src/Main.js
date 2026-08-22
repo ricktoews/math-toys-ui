@@ -39,8 +39,30 @@ const ToggleRead = styled.div`
 	}
 `;
 
+const articleSlug = title => String(title)
+	.toLowerCase()
+	.normalize('NFKD')
+	.replace(/[\u0300-\u036f]/g, '')
+	.replace(/[^a-z0-9]+/g, '-')
+	.replace(/(^-|-$)/g, '');
+
+const writeToClipboard = async text => {
+	try {
+		await navigator.clipboard.writeText(text);
+	} catch {
+		const textarea = document.createElement('textarea');
+		textarea.value = text;
+		Object.assign(textarea.style, { position: 'fixed', left: '-10000px' });
+		document.body.appendChild(textarea);
+		textarea.select();
+		document.execCommand('copy');
+		textarea.remove();
+	}
+};
+
 const ArticleTitle = ({ children }) => {
 	const [copied, setCopied] = useState(false);
+	const [linkCopied, setLinkCopied] = useState(false);
 	const feedbackTimer = React.useRef(null);
 
 	useEffect(() => () => window.clearTimeout(feedbackTimer.current), []);
@@ -59,28 +81,38 @@ const ArticleTitle = ({ children }) => {
 		const text = `${String(children)}\n\n${copy.innerText.trim()}`;
 		copy.remove();
 
-		try {
-			await navigator.clipboard.writeText(text);
-		} catch {
-			const textarea = document.createElement('textarea');
-			textarea.value = text;
-			Object.assign(textarea.style, { position: 'fixed', left: '-10000px' });
-			document.body.appendChild(textarea);
-			textarea.select();
-			document.execCommand('copy');
-			textarea.remove();
-		}
+		await writeToClipboard(text);
 
 		setCopied(true);
+		setLinkCopied(false);
 		window.clearTimeout(feedbackTimer.current);
 		feedbackTimer.current = window.setTimeout(() => setCopied(false), 1600);
+	};
+
+	const copyArticleLink = async event => {
+		event.stopPropagation();
+		const article = event.currentTarget.closest('article');
+		if (!article) return;
+
+		if (!article.id) article.id = articleSlug(children);
+		const url = new URL(window.location.href);
+		url.hash = article.id;
+		await writeToClipboard(url.toString());
+
+		setLinkCopied(true);
+		setCopied(false);
+		window.clearTimeout(feedbackTimer.current);
+		feedbackTimer.current = window.setTimeout(() => setLinkCopied(false), 1600);
 	};
 
 	return (
 		<div className="article-title">
 			<span className="article-title-text">{children}</span>
+			<button type="button" className="article-link" onClick={copyArticleLink} aria-label={`Copy link to ${children}`}>
+				{linkCopied ? <span className="article-action-feedback">Link copied</span> : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"/><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1"/></svg>}
+			</button>
 			<button type="button" className="article-copy" onClick={copyArticle} aria-label={`Copy ${children}`}>
-				{copied ? <span className="article-copy-feedback">Copied</span> : <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>}
+				{copied ? <span className="article-action-feedback">Copied</span> : <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>}
 			</button>
 		</div>
 	);
@@ -300,7 +332,21 @@ export default () => {
 	// This is for adding the 'click' handler to each article title.
 	useEffect(() => {
 		var els = Array.from(document.querySelectorAll('.article-title'));
+		els.forEach(el => {
+			const article = el.closest('article');
+			if (article && !article.id) article.id = articleSlug(el.querySelector('.article-title-text')?.textContent || 'article');
+		});
 		els.forEach(el => el.addEventListener('click', readArticle));
+
+		const linkedArticle = window.location.hash
+			? document.getElementById(decodeURIComponent(window.location.hash.slice(1)))
+			: null;
+		const linkedContent = linkedArticle?.querySelector('.article-closed, .article-opened');
+		if (linkedContent) {
+			linkedContent.classList.remove('article-closed');
+			linkedContent.classList.add('article-opened');
+			window.requestAnimationFrame(() => linkedArticle.querySelector('.article-title')?.scrollIntoView({ block: 'start' }));
+		}
 		return () => els.forEach(el => el.removeEventListener('click', readArticle));
 	}, []);
 
