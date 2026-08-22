@@ -386,7 +386,7 @@ export default () => {
           <p>The decimal remains faultlessly predictable almost to 1000. Just before 999, however, the pattern apparently stumbles: <strong>998 is missing</strong>, and then the cycle begins again at 000, 001…</p>
         </div>
 
-        <p>This is, of course, the decimal expansion of 1/998001. And because we're curious&mdash;inquisitive&mdash;we'd quite like to know what's going on. Why do we get most of the integers from 0 to 999, and why is 998 skipped?</p>
+        <p>This is, of course, the decimal expansion of 1/998001. And because we're curious, we'd quite like to know what's going on. Why do we get most of the integers from 0 to 999, and why is 998 skipped?</p>
 
         <div className="article-insight">
           <span className="insight-label">The vital clue</span>
@@ -398,18 +398,9 @@ export default () => {
         </div>
 
         <h3>Follow the remainder</h3>
-        <p>Let's set up our long division by placing 0.001001001… under the division bar and 999 to the left. We'll take the dividend in groups of three digits for convenience: <span className="inline-digits">001 001 001 …</span></p>
-
-        <p>For the first step, we have 001 divided by 999, which is 0 remainder 1. So on the quotient line above the dividend, we write 000 after the decimal, and we bring down the remainder of 1 beneath the first group of three digits.</p>
-
-        <p>Then, to the right of the 1, we bring down the next group of three, giving us 1001 divided by 999. This gives us 1 remainder 2. On the quotient line, we add 001 after the 000, and we subtract 999 from 1001, bringing down the remainder of 2.</p>
-
-        <p>Next, to the right of the 2, we bring down the next group of three: 2001. This divided by 999 gives us 2 remainder 3: 999 &times; 2 is 1998, and 2001 - 1998 = 3. The quotient now has 000001002, and the next number to divide by 999 is 3001.</p>
-
-        <p>This process continues with fascinating regularity into the 990s. At each step, we bring down the remainder, append 001, and divide by 999.</p>
+        <p>Let's set up our long division by placing 0.001001001… under the division bar and 999 to the left. We'll take the dividend in groups of three digits for convenience.</p>
 
         <figure className="division-work">
-          <figcaption>Watch the remainder become the next dividend</figcaption>
           <div className="division-scroll">
             <div className="division-layout" aria-hidden="true">
               <div className="division-quotient"><span>000</span><span>001</span><span>002</span></div>
@@ -428,35 +419,34 @@ export default () => {
               </div>
             </div>
           </div>
-          <ol className="division-key">
-            <li><span className="step-number">01</span><span><strong>001</strong> gives <strong>000</strong>, remainder <strong>1</strong>.</span></li>
-            <li><span className="step-number">02</span><span>Bring down <strong>001</strong>: <strong>1001</strong> gives <strong>001</strong>, remainder <strong>2</strong>.</span></li>
-            <li><span className="step-number">03</span><span>Bring down <strong>001</strong>: <strong>2001</strong> gives <strong>002</strong>, remainder <strong>3</strong>.</span></li>
-          </ol>
-          <span className="sr-only">The first three long-division steps: 001 divided by 999 gives quotient 000 and remainder 1. Bringing down 001 makes 1001, giving quotient 001 and remainder 2. Bringing down 001 makes 2001, giving quotient 002 and remainder 3.</span>
+          <table className="division-key">
+            <thead>
+              <tr><th>Step</th><th>Dividend</th><th>Quotient</th><th>Remainder</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">1</th><td>001</td><td>000</td><td>1</td></tr>
+              <tr><th scope="row">2</th><td>1001</td><td>001</td><td>2</td></tr>
+              <tr><th scope="row">3</th><td>2001</td><td>002</td><td>3</td></tr>
+              <tr className="division-key-ellipsis"><td colSpan="4" aria-label="Steps omitted">…</td></tr>
+              <tr><th scope="row">998</th><td>997001</td><td>997</td><td>998</td></tr>
+              <tr className="division-key-error"><th scope="row">999</th><td>998001</td><td>998</td><td>999</td></tr>
+            </tbody>
+          </table>
         </figure>
 
-        <div className="recurrence-rule">
-          <span>In general, at step <i>n</i></span>
-          <strong>[n − 1]001 ÷ 999</strong>
-          <span>quotient [n − 1] · remainder n · next [n]001</span>
-        </div>
+        <p>Step 999 follows the pattern, but it produces a remainder that's equal to the divisor and so must be revised:</p>
 
-        <p><b>Step 998:</b> 997001 divided by 999; quotient 997; remainder 998; setup for the next step: 998001.</p>
+        <table className="division-key division-key-corrected">
+          <thead>
+            <tr><th>Step</th><th>Dividend</th><th>Quotient</th><th>Remainder</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">999</th><td>998001</td><td>999</td><td>0</td></tr>
+          </tbody>
+        </table>
 
-        <h3>The apparent stumble</h3>
-        <p>Step 999 is where it gets interesting. If we continued the pattern mechanically, we'd expect this:</p>
-
-        <div className="false-step"><span>Expected</span><s>quotient 998 · remainder 999</s></div>
-
-        <p>Except that the remainder must be less than the divisor. If the remainder is equal to the divisor, the quotient needs to be increased by 1, and the remainder goes away. So Step 999 must be handled differently.</p>
-
-        <div className="resolution-card">
-          <span className="insight-label">Step 999</span>
-          <strong>998001 ÷ 999 = 999</strong>
-          <span>remainder 0 · next group 001</span>
-          <p>The carry turns the expected 998 into 999—and brings us right back to the beginning.</p>
-        </div>
+        <div className="article-conclusion-divider" aria-hidden="true"><span>◆</span></div>
+        <p className="article-conclusion">This illustrates why 998 is missing from the decimal expansion.</p>
         </ToggleRead>
       </article>
 
